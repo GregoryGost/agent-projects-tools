@@ -17,11 +17,12 @@
 
 ## Состав репозитория
 
-Ключевые элементы:
+Ключевые элементы на текущий момент:
 
 ```text
 .
 ├── AGENTS.md
+├── LICENSE
 ├── README.md
 ├── .codex/
 │   └── rules/
@@ -42,6 +43,7 @@
 Назначение основных файлов:
 
 - `AGENTS.md` — короткий bootstrap-файл для агента. Он указывает, что перед работой нужно читать `CODEX_PROJECT.md`, затем применять только релевантные правила из `.codex/rules/` и скилы из `.agents/skills/`.
+- `LICENSE` — текст лицензии MIT.
 - `.codex/rules/project.template.md` — шаблон проектного профиля. Его нужно копировать в целевой проект как `CODEX_PROJECT.md` и заполнять проектно-специфичными значениями.
 - `.codex/rules/obsidian_wiki.md` — правила работы с Obsidian-backed wiki через MCP.
 - `.codex/rules/obsidian_tasks.md` — правила работы с Obsidian-backed taskbook через MCP.
