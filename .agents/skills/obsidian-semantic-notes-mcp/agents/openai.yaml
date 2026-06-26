@@ -1,0 +1,4 @@
+interface:
+  display_name: "Obsidian Semantic Notes MCP"
+  short_description: "Obsidian vault workflows through Semantic Notes Vault MCP and Templater-aware formatting"
+  default_prompt: "Use $obsidian-semantic-notes-mcp for all Obsidian MCP vault, note, task, wiki, and safe-edit and Templater-aware formatting workflows."
