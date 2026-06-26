@@ -17,7 +17,7 @@
 
 ## Состав репозитория
 
-Ключевые элементы на текущий момент:
+Основные элементы:
 
 ```text
 .
@@ -26,36 +26,23 @@
 ├── README.md
 ├── .codex/
 │   └── rules/
-│       ├── project.template.md
-│       ├── obsidian_tasks.md
-│       ├── obsidian_wiki.md
-│       └── obsidian_wiki/
-│           ├── LLM Wiki Workflow.md
-│           └── LLM Wiki Lifecycle.md
 └── .agents/
     └── skills/
-        └── obsidian-semantic-notes-mcp/
-            ├── SKILL.md
-            └── references/
-                └── patterns-and-review.md
 ```
 
-Назначение основных файлов:
+Назначение основных элементов:
 
 - `AGENTS.md` — короткий bootstrap-файл для агента. Он указывает, что перед работой нужно читать `CODEX_PROJECT.md`, затем применять только релевантные правила из `.codex/rules/` и скилы из `.agents/skills/`.
 - `LICENSE` — текст лицензии MIT.
-- `.codex/rules/project.template.md` — шаблон проектного профиля. Его нужно копировать в целевой проект как `CODEX_PROJECT.md` и заполнять проектно-специфичными значениями.
-- `.codex/rules/obsidian_wiki.md` — правила работы с Obsidian-backed wiki через MCP.
-- `.codex/rules/obsidian_tasks.md` — правила работы с Obsidian-backed taskbook через MCP.
-- `.codex/rules/obsidian_wiki/` — reference-материалы для lifecycle и workflow LLM Wiki.
-- `.agents/skills/obsidian-semantic-notes-mcp/` — скил для работы с Obsidian через Semantic Notes Vault MCP, включая отдельный reference-файл с паттернами и review-чеклистами.
+- `.codex/rules/` — переносимые правила Codex и шаблоны проектной конфигурации, включая шаблон `CODEX_PROJECT.md`.
+- `.agents/skills/` — переиспользуемые skill-пакеты для AI-агентов. Состав этой директории может расширяться по мере добавления новых переносимых скилов.
 
 ## Как использовать в другом проекте
 
 Базовый сценарий:
 
 1. Скопируйте или подключите `AGENTS.md` в целевой проект.
-2. Создайте в целевом проекте `CODEX_PROJECT.md` на основе `.codex/rules/project.template.md`.
+2. Создайте в целевом проекте `CODEX_PROJECT.md` на основе шаблона из `.codex/rules/`.
 3. В `CODEX_PROJECT.md` явно укажите активные stack profiles, правила, скилы, команды проверки, dependency policy и внешние системы.
 4. Перенесите только те файлы из `.codex/rules/` и `.agents/skills/`, которые соответствуют активным профилям целевого проекта.
 5. Не активируйте языковые, framework-, database-, cache-, HTTP-client- или external-system-правила без явного указания в `CODEX_PROJECT.md` либо без прямой необходимости по задаче.
@@ -64,25 +51,23 @@
 
 У репозитория нет единой runtime-зависимости: зависимости появляются на уровне конкретных правил и скилов, когда они включаются в целевом проекте.
 
-Текущие материалы уже ссылаются на следующие зависимости и предпосылки:
+Зависимости и предпосылки должны быть описаны рядом с соответствующим правилом или скилом. Для уже добавленных Obsidian-материалов используются или упоминаются:
 
 - `CODEX_PROJECT.md` — обязательный проектный профиль для целевого проекта. Он является source of truth для активных правил, скилов, стеков, команд проверки, языковой политики, dependency policy и внешних систем.
 - Codex — текущий целевой агент для правил и workflow.
-- `.codex/rules/` — директория правил, из которой агент должен применять только файлы, соответствующие задаче и активным профилям из `CODEX_PROJECT.md`.
-- `.agents/skills/` — директория скилов, из которой агент должен применять только активированные в `CODEX_PROJECT.md` скилы.
-- Semantic Notes Vault MCP / Obsidian MCP — обязательная внешняя система для `obsidian-semantic-notes-mcp`, `obsidian_wiki.md` и `obsidian_tasks.md`.
+- Semantic Notes Vault MCP / Obsidian MCP — внешняя система для Obsidian-related правил и скилов.
 - Context7 MCP — упоминается в Obsidian-правилах как источник документации по работе с Obsidian.
-- Obsidian Tasks plugin — учитывается в `obsidian_tasks.md` для формата и ведения taskbook.
+- Obsidian Tasks plugin — учитывается в правилах для taskbook.
 - Obsidian Templater — опциональная зависимость: правила учитывают её только если она включена в `CODEX_PROJECT.md`, явно запрошена пользователем или уже присутствует в существующих note/template-файлах.
 - Dataview и Bases — опциональные возможности Obsidian, используемые только если они установлены и нужны задаче.
-- PlantUML — не обязательная зависимость репозитория, но существующий скил требует сохранять PlantUML-блоки в Obsidian-заметках без повреждений.
+- PlantUML — не обязательная зависимость репозитория, но Obsidian-related материалы требуют сохранять PlantUML-блоки в заметках без повреждений.
 - Локальные fallback outbox-директории, например `.agent_context/context/` и `.agent_context/tasks/`, используются только если Obsidian MCP недоступен и соответствующие пути объявлены в `CODEX_PROJECT.md`.
 
 Новые зависимости нельзя добавлять неявно. Они должны быть либо явно одобрены пользователем, либо разрешены dependency policy в `CODEX_PROJECT.md` целевого проекта.
 
 ## Правила работы с Obsidian-материалами
 
-Существующие Obsidian-правила и скил требуют MCP-only подхода:
+Obsidian-related правила и скилы требуют MCP-only подхода:
 
 - операции чтения, поиска, создания, обновления, перемещения, архивирования и проверки Obsidian vault выполняются через подключённый MCP;
 - `raw/`, `wiki/`, `tasks/` и `archive/` считаются логическими путями Obsidian vault, а не путями файловой системы репозитория;
