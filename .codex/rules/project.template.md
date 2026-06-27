@@ -38,7 +38,7 @@ Natural language policy is independent from programming languages. A project may
 
 List only profiles that apply to this repository.
 
-- `<python-backend / fastapi-api / typescript / vue-frontend / frontend-code-quality / node-backend / cpp-native / embedded-firmware / obsidian-mcp / playwright-ui-validation / none / other>`
+- `<python-backend / fastapi-api / typescript / vue-frontend / frontend-code-quality / frontend-testing / node-backend / cpp-native / embedded-firmware / obsidian-mcp / playwright-ui-validation / none / other>`
 
 ## Active Rules
 
@@ -49,6 +49,7 @@ List only rule files that should normally be applied for this project.
 - Framework rules: `<.codex/rules/*.md list or none>`
 - Styling rules: `<.codex/rules/*.md list or none>`
 - Code quality rules: `<.codex/rules/*.md list or none>`
+- Testing rules: `<.codex/rules/*.md list or none>`
 - Review rules: `<.codex/rules/*.md list or none>`
 - UI validation rules: `<.codex/rules/*.md list or none>`
 - External-system rules: `<.codex/rules/*.md list or none>`
@@ -62,6 +63,7 @@ List only reusable skills that should be available for this project. Do not acti
 - Framework skills: `<skill list or none>`
 - Frontend styling skills: `<skill list or none>`
 - Frontend code quality skills: `<skill list or none>`
+- Frontend testing skills: `<skill list or none>`
 - UI validation skills: `<skill list or none>`
 - Persistence/database skills: `<skill list or none>`
 - HTTP/client skills: `<skill list or none>`
@@ -77,6 +79,8 @@ List only reusable skills that should be available for this project. Do not acti
 - Lint: `<command or none>`
 - Type check / static analysis: `<command or none>`
 - Unit tests: `<command or none>`
+- Component/integration tests: `<command or none>`
+- Test coverage: `<command or none>`
 - Integration tests: `<command or none>`
 - Build: `<command or none>`
 - UI validation: `<command or MCP workflow or none>`
@@ -163,6 +167,28 @@ Use only when the project declares frontend linting, formatting, or type-checkin
 - Stylelint config path: `<stylelint.config.* / project-specific / none>`
 - Active code quality rules: `<.codex/rules/frontend_code_quality.md, overlays, or none>`
 - Active code quality skills: `<frontend-code-quality, overlays, or none>`
+
+### Frontend Testing Profile
+
+Use only when the project declares frontend unit, component, or integration testing workflows.
+
+- Frontend testing enabled: `<yes/no>`
+- Test runner: `<Vitest / Jest / project-specific / none>`
+- Test config path: `<vitest.config.ts / vite.config.ts / project-specific / none>`
+- Unit test command: `<command / none>`
+- Component/integration test command: `<command / none>`
+- Coverage command: `<command / none>`
+- Coverage enabled: `<yes/no>`
+- Coverage provider: `<v8 / istanbul / project-specific / none>`
+- DOM test environment: `<node / jsdom / happy-dom / project-specific / none>`
+- Test setup files: `<path list / none>`
+- Vue Test Utils enabled: `<yes/no>`
+- Pinia testing enabled: `<yes/no>`
+- Router testing policy: `<mocked router / real router per test / project-specific / none>`
+- Network mocking policy: `<mocked fetch / MSW / project-specific / none>`
+- Test file pattern: `<*.spec.ts / *.test.ts / project-specific>`
+- Active frontend testing rules: `<.codex/rules/vitest_vue_testing.md / none>`
+- Active frontend testing skills: `<vitest-vue-testing / none>`
 
 ### UI Validation Profile
 
