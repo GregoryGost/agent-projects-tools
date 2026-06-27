@@ -1,19 +1,15 @@
 # ESLint TypeScript rules
 
-Apply this rule when `CODEX_PROJECT.md` declares ESLint active for a TypeScript project, including projects that are not Vue-based.
+Apply this rule when `CODEX_PROJECT.md` declares ESLint active for a TypeScript project.
 
-This rule covers TypeScript linting only. Vue Single-File Component linting is a separate overlay handled by `.codex/rules/eslint_vue.md`.
+This rule covers framework-neutral TypeScript linting. Framework-specific file formats and framework-specific lint plugins belong in separate overlay rules.
 
 ## Required skills
 
 Use together with:
 
-- `frontend-code-quality` when the project is frontend-oriented;
+- `typescript-core`;
 - `eslint-typescript`.
-
-Use framework overlays only when active:
-
-- `eslint-vue` for Vue SFC linting.
 
 ## Source of truth
 
@@ -35,12 +31,10 @@ A TypeScript ESLint setup usually needs:
 - `typescript-eslint`;
 - `eslint-config-prettier` when Prettier is active.
 
-Do not require `eslint-plugin-vue` or `@vue/eslint-config-typescript` for TypeScript-only projects.
-
 ## Constraints
 
 - Prefer ESLint flat config for new setups unless the target project is intentionally legacy.
-- Keep TypeScript linting independent from Vue SFC parsing.
+- Keep TypeScript linting independent from framework-specific lint overlays.
 - Include only the file patterns that match the project: `.ts`, `.mts`, `.cts`, `.tsx`, or project-specific patterns.
 - Do not enable typed linting unless the project profile explicitly asks for it or the existing config already uses it.
 - Put Prettier conflict-disabling config last when used.
