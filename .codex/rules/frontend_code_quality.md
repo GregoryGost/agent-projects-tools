@@ -1,8 +1,8 @@
 # Frontend code quality rules
 
-Apply this rule only when `CODEX_PROJECT.md` declares frontend code quality checks as active or when the task directly changes formatting, linting, type-checking, or package scripts for a frontend or TypeScript project.
+Apply this rule only when `CODEX_PROJECT.md` declares frontend code quality checks as active or when the task directly changes formatting, linting, type-checking, or package scripts for a frontend project.
 
-This rule coordinates ESLint, Prettier, Vue SFC type-checking, and optional style linting. It does not replace framework-specific rules such as `vue_frontend.md`.
+This rule coordinates frontend-oriented ESLint overlays, Prettier, Vue SFC type-checking, Tailwind formatting integration, and optional style linting. It does not replace framework-specific rules such as `vue_frontend.md`.
 
 ## Required skills
 
@@ -12,18 +12,18 @@ Use together with:
 
 Use overlay skills only when active:
 
-- `eslint-typescript` when ESLint is active for TypeScript code, including TypeScript-only projects.
+- `eslint-typescript` when frontend TypeScript linting is active.
 - `eslint-vue` when ESLint is active for Vue SFCs.
 - `prettier-formatting` when Prettier is active.
 
-Do not assume Vue linting is active from TypeScript alone. Do not assume Stylelint is active from Tailwind or SCSS alone. Stylelint requires explicit project profile activation.
+Do not use this rule as a repository-wide code quality layer for non-frontend stacks. TypeScript-only non-frontend projects can use `eslint-typescript` and `prettier-formatting` directly. Do not assume Vue linting is active from TypeScript alone. Do not assume Stylelint is active from Tailwind or SCSS alone. Stylelint requires explicit project profile activation.
 
 ## Source of truth
 
-Before changing quality tooling:
+Before changing frontend quality tooling:
 
 1. Read `CODEX_PROJECT.md`.
-2. Check package manager, package scripts, dependency policy, TypeScript/JavaScript profile, Vue profile, styling profile, and frontend code quality profile.
+2. Check package manager, package scripts, dependency policy, TypeScript/JavaScript profile, framework profile, styling profile, and frontend code quality profile.
 3. Inspect `package.json`, lockfile, `eslint.config.*`, Prettier config, `tsconfig*`, `vite.config.*`, and Tailwind/Vue config files when relevant.
 4. Compare required tools against installed dependencies.
 5. Do not add, remove, or upgrade dependencies unless the user approves it or dependency policy allows it.
@@ -31,7 +31,7 @@ Before changing quality tooling:
 
 ## Baselines
 
-For TypeScript projects, the portable quality baseline normally includes:
+For frontend TypeScript projects, the portable quality baseline normally includes:
 
 - ESLint flat config for TypeScript files;
 - `typescript-eslint` tooling;
@@ -47,7 +47,7 @@ For Vue 3 + TypeScript + Vite projects, add the Vue overlay:
 
 ## Guardrails
 
-- Keep TypeScript ESLint independent from Vue SFC linting so TypeScript-only projects can reuse the core layer.
+- Keep TypeScript ESLint independent from Vue SFC linting so frontend TypeScript projects can reuse the core layer without Vue dependencies.
 - Keep formatting and linting responsibilities separate unless the project explicitly uses another workflow.
 - Do not run formatter commands that rewrite broad paths unless the project profile or user request permits it.
 - Do not commit generated lint reports or temporary formatter artifacts.
@@ -57,4 +57,4 @@ For Vue 3 + TypeScript + Vite projects, add the Vue overlay:
 
 ## Review expectations
 
-Review dependency list, package scripts, configs, TypeScript vs Vue linting boundaries, formatter/linter boundaries, Vue SFC type-checking, Tailwind plugin use, and project profile consistency together.
+Review dependency list, package scripts, configs, TypeScript vs framework linting boundaries, formatter/linter boundaries, Vue SFC type-checking, Tailwind plugin use, and project profile consistency together.
