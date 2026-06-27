@@ -145,15 +145,18 @@ Use only when the project declares frontend styling rules or skills.
 
 ### Frontend Code Quality Profile
 
-Use only when the project declares frontend linting, formatting, or type-checking workflows.
+Use when the project declares frontend or TypeScript linting, formatting, or type-checking workflows. TypeScript ESLint can be active without Vue; Vue ESLint is an overlay for Vue SFC projects only.
 
 - Frontend code quality enabled: `<yes/no>`
 - Package manager: `<pnpm / npm / yarn / bun / project-specific>`
 - Package manager version: `<version / project-specific / none>`
 - ESLint enabled: `<yes/no>`
 - ESLint config path: `<eslint.config.ts / eslint.config.js / eslint.config.mjs / project-specific / none>`
-- ESLint profile: `<base-js / typescript / vue-typescript / project-specific / none>`
-- ESLint command: `<command / none>`
+- ESLint profile: `<base-js / typescript / vue-sfc / typescript-vue-sfc / project-specific / none>`
+- ESLint TypeScript enabled: `<yes/no>`
+- ESLint TypeScript command: `<command / none>`
+- ESLint Vue SFC enabled: `<yes/no>`
+- ESLint Vue SFC command: `<command / none>`
 - ESLint report artifact policy: `<delete after review / keep as artifact / none / project-specific>`
 - Prettier enabled: `<yes/no>`
 - Prettier config path: `<.prettierrc / .prettierrc.json / prettier.config.js / project-specific / none>`
@@ -166,8 +169,8 @@ Use only when the project declares frontend linting, formatting, or type-checkin
 - Vue SFC type check command: `<command / none>`
 - Stylelint enabled: `<yes/no>`
 - Stylelint config path: `<stylelint.config.* / project-specific / none>`
-- Active code quality rules: `<.codex/rules/frontend_code_quality.md, overlays, or none>`
-- Active code quality skills: `<frontend-code-quality, overlays, or none>`
+- Active code quality rules: `<.codex/rules/frontend_code_quality.md, .codex/rules/eslint_typescript.md, .codex/rules/eslint_vue.md, overlays, or none>`
+- Active code quality skills: `<frontend-code-quality, eslint-typescript, eslint-vue, overlays, or none>`
 
 ### Frontend Testing Profile
 
