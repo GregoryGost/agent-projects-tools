@@ -21,4 +21,8 @@ Use these sources for Vue unit tests, component integration tests, Pinia testing
 - Pinia Testing Stores: https://pinia.vuejs.org/cookbook/testing.html
 - Pinia API: https://pinia.vuejs.org/api/
 
+## Baseline Interpretation
+
+Vue testing documentation recommends starting tests early, using Vitest for Vite-based Vue projects, and covering much of a Vue application with component tests. In this repository, `vitest-vue-testing` is therefore treated as the Vue frontend baseline unless a target project explicitly declares another testing stack or an approved no-tests policy.
+
 Prefer official Vue, Vue Test Utils, Vitest, and Pinia documentation for test behavior. Project commands, dependency policy, test environment, and coverage policy come from `CODEX_PROJECT.md` and the target repository.
