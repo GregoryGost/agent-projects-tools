@@ -5,9 +5,9 @@ description: "Use for Vue 3 unit and component integration tests with Vitest: co
 
 # Vitest Vue Testing
 
-Use this skill when `CODEX_PROJECT.md` declares Vue unit/component testing as active or when the task directly adds, changes, or reviews Vue unit, component, or integration tests.
+Use this skill for Vue 3 frontend projects by default. Do not treat unit and component testing as optional for `vue-frontend` unless `CODEX_PROJECT.md` explicitly documents another testing stack or an approved no-tests policy.
 
-Apply `.codex/rules/vitest_vue_testing.md`, `typescript-core`, and `vue-expert` together with this skill. Apply `pinia-expert` or `vue-router-expert` only when the tested behavior touches stores or routes.
+Apply `.codex/rules/vitest_vue_testing.md`, `typescript-core`, and `vue-expert` together with this skill. Apply `pinia-expert` or `vue-router-expert` when the tested behavior touches stores or routes.
 
 Load references when needed:
 
@@ -18,13 +18,14 @@ Load references when needed:
 ## Workflow
 
 1. Read `CODEX_PROJECT.md`.
-2. Confirm the active frontend testing profile, test commands, test environment, coverage policy, and dependency policy.
+2. Confirm Vue frontend is active and identify test commands, test environment, coverage policy, and dependency policy.
 3. Inspect `package.json`, lockfile, `vitest.config.*`, `vite.config.*`, `tsconfig*`, setup files, and existing test patterns.
-4. Classify the requested test as unit, component integration, or E2E/UI validation.
-5. Select the smallest test type that gives confidence for the behavior.
-6. Add or update tests using existing project conventions.
-7. Run or report the project-declared unit/component/integration test command.
-8. If tests need new dependencies, recommend them explicitly and do not add them unless allowed by the project policy or user approval.
+4. If no unit/component test runner is configured, report this as a Vue project quality gap and recommend the baseline dependencies and commands.
+5. Classify the requested test as unit, component integration, or E2E/UI validation.
+6. Select the smallest test type that gives confidence for the behavior.
+7. Add or update tests using existing project conventions.
+8. Run or report the project-declared unit/component/integration test command.
+9. If tests need new dependencies, recommend them explicitly and do not add them unless allowed by the project policy or user approval.
 
 ## Test Type Routing
 
@@ -36,6 +37,7 @@ Load references when needed:
 ## Vue Component Integration
 
 - Prefer testing public behavior: rendered output, props, slots, events, and user-visible interaction.
+- For new or substantially changed user-facing components, add or update a spec file unless the project explicitly opts out.
 - Do not assert private component instance state unless the task explicitly requires white-box coverage.
 - Avoid snapshot-only tests.
 - Mount with the real plugin only when the plugin integration is part of the behavior under test.
@@ -65,10 +67,12 @@ Load references when needed:
 
 ## Review Checklist
 
-- [ ] `CODEX_PROJECT.md` and testing profile were checked.
+- [ ] `CODEX_PROJECT.md` and Vue frontend profile were checked.
+- [ ] Unit/component test tooling exists, or the missing baseline was reported as a quality gap.
 - [ ] Test type matches the behavior scope.
 - [ ] Dependencies are present or explicitly recommended without unauthorized changes.
 - [ ] Tests assert behavior rather than implementation details.
+- [ ] New or changed user-facing Vue components have a spec or a documented project-level exception.
 - [ ] Pinia/router/plugin setup matches the intended integration boundary.
 - [ ] Async behavior is awaited explicitly.
 - [ ] Project-declared test command was run or reported as unavailable.
