@@ -1,6 +1,6 @@
 # Frontend code quality rules
 
-Apply this rule only when `CODEX_PROJECT.md` declares frontend code quality checks as active or when the task directly changes formatting, linting, type-checking, or package scripts for a frontend project.
+Apply this rule only when `CODEX_PROJECT.md` declares frontend code quality checks as active or when the task directly changes formatting, linting, type-checking, or package scripts for a frontend or TypeScript project.
 
 This rule coordinates ESLint, Prettier, Vue SFC type-checking, and optional style linting. It does not replace framework-specific rules such as `vue_frontend.md`.
 
@@ -12,10 +12,11 @@ Use together with:
 
 Use overlay skills only when active:
 
-- `eslint-vue-typescript` when ESLint is active for Vue + TypeScript.
+- `eslint-typescript` when ESLint is active for TypeScript code, including TypeScript-only projects.
+- `eslint-vue` when ESLint is active for Vue SFCs.
 - `prettier-formatting` when Prettier is active.
 
-Do not assume Stylelint is active from Tailwind or SCSS alone. Stylelint requires explicit project profile activation.
+Do not assume Vue linting is active from TypeScript alone. Do not assume Stylelint is active from Tailwind or SCSS alone. Stylelint requires explicit project profile activation.
 
 ## Source of truth
 
@@ -28,18 +29,25 @@ Before changing quality tooling:
 5. Do not add, remove, or upgrade dependencies unless the user approves it or dependency policy allows it.
 6. Do not invent scripts such as `lint`, `format:check`, or `typecheck`; use project-declared scripts.
 
-## Baseline for Vue + TypeScript + Vite
+## Baselines
 
-For a Vue 3 + TypeScript + Vite project, the portable quality baseline normally includes:
+For TypeScript projects, the portable quality baseline normally includes:
 
-- ESLint flat config for TypeScript and Vue SFC files;
-- Prettier as a separate formatter;
-- `eslint-config-prettier` to avoid formatter/linter conflicts;
+- ESLint flat config for TypeScript files;
+- `typescript-eslint` tooling;
+- Prettier as a separate formatter when formatting is active;
+- `eslint-config-prettier` to avoid formatter/linter conflicts when ESLint and Prettier are both active.
+
+For Vue 3 + TypeScript + Vite projects, add the Vue overlay:
+
+- Vue SFC and template linting through `eslint-plugin-vue`;
+- Vue TypeScript ESLint integration through `@vue/eslint-config-typescript` or the project-approved equivalent;
 - `vue-tsc` for Vue SFC type-checking;
 - Tailwind class sorting only when Tailwind CSS is active.
 
 ## Guardrails
 
+- Keep TypeScript ESLint independent from Vue SFC linting so TypeScript-only projects can reuse the core layer.
 - Keep formatting and linting responsibilities separate unless the project explicitly uses another workflow.
 - Do not run formatter commands that rewrite broad paths unless the project profile or user request permits it.
 - Do not commit generated lint reports or temporary formatter artifacts.
@@ -49,4 +57,4 @@ For a Vue 3 + TypeScript + Vite project, the portable quality baseline normally 
 
 ## Review expectations
 
-Review dependency list, package scripts, configs, formatter/linter boundaries, Vue SFC type-checking, Tailwind plugin use, and project profile consistency together.
+Review dependency list, package scripts, configs, TypeScript vs Vue linting boundaries, formatter/linter boundaries, Vue SFC type-checking, Tailwind plugin use, and project profile consistency together.
