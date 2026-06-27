@@ -20,7 +20,8 @@ Load this checklist when changing frontend quality tooling, package scripts, ESL
 
 ## Dependency Matrix
 
-- [ ] ESLint dependencies match the active lint profile.
+- [ ] TypeScript ESLint dependencies match the active TypeScript lint profile.
+- [ ] Vue ESLint dependencies are present only when Vue SFC linting is active.
 - [ ] Prettier dependencies match the active formatting profile.
 - [ ] `vue-tsc` is present or explicitly unavailable for Vue + TypeScript SFC checks.
 - [ ] Tailwind Prettier plugin is active only when Tailwind is active.
@@ -30,6 +31,7 @@ Load this checklist when changing frontend quality tooling, package scripts, ESL
 ## Configs And Commands
 
 - [ ] ESLint config path was checked.
+- [ ] TypeScript-only and Vue SFC lint target patterns are separated.
 - [ ] Prettier config and ignore files were checked.
 - [ ] `tsconfig*` and Vue SFC includes were checked when type checking is involved.
 - [ ] Vite and Tailwind config were checked when formatting/linting depends on them.
