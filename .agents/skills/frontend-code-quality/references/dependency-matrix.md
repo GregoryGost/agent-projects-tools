@@ -41,7 +41,7 @@ It also uses Tailwind/Vite-related build dependencies that affect formatting/con
 - `vite`
 - `@vitejs/plugin-vue`
 
-Unit and component test dependencies such as `vitest`, `@vue/test-utils`, `jsdom`, `happy-dom`, and `@pinia/testing` belong to the frontend testing profile, not to this code quality profile.
+Vue unit and component test dependencies such as `vitest`, `@vue/test-utils`, `jsdom`, `happy-dom`, and `@pinia/testing` belong to the Vue frontend testing baseline, not to this code quality profile.
 
 ## Optional Or Project-Specific
 
