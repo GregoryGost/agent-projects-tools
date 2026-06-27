@@ -1,19 +1,21 @@
 ---
 name: frontend-code-quality
-description: "Use for frontend and TypeScript code-quality tooling: package scripts, ESLint, Prettier, Vue SFC type-checking, Tailwind formatting integration, dependency matrix review, and validation command routing."
+description: "Use for frontend code-quality tooling: package scripts, ESLint overlays, Prettier, Vue SFC type-checking, Tailwind formatting integration, dependency matrix review, and validation command routing."
 ---
 
 # Frontend Code Quality
 
-Use this skill when a task changes or reviews frontend or TypeScript linting, formatting, type-checking, quality scripts, or dev dependencies related to code quality.
+Use this skill when a task changes or reviews frontend linting, formatting, type-checking, quality scripts, or dev dependencies related to frontend code quality.
 
 Apply `CODEX_PROJECT.md` and `.codex/rules/frontend_code_quality.md` together with this skill.
 
 Use overlay skills when active:
 
-- `eslint-typescript` for TypeScript ESLint setup, including TypeScript-only projects.
+- `eslint-typescript` for frontend TypeScript ESLint setup.
 - `eslint-vue` for Vue SFC and template linting in Vue projects.
 - `prettier-formatting` for Prettier configuration and formatting workflows.
+
+For TypeScript-only non-frontend projects, use `eslint-typescript` and `prettier-formatting` directly instead of this frontend orchestration skill.
 
 Load references when needed:
 
@@ -29,12 +31,12 @@ Load references when needed:
 4. Inspect relevant config files: `eslint.config.*`, Prettier config, `tsconfig*`, `vite.config.*`, Tailwind files, and ignore files.
 5. Compare installed dev dependencies with the active profile dependency matrix.
 6. Do not add or upgrade dependencies unless the user approves it or the project dependency policy allows it.
-7. Route work to the active specialized skill: TypeScript ESLint, Vue ESLint, Prettier, Vue type-checking, or styling checks.
+7. Route work to the active specialized skill: frontend TypeScript ESLint, Vue ESLint, Prettier, Vue type-checking, or styling checks.
 8. Run or report project-declared validation commands.
 
 ## Baselines
 
-For TypeScript projects, expect separate responsibilities:
+For frontend TypeScript projects, expect separate responsibilities:
 
 - ESLint checks TypeScript code quality.
 - Prettier formats code when active.
@@ -57,7 +59,7 @@ For Vue 3 + TypeScript + Vite projects, add Vue-specific quality tooling:
 
 - [ ] `CODEX_PROJECT.md` was read.
 - [ ] `package.json` and actual scripts were checked.
-- [ ] Active dev dependencies match the enabled quality profile.
+- [ ] Active dev dependencies match the enabled frontend quality profile.
 - [ ] TypeScript ESLint and Vue ESLint boundaries are separated.
 - [ ] ESLint and Prettier responsibilities are not conflated.
 - [ ] Vue SFC type-checking is covered through `vue-tsc` when Vue + TypeScript is active.
