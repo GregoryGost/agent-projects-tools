@@ -37,4 +37,4 @@ Use these sources for ESLint, Prettier, Vue SFC type-checking, Tailwind formatti
 - @vue/tsconfig: https://github.com/vuejs/tsconfig
 - vue-tsc / language-tools: https://github.com/vuejs/language-tools
 
-Prefer official documentation over project examples for tool behavior. Project commands, versions, and dependency policy come from `CODEX_PROJECT.md` and the target repository.
+Use `eslint-typescript` for TypeScript-only projects and add `eslint-vue` only for Vue SFC projects. Prefer official documentation over project examples for tool behavior. Project commands, versions, and dependency policy come from `CODEX_PROJECT.md` and the target repository.
