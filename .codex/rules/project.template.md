@@ -119,12 +119,13 @@ Use only when the project declares `vue-frontend`.
 - Vue API style: `<Composition API / Options API / project-specific>`
 - Vue SFC policy: `<script setup lang="ts" / project-specific>`
 - Vue build tool policy: `<Vite required / project-specific>`
+- Vue testing baseline: `<Vitest required / project-specific testing stack / explicit no-tests policy>`
 - Vite config path: `<vite.config.ts / vite.config.js / project-specific / none>`
 - Vue Router enabled: `<yes/no>`
 - Pinia enabled: `<yes/no>`
 - VueUse enabled: `<yes/no>`
-- Active Vue rules: `<.codex/rules/vue_frontend.md, overlays, or none>`
-- Active Vue skills: `<vue-expert, overlays, or none>`
+- Active Vue rules: `<.codex/rules/vue_frontend.md, .codex/rules/vitest_vue_testing.md, overlays, or none>`
+- Active Vue skills: `<vue-expert, vitest-vue-testing, overlays, or none>`
 
 ### Frontend Styling Profile
 
@@ -170,10 +171,11 @@ Use only when the project declares frontend linting, formatting, or type-checkin
 
 ### Frontend Testing Profile
 
-Use only when the project declares frontend unit, component, or integration testing workflows.
+Use for Vue frontend projects by default. If a Vue project cannot use the Vitest baseline, declare another testing stack or an explicit approved no-tests policy here.
 
 - Frontend testing enabled: `<yes/no>`
-- Test runner: `<Vitest / Jest / project-specific / none>`
+- Testing baseline policy: `<Vitest required / project-specific testing stack / explicit no-tests policy>`
+- Test runner: `<Vitest / project-specific / none>`
 - Test config path: `<vitest.config.ts / vite.config.ts / project-specific / none>`
 - Unit test command: `<command / none>`
 - Component/integration test command: `<command / none>`
@@ -187,6 +189,7 @@ Use only when the project declares frontend unit, component, or integration test
 - Router testing policy: `<mocked router / real router per test / project-specific / none>`
 - Network mocking policy: `<mocked fetch / MSW / project-specific / none>`
 - Test file pattern: `<*.spec.ts / *.test.ts / project-specific>`
+- Missing baseline policy: `<report as quality gap / fail task / project-specific>`
 - Active frontend testing rules: `<.codex/rules/vitest_vue_testing.md / none>`
 - Active frontend testing skills: `<vitest-vue-testing / none>`
 
