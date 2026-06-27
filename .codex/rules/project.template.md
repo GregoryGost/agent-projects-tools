@@ -38,7 +38,7 @@ Natural language policy is independent from programming languages. A project may
 
 List only profiles that apply to this repository.
 
-- `<python-backend / fastapi-api / typescript / vue-frontend / node-backend / cpp-native / embedded-firmware / obsidian-mcp / none / other>`
+- `<python-backend / fastapi-api / typescript / vue-frontend / node-backend / cpp-native / embedded-firmware / obsidian-mcp / playwright-ui-validation / none / other>`
 
 ## Active Rules
 
@@ -47,7 +47,9 @@ List only rule files that should normally be applied for this project.
 - Core rules: `<.codex/rules/*.md list>`
 - Language rules: `<.codex/rules/*.md list or none>`
 - Framework rules: `<.codex/rules/*.md list or none>`
+- Styling rules: `<.codex/rules/*.md list or none>`
 - Review rules: `<.codex/rules/*.md list or none>`
+- UI validation rules: `<.codex/rules/*.md list or none>`
 - External-system rules: `<.codex/rules/*.md list or none>`
 
 ## Active Skills
@@ -57,6 +59,8 @@ List only reusable skills that should be available for this project. Do not acti
 - Core skills: `<skill list or none>`
 - Language skills: `<skill list or none>`
 - Framework skills: `<skill list or none>`
+- Frontend styling skills: `<skill list or none>`
+- UI validation skills: `<skill list or none>`
 - Persistence/database skills: `<skill list or none>`
 - HTTP/client skills: `<skill list or none>`
 - Security skills: `<skill list or none>`
@@ -71,6 +75,7 @@ List only reusable skills that should be available for this project. Do not acti
 - Unit tests: `<command or none>`
 - Integration tests: `<command or none>`
 - Build: `<command or none>`
+- UI validation: `<command or MCP workflow or none>`
 - Other validation: `<command or none>`
 
 ## Runtime / Programming Language Profiles
@@ -93,8 +98,54 @@ Use only the blocks that match this repository. Delete or set unused blocks to `
 - Package manager: `<npm / pnpm / yarn / none / other>`
 - Framework: `<Vue / React / Svelte / Express / NestJS / none / other>`
 - Build tool: `<Vite / Webpack / Rollup / tsc / none / other>`
+- TypeScript config path: `<tsconfig path / project-specific / none>`
 - Active TypeScript/JavaScript rules: `<rule list / none>`
 - Active TypeScript/JavaScript skills: `<skill list / none>`
+
+### Vue Frontend Profile
+
+Use only when the project declares `vue-frontend`.
+
+- Vue frontend enabled: `<yes/no>`
+- Vue version: `<version constraint / project-specific>`
+- Vue API style: `<Composition API / Options API / project-specific>`
+- Vue SFC policy: `<script setup lang="ts" / project-specific>`
+- Vue build tool policy: `<Vite required / project-specific>`
+- Vite config path: `<vite.config.ts / vite.config.js / project-specific / none>`
+- Vue Router enabled: `<yes/no>`
+- Pinia enabled: `<yes/no>`
+- VueUse enabled: `<yes/no>`
+- Active Vue rules: `<.codex/rules/vue_frontend.md, overlays, or none>`
+- Active Vue skills: `<vue-expert, overlays, or none>`
+
+### Frontend Styling Profile
+
+Use only when the project declares frontend styling rules or skills.
+
+- Tailwind CSS enabled: `<yes/no>`
+- Tailwind CSS version: `<version constraint / project-specific / none>`
+- Tailwind config path: `<path / none / project-specific>`
+- Sass/SCSS enabled: `<yes/no>`
+- Sass implementation: `<sass / project-specific / none>`
+- Global style entry points: `<path list / none>`
+- Design tokens source: `<CSS variables / Tailwind theme / SCSS variables / design system / none / other>`
+- Component style policy: `<Tailwind-first / scoped SCSS / shared SCSS / project-specific>`
+- Active styling rules: `<.codex/rules/frontend_styling.md / none>`
+- Active styling skills: `<scss-tailwind-expert / none>`
+
+### UI Validation Profile
+
+Use only when browser UI validation is enabled.
+
+- Browser UI validation enabled: `<yes/no>`
+- Playwright MCP enabled: `<yes/no>`
+- Playwright MCP server name: `<name / project-specific / none>`
+- Dev server URL: `<url / project-specific / none>`
+- Target routes for smoke validation: `<route list / project-specific / none>`
+- Wait target policy: `<selector/text/accessibility target / project-specific>`
+- UI artifacts path: `<path / none / project-specific>`
+- Active UI validation rules: `<.codex/rules/playwright_ui_validation.md / none>`
+- Active UI validation skills: `<playwright-ui-checks-mcp / none>`
 
 ### C / C++ Profile
 
