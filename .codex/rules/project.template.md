@@ -38,7 +38,7 @@ Natural language policy is independent from programming languages. A project may
 
 List only profiles that apply to this repository.
 
-- `<python-backend / fastapi-api / typescript / vue-frontend / node-backend / cpp-native / embedded-firmware / obsidian-mcp / playwright-ui-validation / none / other>`
+- `<python-backend / fastapi-api / typescript / vue-frontend / frontend-code-quality / node-backend / cpp-native / embedded-firmware / obsidian-mcp / playwright-ui-validation / none / other>`
 
 ## Active Rules
 
@@ -48,6 +48,7 @@ List only rule files that should normally be applied for this project.
 - Language rules: `<.codex/rules/*.md list or none>`
 - Framework rules: `<.codex/rules/*.md list or none>`
 - Styling rules: `<.codex/rules/*.md list or none>`
+- Code quality rules: `<.codex/rules/*.md list or none>`
 - Review rules: `<.codex/rules/*.md list or none>`
 - UI validation rules: `<.codex/rules/*.md list or none>`
 - External-system rules: `<.codex/rules/*.md list or none>`
@@ -60,6 +61,7 @@ List only reusable skills that should be available for this project. Do not acti
 - Language skills: `<skill list or none>`
 - Framework skills: `<skill list or none>`
 - Frontend styling skills: `<skill list or none>`
+- Frontend code quality skills: `<skill list or none>`
 - UI validation skills: `<skill list or none>`
 - Persistence/database skills: `<skill list or none>`
 - HTTP/client skills: `<skill list or none>`
@@ -69,6 +71,8 @@ List only reusable skills that should be available for this project. Do not acti
 ## Build And Test Commands
 
 - Install dependencies: `<command or none>`
+- Format check: `<command or none>`
+- Format write: `<command or none>`
 - Format: `<command or none>`
 - Lint: `<command or none>`
 - Type check / static analysis: `<command or none>`
@@ -125,6 +129,7 @@ Use only when the project declares frontend styling rules or skills.
 - Tailwind CSS enabled: `<yes/no>`
 - Tailwind CSS version: `<version constraint / project-specific / none>`
 - Tailwind config path: `<path / none / project-specific>`
+- Tailwind stylesheet path: `<path / none / project-specific>`
 - Sass/SCSS enabled: `<yes/no>`
 - Sass implementation: `<sass / project-specific / none>`
 - Global style entry points: `<path list / none>`
@@ -132,6 +137,32 @@ Use only when the project declares frontend styling rules or skills.
 - Component style policy: `<Tailwind-first / scoped SCSS / shared SCSS / project-specific>`
 - Active styling rules: `<.codex/rules/frontend_styling.md / none>`
 - Active styling skills: `<scss-tailwind-expert / none>`
+
+### Frontend Code Quality Profile
+
+Use only when the project declares frontend linting, formatting, or type-checking workflows.
+
+- Frontend code quality enabled: `<yes/no>`
+- Package manager: `<pnpm / npm / yarn / bun / project-specific>`
+- Package manager version: `<version / project-specific / none>`
+- ESLint enabled: `<yes/no>`
+- ESLint config path: `<eslint.config.ts / eslint.config.js / eslint.config.mjs / project-specific / none>`
+- ESLint profile: `<base-js / typescript / vue-typescript / project-specific / none>`
+- ESLint command: `<command / none>`
+- ESLint report artifact policy: `<delete after review / keep as artifact / none / project-specific>`
+- Prettier enabled: `<yes/no>`
+- Prettier config path: `<.prettierrc / .prettierrc.json / prettier.config.js / project-specific / none>`
+- Prettier ignore path: `<.prettierignore / project-specific / none>`
+- Prettier policy: `<separate command / through ESLint / project-specific>`
+- Format check command: `<command / none>`
+- Format write command: `<command / none>`
+- Tailwind Prettier plugin enabled: `<yes/no>`
+- Vue SFC type check enabled: `<yes/no>`
+- Vue SFC type check command: `<command / none>`
+- Stylelint enabled: `<yes/no>`
+- Stylelint config path: `<stylelint.config.* / project-specific / none>`
+- Active code quality rules: `<.codex/rules/frontend_code_quality.md, overlays, or none>`
+- Active code quality skills: `<frontend-code-quality, overlays, or none>`
 
 ### UI Validation Profile
 
