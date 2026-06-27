@@ -54,6 +54,12 @@
 | Область | Что покрыто | Официальные источники |
 | --- | --- | --- |
 | Python backend/API | Python, FastAPI, Pydantic, SQLAlchemy | [Python](https://docs.python.org/3/), [FastAPI](https://fastapi.tiangolo.com/), [Pydantic](https://docs.pydantic.dev/), [SQLAlchemy](https://docs.sqlalchemy.org/) |
+| TypeScript core | TypeScript, TypeScript ESLint workflows | [TypeScript](https://www.typescriptlang.org/docs/), [typescript-eslint](https://typescript-eslint.io/getting-started/) |
+| Vue frontend | Vue 3, SFC, Composition API, TypeScript in Vue, Vite | [Vue](https://vuejs.org/guide/introduction.html), [Vue TypeScript](https://vuejs.org/guide/typescript/overview.html), [Vite](https://vite.dev/guide/) |
+| Vue ecosystem overlays | Vue Router, Pinia, VueUse | [Vue Router](https://router.vuejs.org/), [Pinia](https://pinia.vuejs.org/), [VueUse](https://vueuse.org/guide/) |
+| Frontend styling | Tailwind CSS, Sass/SCSS | [Tailwind CSS](https://tailwindcss.com/docs), [Sass](https://sass-lang.com/documentation/) |
+| Frontend code quality | ESLint, eslint-plugin-vue, Prettier, Tailwind class sorting, Vue SFC type checking | [ESLint](https://eslint.org/docs/latest/use/getting-started), [eslint-plugin-vue](https://eslint.vuejs.org/user-guide/), [Prettier](https://prettier.io/docs/install), [prettier-plugin-tailwindcss](https://github.com/tailwindlabs/prettier-plugin-tailwindcss), [Vue TypeScript](https://vuejs.org/guide/typescript/overview.html) |
+| Playwright UI validation | Playwright MCP/browser UI checks | [Playwright](https://playwright.dev/docs/intro), [MCP](https://modelcontextprotocol.io/) |
 | Obsidian knowledge/task workflows | Obsidian, Model Context Protocol, Context7, Obsidian Tasks, Templater, Dataview, Bases | [Obsidian](https://obsidian.md/), [MCP](https://modelcontextprotocol.io/), [Context7](https://context7.com/), [Obsidian Tasks](https://publish.obsidian.md/tasks/Introduction), [Templater](https://silentvoid13.github.io/Templater/), [Dataview](https://blacksmithgu.github.io/obsidian-dataview/), [Bases](https://help.obsidian.md/bases) |
 
 Новые языки, фреймворки, внешние приложения, плагины и системы должны добавляться в эту таблицу вместе с правилами или скилами, которые их покрывают.
