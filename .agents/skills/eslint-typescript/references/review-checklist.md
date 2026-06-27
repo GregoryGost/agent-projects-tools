@@ -5,8 +5,7 @@ Load this checklist for ESLint configuration and lint workflow changes in TypeSc
 ## Activation
 
 - [ ] `CODEX_PROJECT.md` declares ESLint active for TypeScript, or the task directly touches TypeScript linting.
-- [ ] `eslint-typescript`, `frontend-code-quality`, and `typescript-core` are applied.
-- [ ] Vue SFC linting is not assumed unless `eslint-vue` is active.
+- [ ] `eslint-typescript` and `typescript-core` are applied.
 
 ## Dependencies
 
@@ -15,7 +14,7 @@ Load this checklist for ESLint configuration and lint workflow changes in TypeSc
 - [ ] `typescript` and `typescript-eslint` are present for TypeScript linting.
 - [ ] `globals` is present when flat config declares browser/node globals.
 - [ ] `eslint-config-prettier` is present when Prettier is active.
-- [ ] Vue-specific lint dependencies are absent unless Vue overlay is active.
+- [ ] Framework-specific lint dependencies are handled by matching framework overlays, not by this checklist.
 
 ## Config
 
