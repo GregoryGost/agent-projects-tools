@@ -1,13 +1,13 @@
 ---
 name: eslint-typescript
-description: "Use for ESLint setup and review in TypeScript projects independent of Vue: flat config, typescript-eslint, globals, typed-linting policy, Prettier conflict handling, and lint scripts."
+description: "Use for ESLint setup and review in TypeScript projects: flat config, typescript-eslint, globals, typed-linting policy, Prettier conflict handling, and lint scripts."
 ---
 
 # ESLint TypeScript
 
-Use this skill when ESLint is active for a TypeScript project, including projects that do not use Vue.
+Use this skill when ESLint is active for a TypeScript project.
 
-Apply `CODEX_PROJECT.md`, `.codex/rules/frontend_code_quality.md`, `.codex/rules/eslint_typescript.md`, `frontend-code-quality`, and `typescript-core` together with this skill.
+Apply `CODEX_PROJECT.md`, `.codex/rules/eslint_typescript.md`, and `typescript-core` together with this skill.
 
 For review checks, load `references/review-checklist.md`. For official docs, load `references/official-sources.md`.
 
@@ -32,13 +32,11 @@ For TypeScript projects, expect some combination of:
 - `typescript-eslint`;
 - `eslint-config-prettier` when Prettier is active.
 
-Vue-specific dependencies such as `eslint-plugin-vue` and `@vue/eslint-config-typescript` belong to `eslint-vue`, not this core TypeScript skill.
-
 ## Guardrails
 
 - Do not assume `eslint.config.js`; projects may use `eslint.config.ts`, `eslint.config.mjs`, or another declared path.
 - Do not assume the lint command is `pnpm lint`.
-- Do not include `.vue` patterns unless the Vue ESLint overlay is active.
+- Do not include framework-specific file patterns unless the matching framework overlay is active.
 - Do not enable typed linting unless the project explicitly uses or requests it.
 - Do not remove Prettier conflict-disabling config when Prettier is active.
 - Do not leave generated lint reports unless the project explicitly treats them as artifacts.
