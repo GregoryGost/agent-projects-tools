@@ -9,7 +9,7 @@ Use this skill when ESLint is active for a Vue + TypeScript project or when the 
 
 Apply `CODEX_PROJECT.md`, `.codex/rules/frontend_code_quality.md`, `.codex/rules/eslint_vue_typescript.md`, `frontend-code-quality`, `vue-expert`, and `typescript-core` together with this skill.
 
-For review checks, load `references/review-checklist.md`.
+For review checks, load `references/review-checklist.md`. For official docs, load `references/official-sources.md`.
 
 ## Workflow
 
