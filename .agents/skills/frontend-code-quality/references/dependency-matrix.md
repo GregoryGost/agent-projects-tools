@@ -4,16 +4,25 @@ This matrix describes dev dependencies for active frontend quality profiles. It 
 
 Always read `CODEX_PROJECT.md`, `package.json`, lockfiles, and dependency policy before recommending or adding dependencies.
 
-## Vue 3 + TypeScript + Vite Baseline
+## TypeScript ESLint Baseline
 
-Use when the project activates `vue-frontend`, `typescript-core`, `frontend-code-quality`, ESLint, Prettier, and Vue SFC type checking.
+Use for TypeScript projects, including projects that are not Vue-based.
 
 | Purpose | Dev dependencies | Notes |
 | --- | --- | --- |
 | ESLint core | `eslint`, `@eslint/js`, `globals` | `@eslint/js` is needed when using ESLint recommended JS config. `globals` is used for browser/node globals in flat config. |
-| TypeScript linting | `typescript`, `typescript-eslint` | Use directly or through Vue-provided wrappers, depending on project setup. |
+| TypeScript linting | `typescript`, `typescript-eslint` | Use for TypeScript files in frontend, backend, library, and tooling projects. |
+| Formatting compatibility | `prettier`, `eslint-config-prettier` | Use when Prettier is active. Keep Prettier separate from ESLint. |
+
+Do not add Vue lint dependencies for TypeScript-only projects.
+
+## Vue 3 + TypeScript + Vite Overlay
+
+Use in addition to the TypeScript baseline when the project activates `vue-frontend`, ESLint, Prettier, and Vue SFC type checking.
+
+| Purpose | Dev dependencies | Notes |
+| --- | --- | --- |
 | Vue SFC linting | `eslint-plugin-vue`, `@vue/eslint-config-typescript` | Use for Vue SFC and Vue + TypeScript linting. |
-| Formatting | `prettier`, `eslint-config-prettier` | Keep Prettier separate from ESLint; use config-prettier to disable conflicting ESLint rules. |
 | Vue SFC type checking | `vue-tsc`, `@vue/tsconfig` | `vue-tsc` is the command-line type checker for Vue SFCs. |
 | Tailwind class sorting | `prettier-plugin-tailwindcss` | Use only when Tailwind CSS is active. |
 
