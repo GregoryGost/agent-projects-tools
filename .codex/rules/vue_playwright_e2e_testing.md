@@ -17,7 +17,10 @@ Use related overlay skills only when active:
 - `vue-router-expert` when E2E covers routing, route params, guards, redirects, or navigation state;
 - `pinia-expert` when E2E covers state effects visible through UI or API;
 - `vueuse-expert` when E2E covers behavior driven by VueUse;
-- `tailwind-expert`, `scss-expert`, or `ui-ux-review` when the E2E task validates related UI states.
+- `css-expert` when E2E validates visible layout or state driven by plain CSS, CSS Modules, or SFC style blocks;
+- `css-animation-expert` when E2E validates visible transitions, motion, or Vue transition CSS;
+- `tailwind-expert` or `scss-expert` when those styling overlays affect user-visible E2E behavior;
+- `ui-ux-review` when the E2E task validates layout, interaction states, or accessibility-sensitive visible behavior.
 
 ## Source of truth
 
@@ -38,6 +41,7 @@ Vue E2E tests must test the application as a user through real browser pages.
 - Do not duplicate component tests already covered by `vitest-vue-testing`.
 - Test critical multi-page/user flows, route transitions, auth redirects, form submission, API-backed behavior, layout-level behavior, and visible state effects.
 - Verify externally visible behavior rather than implementation details.
+- Do not assert private CSS class implementation unless the class is an explicit public test contract.
 
 ## Playwright policy
 
