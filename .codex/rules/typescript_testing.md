@@ -2,7 +2,7 @@
 
 Apply this rule when `CODEX_PROJECT.md` declares TypeScript unit or integration testing active, or when the task directly changes tests for TypeScript code.
 
-This rule is framework-neutral. Framework-specific testing belongs in overlay rules.
+This rule is framework-neutral and test-runner-neutral. Framework-specific, DOM, component, E2E, and concrete runner workflows belong in separate overlays or in the target project's `CODEX_PROJECT.md`.
 
 ## Required skills
 
@@ -16,17 +16,17 @@ Use together with:
 Before adding or changing tests:
 
 1. Read `CODEX_PROJECT.md`.
-2. Check test runner, test commands, coverage policy, dependency policy, and test file patterns.
+2. Check the declared test runner, test commands, coverage policy, dependency policy, and test file patterns.
 3. Inspect `package.json`, lockfile, test config files, `tsconfig*`, setup files, and existing tests.
 4. Review the TypeScript core modeling decision: function/module vs class.
 5. Use project-declared commands.
-6. Do not add test dependencies without user approval or dependency policy support.
+6. Do not add test dependencies or choose a new runner without user approval or dependency policy support.
 
 ## Testing boundaries
 
 - Unit tests cover pure functions, modules, mappers, validation logic, class invariants, public methods, and isolated services.
 - Integration tests cover interaction between multiple project modules, classes, services, adapters, and collaborators without requiring browser UI automation.
-- Framework, DOM, component, and E2E tests belong in stack-specific overlays.
+- Framework, DOM, component, E2E, and runner-specific workflows belong in stack-specific overlays.
 
 ## Class and object model testing
 
@@ -41,14 +41,12 @@ When `typescript-core` prefers a class, tests must respect that model instead of
 - Do not weaken visibility or export private helpers only to make tests easier.
 - Prefer deterministic clocks, IDs, randomness, storage, network, and filesystem boundaries.
 
-## Expected tooling
+## Runner policy
 
-For TypeScript projects, common test runners include:
-
-- `vitest` for Vite-compatible or modern TypeScript workflows;
-- `jest` only when the project already uses it or explicitly declares it.
-
-Coverage is optional and must be declared by the project profile.
+- Use the test runner already declared by the project.
+- Do not assume a runner from the language alone.
+- Do not introduce runner-specific APIs, globals, setup files, snapshots, coverage providers, or mocking patterns unless they already exist or are explicitly approved.
+- If the project has no declared TypeScript test runner, report it as a project testing gap and recommend adding a project-specific testing profile rather than hardcoding a runner in this baseline.
 
 ## Test design constraints
 
