@@ -45,7 +45,7 @@ When `typescript-core` prefers a class, tests must respect that model instead of
 
 - Use the test runner already declared by the project.
 - Do not assume a runner from the language alone.
-- Do not introduce runner-specific APIs, globals, setup files, snapshots, coverage providers, or mocking patterns unless they already exist or are explicitly approved.
+- Do not introduce runner-specific assertion APIs, mocking APIs, globals, setup files, snapshots, coverage providers, or mocking patterns unless they already exist or are explicitly approved.
 - If the project has no declared TypeScript test runner, report it as a project testing gap and recommend adding a project-specific testing profile rather than hardcoding a runner in this baseline.
 
 ## Test design constraints
