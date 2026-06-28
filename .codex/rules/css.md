@@ -18,7 +18,7 @@ Before changing CSS:
 2. Check CSS entry points, browser support policy, CSS build pipeline, PostCSS/autoprefixer policy, CSS Modules policy, formatter/linter policy, and validation commands.
 3. Inspect existing CSS architecture: tokens, base/reset, layout, components, utilities, overrides, CSS Modules, and local component styles.
 4. If Vue is active, inspect affected `.vue` style blocks, SFC style scope, CSS `v-bind()` usage, deep/global selector usage, and the project policy for local vs shared styles.
-5. Load `css-expert/references/patterns-and-review.md` and `css-expert/references/browser-and-architecture.md` when adding or changing architecture, cascade layers, custom properties, responsive rules, browser fallbacks, form-control styles, scrollbars, modern selectors, container queries, nesting, animations, or Vue SFC style blocks.
+5. Load `css-expert/references/patterns-and-review.md` and `css-expert/references/browser-and-architecture.md` when adding or changing architecture, cascade layers, custom properties, responsive rules, browser fallbacks, form-control styles, scrollbars, modern selectors, container queries, nesting, or Vue SFC style blocks.
 6. Follow project-declared commands.
 
 ## Constraints
@@ -33,8 +33,8 @@ Before changing CSS:
 - Do not rely on CSS transforms unless the project build pipeline explicitly handles them.
 - Do not hand-write vendor prefixes unless project policy or browser support requirements demand it.
 - Treat form controls, scrollbars, viewport units, font rendering, and mobile browser behavior as cross-browser risk areas.
-- Check `@layer`, `@scope`, `@property`, `@starting-style`, container queries, anchor positioning, scroll-driven animations, view transitions, `:has()`, `:is()`, and native nesting against browser support policy before relying on them.
-- Preserve focus-visible, disabled, hover, active, reduced-motion, forced-colors, and color-scheme behavior where relevant.
+- Check `@layer`, `@scope`, `@property`, container queries, anchor positioning, `:has()`, `:is()`, and native nesting against browser support policy before relying on them.
+- Preserve focus-visible, disabled, hover, active, forced-colors, and color-scheme behavior where relevant.
 - In Vue SFCs, use local style blocks only for component-owned styling; keep reusable tokens, base styles, layout primitives, and shared utilities in project-declared shared CSS files.
 
 ## Vue usage when active
