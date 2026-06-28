@@ -2,18 +2,43 @@
 
 Use this reference when designing or reviewing Tailwind CSS usage.
 
-This reference focuses only on Tailwind CSS: utility class usage, theme variables, responsive variants, state variants, source detection, class sorting, Vue class binding, and project policy.
+This reference focuses only on Tailwind CSS: utility class usage, theme variables, responsive variants, state variants, source detection, stylesheet entry point integration, Vue class binding, and project policy.
 
 ## Core Principles
 
 - Treat Tailwind CSS as an optional standalone styling overlay activated by `CODEX_PROJECT.md`.
+- If SCSS is also active, place Tailwind import/directives in the existing project SCSS stylesheet entry point.
 - Prefer existing utility patterns and theme variables before adding new design tokens.
 - Use complete, statically detectable class names.
 - Do not build class names with string concatenation or interpolation.
 - Use responsive and state variants intentionally: breakpoint, hover, focus, active, disabled, dark mode, motion, and accessibility states.
 - Use arbitrary values only for justified one-off values; prefer theme variables when a value is reusable.
-- Keep class lists readable and use the project-declared class sorting policy when active.
+- Keep class lists readable; leave class ordering automation to the project formatting rules.
 - Do not add plugins, custom variants, or broad theme changes without project policy support.
+
+## Tailwind Stylesheet Entry Point
+
+Default standalone CSS entry point:
+
+```css
+@import "tailwindcss";
+
+@theme {
+  --color-brand-500: oklch(0.72 0.11 221.19);
+}
+```
+
+SCSS project entry point:
+
+```scss
+@import "tailwindcss";
+
+@theme {
+  --color-brand-500: oklch(0.72 0.11 221.19);
+}
+```
+
+Use the SCSS entry point only when the project already routes styles through SCSS and the build chain processes that entry point with Tailwind. Do not add a second CSS entry point only for Tailwind in an SCSS-based project.
 
 ## Good: Direct Utility Classes For Local Styling
 
@@ -180,18 +205,11 @@ Why this is good:
 - Hover and keyboard focus states are both represented.
 - The visual behavior remains accessible.
 
-## Class Sorting
-
-- Follow project-declared class sorting policy.
-- Use `prettier-plugin-tailwindcss` only when that policy is active.
-- Do not reorder manually if the project relies on an automated formatter.
-- Do not add a formatter plugin unless dependency policy allows it.
-
 ## Vue Usage When Vue Is Active
 
 Use Tailwind in Vue only when the `vue-frontend` profile and the Tailwind profile are active, or when an existing `.vue` file already uses Tailwind utilities.
 
-Good:
+Good static classes:
 
 ```vue
 <template>
@@ -230,10 +248,11 @@ Problem: the full utility class names are not present as static source text.
 
 - Is Tailwind CSS active for this project or directly touched by the task?
 - Is the Tailwind version and integration path known?
+- If SCSS is active, is Tailwind integrated through the SCSS entry point?
 - Are utility class names complete and statically detectable?
 - Are theme variables used for reusable design tokens?
 - Are arbitrary values justified as local one-offs?
 - Are responsive variants mobile-first unless project policy says otherwise?
 - Are hover, focus, active, disabled, motion, contrast, and dark-mode states preserved when relevant?
 - Is Vue class binding using complete utility strings when Vue is active?
-- Is class sorting handled according to project policy?
+- Was class ordering left to project formatting rules?
