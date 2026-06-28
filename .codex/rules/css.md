@@ -18,7 +18,7 @@ Before changing CSS:
 2. Check CSS entry points, browser support policy, CSS build pipeline, PostCSS/autoprefixer policy, CSS Modules policy, formatter/linter policy, and validation commands.
 3. Inspect existing CSS architecture: tokens, base/reset, layout, components, utilities, overrides, CSS Modules, and local component styles.
 4. If Vue is active, inspect affected `.vue` style blocks, SFC style scope, CSS `v-bind()` usage, deep/global selector usage, and the project policy for local vs shared styles.
-5. Load `css-expert/references/patterns-and-review.md` when adding or changing architecture, cascade layers, custom properties, responsive rules, browser fallbacks, form-control styles, scrollbars, modern selectors, container queries, nesting, animations, or Vue SFC style blocks.
+5. Load `css-expert/references/patterns-and-review.md` and `css-expert/references/browser-and-architecture.md` when adding or changing architecture, cascade layers, custom properties, responsive rules, browser fallbacks, form-control styles, scrollbars, modern selectors, container queries, nesting, animations, or Vue SFC style blocks.
 6. Follow project-declared commands.
 
 ## Constraints
