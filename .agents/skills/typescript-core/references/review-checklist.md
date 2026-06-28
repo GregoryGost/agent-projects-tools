@@ -19,6 +19,18 @@ Load this file when changing or reviewing TypeScript code.
 - [ ] Side effects remain at explicit boundaries.
 - [ ] Import ordering, path aliases, formatter, and linter conventions are preserved.
 
+## Functions And Classes
+
+- [ ] Stateless pure logic is modeled as functions/modules unless a class has a concrete benefit.
+- [ ] Classes are used when they preserve identity, state, invariants, lifecycle, collaborators, or polymorphic behavior.
+- [ ] A class is preferred over loose functions when it better protects invariants or public contracts.
+- [ ] Static-only utility classes and constructor-only wrappers are absent.
+- [ ] Class fields are initialized safely and `readonly` is used where appropriate.
+- [ ] Inheritance follows substitutability; composition is used for simple reuse.
+- [ ] `implements` is not treated as method-parameter inference; method parameters remain explicit.
+- [ ] Overrides are explicit when the project enables or expects `override`.
+- [ ] Getter/setter pairs add behavior; trivial pass-through accessors are avoided.
+
 ## Contracts
 
 - [ ] Public exports remain compatible or were intentionally changed.
