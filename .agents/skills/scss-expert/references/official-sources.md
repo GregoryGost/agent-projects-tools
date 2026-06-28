@@ -1,7 +1,16 @@
 # SCSS Official Sources
 
 - Sass Documentation: https://sass-lang.com/documentation/
-- Sass Breaking Changes: https://sass-lang.com/documentation/breaking-changes/
+- Sass `@use`: https://sass-lang.com/documentation/at-rules/use/
+- Sass `@forward`: https://sass-lang.com/documentation/at-rules/forward/
+- Sass `@import` Deprecation: https://sass-lang.com/documentation/breaking-changes/import/
+- Sass Variables: https://sass-lang.com/documentation/variables/
+- Sass Maps: https://sass-lang.com/documentation/values/maps/
+- Sass Mixins: https://sass-lang.com/documentation/at-rules/mixin/
+- Sass Built-In Modules: https://sass-lang.com/documentation/modules/
+- Sass Property Declarations: https://sass-lang.com/documentation/style-rules/declarations/
+- Sass Parent Selector: https://sass-lang.com/documentation/style-rules/parent-selector/
 - CSS Custom Properties: https://developer.mozilla.org/en-US/docs/Web/CSS/--*
+- CSS Nesting: https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_nesting
 
-Project style entry points, validation commands, and dependency policy come from `CODEX_PROJECT.md` and the target repository.
+Project style entry points, validation commands, dependency policy, Tailwind policy, and design-token ownership come from `CODEX_PROJECT.md` and the target repository.
