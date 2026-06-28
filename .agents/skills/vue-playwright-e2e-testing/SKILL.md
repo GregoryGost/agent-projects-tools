@@ -1,6 +1,6 @@
 ---
 name: vue-playwright-e2e-testing
-description: "Use for Vue frontend browser E2E testing with Playwright: user flows, routing, auth, forms, API-backed behavior, fixtures, webServer, locators, traces, CI policy, and E2E review."
+description: "Use for Vue frontend browser E2E testing with Playwright: user flows, routing, auth, forms, API-backed behavior, fixtures, webServer, locators, traces, styling-visible behavior, CI policy, and E2E review."
 ---
 
 # Vue Playwright E2E Testing
@@ -20,9 +20,10 @@ Load references when needed:
 2. Confirm Vue frontend and Vue Playwright E2E are active.
 3. Check Playwright version, config path, E2E command, app start/preview command, base URL, browser matrix, auth policy, backend requirements, and artifact policy.
 4. Inspect `package.json`, lockfile, `playwright.config.*`, `vite.config.*`, `tsconfig*`, route definitions, public env usage, and existing E2E tests.
-5. Identify the user flow and active overlays: Vue Router, Pinia, VueUse, Tailwind, SCSS, UI/UX.
-6. Add the smallest browser E2E scenario that validates a critical flow.
-7. Run or report the project-declared E2E command.
+5. Identify the user flow and active overlays: Vue Router, Pinia, VueUse, CSS, CSS animation, Tailwind, SCSS, UI/UX.
+6. Apply styling overlays only to user-visible behavior; do not assert private CSS implementation details.
+7. Add the smallest browser E2E scenario that validates a critical flow.
+8. Run or report the project-declared E2E command.
 
 ## Baseline
 
@@ -42,6 +43,7 @@ Load references when needed:
 - Do not test third-party sites directly.
 - Keep route/auth/backend state setup explicit.
 - Capture artifacts according to project policy.
+- Treat Playwright MCP UI checks as local evidence gathering, not as a replacement for this persistent E2E suite.
 
 ## Review Checklist
 
@@ -49,7 +51,8 @@ Load references when needed:
 - [ ] Playwright config, command, webServer/base URL, and browser matrix were checked.
 - [ ] The test does not import Vue internals.
 - [ ] The scenario covers a critical user flow rather than a component detail.
-- [ ] Router, Pinia, VueUse, styling, or UI/UX overlays were applied only when active.
+- [ ] Router, Pinia, VueUse, CSS, CSS animation, Tailwind, SCSS, or UI/UX overlays were applied only when active.
+- [ ] Styling-related assertions check user-visible behavior rather than private class implementation.
 - [ ] Test data, auth state, and backend readiness are deterministic.
 - [ ] Locators use user-facing attributes or explicit contracts.
 - [ ] Trace/screenshot/video policy is followed.
