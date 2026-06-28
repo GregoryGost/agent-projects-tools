@@ -24,8 +24,8 @@ Load references when needed:
 3. Inspect existing CSS structure before editing: tokens, base/reset, layout, components, utilities, overrides, CSS Modules, and Vue SFC style blocks when present.
 4. Identify the smallest styling layer that solves the task: token, base rule, layout rule, component rule, state rule, utility rule, or local SFC style.
 5. Compare the intended change against `references/patterns-and-review.md` and `references/browser-and-architecture.md`.
-6. Check browser support and fallback requirements for modern features, especially `@layer`, `@scope`, `@property`, `@starting-style`, container queries, nesting, `:has()`, subgrid, viewport units, color functions, anchor positioning, scroll-driven animations, view transitions, form-control styling, and scrollbars.
-7. Preserve responsive behavior, accessibility states, color-scheme behavior, reduced-motion behavior, and forced-colors behavior when relevant.
+6. Check browser support and fallback requirements for modern features, especially `@layer`, `@scope`, `@property`, container queries, nesting, `:has()`, subgrid, viewport units, color functions, anchor positioning, form-control styling, and scrollbars.
+7. Preserve responsive behavior, accessibility states, color-scheme behavior, and forced-colors behavior when relevant.
 8. Run or report project-declared validation commands when applicable.
 
 ## Guardrails
@@ -48,6 +48,6 @@ Load references when needed:
 - [ ] Styling layer is correct: token, base, layout, component, utility, override, CSS Module, or SFC-local style.
 - [ ] Selectors remain low-specificity and maintainable.
 - [ ] Modern CSS features have browser support or fallback strategy.
-- [ ] Responsive, theme, reduced-motion, and accessibility states remain coherent.
+- [ ] Responsive, theme, and accessibility states remain coherent.
 - [ ] Vue SFC style scope was checked when `.vue` files are affected.
 - [ ] No unrelated styling layer was changed.
