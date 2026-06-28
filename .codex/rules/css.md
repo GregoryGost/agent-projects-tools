@@ -33,6 +33,7 @@ Before changing CSS:
 - Do not rely on CSS transforms unless the project build pipeline explicitly handles them.
 - Do not hand-write vendor prefixes unless project policy or browser support requirements demand it.
 - Treat form controls, scrollbars, viewport units, font rendering, and mobile browser behavior as cross-browser risk areas.
+- Check `@layer`, `@scope`, `@property`, `@starting-style`, container queries, anchor positioning, scroll-driven animations, view transitions, `:has()`, `:is()`, and native nesting against browser support policy before relying on them.
 - Preserve focus-visible, disabled, hover, active, reduced-motion, forced-colors, and color-scheme behavior where relevant.
 - In Vue SFCs, use local style blocks only for component-owned styling; keep reusable tokens, base styles, layout primitives, and shared utilities in project-declared shared CSS files.
 
