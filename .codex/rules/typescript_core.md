@@ -42,14 +42,29 @@ Before changing TypeScript code:
 - Do not change exported types or public contracts without checking call sites.
 - Keep type helpers local unless they are reused or part of a stable shared contract.
 
-## Function and API patterns
+## Function, class, and API patterns
 
+- Prefer functions for stateless pure transformations, small mappers, predicates, and utilities.
+- Prefer classes when the model has identity, state, constructor invariants, lifecycle, or polymorphic behavior.
+- When a class better preserves invariants than loose functions, prefer the class.
 - Keep function parameters explicit and avoid boolean-flag APIs when a named options object or discriminated union is clearer.
 - Prefer pure functions for transformations and calculations.
 - Keep parsing, validation, mapping, and business logic as separate boundaries when the codebase already follows that pattern.
 - Do not replace runtime validation with TypeScript types; external data still needs runtime checks.
 - Avoid broad type assertions. Narrow values instead.
 - Keep generic helpers simple and justified by real reuse.
+
+## Classes and object modeling
+
+- Use a class when state and behavior must stay together.
+- Use constructors to establish valid object state.
+- Use `implements` for interface conformance checks and still annotate method parameters explicitly.
+- Use `extends` only for true subtype relationships; prefer composition for simple reuse.
+- Use `override` for intentional overrides when the project enables it.
+- Prefer `readonly` for fields assigned only at declaration or in the constructor.
+- Avoid static-only utility classes and constructor-only wrappers.
+- Avoid trivial getter/setter pairs without extra behavior.
+- Avoid class index signatures for mixed dynamic data.
 
 ## Async and error handling
 
