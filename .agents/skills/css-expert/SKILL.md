@@ -9,7 +9,7 @@ Use this skill when plain CSS is active in `CODEX_PROJECT.md` or when the task d
 
 This skill is standalone and does not require another styling overlay to be present.
 
-Apply `.codex/rules/css_styling.md` together with this skill.
+Apply `.codex/rules/css.md` together with this skill.
 
 Load references when needed:
 
