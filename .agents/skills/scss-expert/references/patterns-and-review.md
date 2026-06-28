@@ -2,18 +2,18 @@
 
 Use this reference when designing or reviewing Sass/SCSS styling.
 
-This reference complements Vue, Tailwind, Prettier, and TypeScript skills. It focuses only on Sass/SCSS module structure, design-token wiring, custom properties, mixins, maps, nesting, component-local styles, and style review.
+This reference complements Vue, Prettier, and TypeScript skills. It focuses only on Sass/SCSS module structure, design-token wiring, custom properties, mixins, maps, nesting, component-local styles, Vue SFC style blocks, and style review.
 
 ## Core Principles
 
-- Treat SCSS as an optional styling overlay activated by `CODEX_PROJECT.md`.
-- Keep SCSS independent from Tailwind unless the project explicitly combines them.
+- Treat SCSS as an optional standalone styling overlay activated by `CODEX_PROJECT.md`.
 - Use the Sass module system with `@use` and `@forward` for new shared SCSS.
 - Do not add new Sass `@import` unless the project is intentionally pinned to a legacy Sass implementation that cannot use modules.
 - Prefer existing variables, maps, mixins, functions, and CSS custom properties before adding new design tokens.
 - Use CSS custom properties for runtime theme values and Sass variables/maps for compile-time structure.
 - Keep nesting shallow and intentional.
 - Keep mixins focused on reusable declarations or patterns; do not use mixins to hide one-off CSS.
+- In Vue projects, keep local component styles in SFC style blocks and reusable SCSS in shared SCSS modules.
 
 ## Good: Module System With Namespaced Tokens
 
@@ -243,11 +243,11 @@ Problems:
 - Reuse and overrides become harder.
 - Markup changes can break unrelated styles.
 
-## Component-Scoped SCSS
+## Vue SFC Usage When Vue Is Active
 
-Use component-scoped SCSS only for local component styling. Shared tokens, mixins, functions, and global resets belong in the project-declared shared style layer.
+Use SCSS in Vue only when the project declares both Vue and SCSS active, or when an existing `.vue` file already uses SCSS.
 
-Good:
+Good local SFC style:
 
 ```vue
 <style scoped lang="scss">
@@ -257,7 +257,33 @@ Good:
 </style>
 ```
 
-Bad:
+Good dynamic CSS value from component state:
+
+```vue
+<script setup lang="ts">
+const accentColor = '#2563eb'
+</script>
+
+<style scoped lang="scss">
+.button {
+  color: v-bind(accentColor);
+}
+</style>
+```
+
+Good shared SCSS usage in a Vue style block:
+
+```vue
+<style scoped lang="scss">
+@use "@/styles/tokens" as tokens;
+
+.card {
+  padding: tokens.$space-4;
+}
+</style>
+```
+
+Bad: defining reusable shared SCSS inside a local SFC block:
 
 ```vue
 <style scoped lang="scss">
@@ -270,14 +296,15 @@ Bad:
 </style>
 ```
 
-Problem: reusable mixins should not be declared inside a local component style block.
+Problem: reusable mixins, maps, functions, and token declarations should live in the project-declared shared SCSS layer, not inside one component.
 
-## Tailwind Separation
+## Component-Scoped SCSS
 
-- Do not infer Tailwind usage from SCSS.
-- Do not replace project-approved Tailwind utilities with SCSS unless the task explicitly asks for it.
-- Do not move Tailwind design tokens into SCSS unless the project defines a shared token strategy.
-- If both Tailwind and SCSS are active, identify which layer owns each concern before editing.
+Use component-scoped SCSS only for local component styling. Shared tokens, mixins, functions, and global resets belong in the project-declared shared style layer.
+
+Use `scoped` only when component-local style scoping is intended. Keep global styles in project-declared global entry points.
+
+Use CSS Modules only when the project convention already uses them or the task explicitly asks for module-scoped class names.
 
 ## Review Questions
 
@@ -289,4 +316,4 @@ Problem: reusable mixins should not be declared inside a local component style b
 - Are mixins reusable and narrow?
 - Is nesting shallow and intentional?
 - Were responsive and theme behaviors checked?
-- Is Tailwind kept separate unless the project explicitly combines it with SCSS?
+- If Vue is active, is the styling placed in the correct SFC or shared SCSS layer?
