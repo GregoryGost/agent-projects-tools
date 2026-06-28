@@ -12,5 +12,7 @@
 - Sass Parent Selector: https://sass-lang.com/documentation/style-rules/parent-selector/
 - CSS Custom Properties: https://developer.mozilla.org/en-US/docs/Web/CSS/--*
 - CSS Nesting: https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_nesting
+- Vue Single-File Components: https://vuejs.org/guide/scaling-up/sfc.html
+- Vue SFC CSS Features: https://vuejs.org/api/sfc-css-features.html
 
-Project style entry points, validation commands, dependency policy, Tailwind policy, and design-token ownership come from `CODEX_PROJECT.md` and the target repository.
+Project style entry points, validation commands, dependency policy, design-token ownership, and Vue SFC style policy come from `CODEX_PROJECT.md` and the target repository.
