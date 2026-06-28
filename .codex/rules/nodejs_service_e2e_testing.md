@@ -1,6 +1,6 @@
 # Node.js service E2E testing rules
 
-Apply this rule when `CODEX_PROJECT.md` declares Node.js service E2E testing active, or when the task directly changes E2E tests for a TypeScript Node.js API, service, CLI, worker, or queue consumer.
+Apply this rule when `CODEX_PROJECT.md` declares Node.js service E2E testing active, or when the task directly changes E2E tests for a TypeScript Node.js API, service, CLI, worker, queue consumer, or scheduled job.
 
 This rule is for non-browser TypeScript projects. Do not use Playwright, browser automation, DOM assertions, or Vue-specific tools here.
 
@@ -19,9 +19,10 @@ Before adding or changing Node.js service E2E tests:
 1. Read `CODEX_PROJECT.md`.
 2. Check service type: HTTP API, CLI, worker, queue consumer, scheduled job, or mixed service.
 3. Check declared E2E command, Jest command, environment policy, dependency policy, coverage policy, and artifact policy.
-4. Inspect `package.json`, lockfile, `tsconfig*`, Jest config, service entrypoint, composition root, config loader, migrations, seeds, and existing E2E tests.
+4. Inspect `package.json`, lockfile, `tsconfig*`, Jest config, service entrypoint, composition root, config loader, migrations, seeds, env loading, and existing E2E tests.
 5. Identify the public boundary under test and keep assertions at that boundary.
-6. Use project-declared commands and do not invent script names.
+6. Load `nodejs-service-e2e-testing/references/patterns-and-review.md` when adding or changing service E2E tests.
+7. Use project-declared commands and do not invent script names.
 
 ## Relationship to existing rules
 
@@ -66,7 +67,8 @@ Use the real public boundary of the service:
 
 ## Determinism and cleanup
 
-- Avoid real time waits. Prefer readiness checks, health endpoints, wait strategies, or explicit event completion.
+- Avoid real time waits. Prefer readiness checks, health endpoints, wait strategies, explicit event completion, or bounded polling for observable effects.
 - Control clocks, random IDs, ports, environment variables, files, queues, and external calls.
-- Ensure app instances, containers, connections, temp files, queues, and ports are cleaned up after tests.
+- Ensure app instances, containers, connections, temp files, queues, child processes, and ports are cleaned up after tests.
 - Keep E2E scenarios small, critical, and behavior-oriented.
+- Report known setup gaps, unavailable dependencies, or non-reproducible environment assumptions.
