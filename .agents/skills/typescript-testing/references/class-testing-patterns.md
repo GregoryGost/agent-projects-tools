@@ -2,6 +2,8 @@
 
 Use this reference when tests cover TypeScript classes, object modeling, constructor invariants, stateful behavior, lifecycle, or collaborators.
 
+Examples use neutral `assert*` helpers as placeholders for the project-declared test runner assertion API. Replace them with the assertion style already used by the target project.
+
 ## Baseline
 
 - Preserve the function/module vs class choice made by `typescript-core`.
@@ -26,13 +28,11 @@ class Counter {
   }
 }
 
-it('increments value', () => {
-  const counter = new Counter()
+const counter = new Counter()
 
-  counter.increment()
+counter.increment()
 
-  expect((counter as any).value).toBe(1)
-})
+assertEqual((counter as any).value, 1)
 ```
 
 Problems:
@@ -44,13 +44,11 @@ Problems:
 ## Good: Testing Public Behavior
 
 ```ts
-it('increments the visible count', () => {
-  const counter = new Counter()
+const counter = new Counter()
 
-  counter.increment()
+counter.increment()
 
-  expect(counter.current()).toBe(1)
-})
+assertEqual(counter.current(), 1)
 ```
 
 ## Constructor Invariants
@@ -64,9 +62,10 @@ class Percentage {
   }
 }
 
-it('rejects invalid percentage values', () => {
-  expect(() => new Percentage(120)).toThrow('Percentage must be between 0 and 100')
-})
+assertThrows(
+  () => new Percentage(120),
+  'Percentage must be between 0 and 100',
+)
 ```
 
 ## Collaborator Testing With A Typed Fake
@@ -84,14 +83,12 @@ class FakeProductRepository implements ProductRepository {
   }
 }
 
-it('returns undefined when product is missing', async () => {
-  const service = new ProductPricingService(
-    new FakeProductRepository(undefined),
-    fixedPricePolicy,
-  )
+const service = new ProductPricingService(
+  new FakeProductRepository(undefined),
+  fixedPricePolicy,
+)
 
-  await expect(service.priceFor('missing')).resolves.toBeUndefined()
-})
+assertEqual(await service.priceFor('missing'), undefined)
 ```
 
 ## Review Questions
