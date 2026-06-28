@@ -13,12 +13,155 @@ Examples:
 - publish a queue message and verify the externally visible side effect;
 - run a scheduled-job handler with real test dependencies and verify output state.
 
-## HTTP API Pattern
+## Good: HTTP API Through Public Boundary
 
-- Prefer Supertest when the app exposes an `http.Server` or request handler and the project supports in-process app creation.
-- Prefer Node `fetch`/Undici when testing a real running service or a black-box deployment-like boundary.
-- Assert public response shape, status, headers, and externally visible side effects.
-- Do not assert controller/private function calls.
+```ts
+import request from 'supertest';
+import { createApp } from '../src/app';
+import { resetTestDatabase } from './support/database';
+
+describe('POST /users', () => {
+  beforeEach(async () => {
+    await resetTestDatabase();
+  });
+
+  it('creates a user and exposes it through the API', async () => {
+    const app = await createApp({ env: 'test' });
+
+    const createResponse = await request(app.server)
+      .post('/users')
+      .send({ email: 'user-e2e@example.test' })
+      .expect(201);
+
+    await request(app.server)
+      .get(`/users/${createResponse.body.id}`)
+      .expect(200)
+      .expect(({ body }) => {
+        expect(body.email).toBe('user-e2e@example.test');
+      });
+  });
+});
+```
+
+Why this is good:
+
+- The test uses the HTTP boundary.
+- It verifies externally visible behavior.
+- Test data is isolated.
+
+## Bad: E2E That Calls Internals Directly
+
+```ts
+import { createUser } from '../src/users/createUser';
+
+it('creates a user', async () => {
+  const user = await createUser({ email: 'user@example.test' });
+
+  expect(user.email).toBe('user@example.test');
+});
+```
+
+Problems:
+
+- This is closer to an integration/unit test.
+- It bypasses routing, serialization, validation, auth, and composition.
+- It does not prove the public service boundary works.
+
+## Good: Real Disposable Dependency
+
+```ts
+import { PostgreSqlContainer } from '@testcontainers/postgresql';
+
+let postgres: StartedPostgreSqlContainer;
+
+beforeAll(async () => {
+  postgres = await new PostgreSqlContainer('postgres:16-alpine').start();
+  process.env.DATABASE_URL = postgres.getConnectionUri();
+  await runMigrations(process.env.DATABASE_URL);
+});
+
+afterAll(async () => {
+  await postgres.stop();
+});
+```
+
+Why this is good:
+
+- The database behavior is real.
+- The dependency is disposable.
+- Setup and teardown are explicit.
+
+## Bad: Shared Uncontrolled Database
+
+```ts
+process.env.DATABASE_URL = 'postgres://shared-dev-db/app';
+```
+
+Problems:
+
+- Tests can destroy or depend on shared state.
+- Failures may depend on another developer or CI job.
+- Cleanup is hard to guarantee.
+
+## Good: CLI Through Process Boundary
+
+```ts
+import { execa } from 'execa';
+import { mkdtemp, readFile, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+
+it('exports a report file', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'report-e2e-'));
+
+  try {
+    const result = await execa('node', ['dist/cli.js', 'export', '--out', dir], {
+      env: { NODE_ENV: 'test' },
+    });
+
+    expect(result.exitCode).toBe(0);
+    await expect(readFile(join(dir, 'report.json'), 'utf8')).resolves.toContain('summary');
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+});
+```
+
+Why this is good:
+
+- The CLI is tested as a user runs it.
+- Filesystem effects are verified.
+- Temporary files are cleaned up.
+
+## Bad: Fixed Sleep For Async Completion
+
+```ts
+await queue.publish({ type: 'send-email', id: '123' });
+await new Promise((resolve) => setTimeout(resolve, 5000));
+expect(await sentEmails.count()).toBe(1);
+```
+
+Problems:
+
+- The test can be slow and flaky.
+- It may pass or fail based on machine timing.
+- It hides the real readiness condition.
+
+## Good: Bounded Wait For Observable Result
+
+```ts
+await queue.publish({ type: 'send-email', id: '123' });
+
+await eventually(async () => {
+  await expect(sentEmails.countByMessageId('123')).resolves.toBe(1);
+});
+```
+
+Why this is good:
+
+- The wait condition is explicit.
+- The test can finish quickly when the system is ready.
+- Timeout failures point to the missing observable result.
 
 ## Dependency Pattern
 
@@ -34,20 +177,6 @@ Examples:
 - Use unique test IDs or isolated databases/schemas/queues/buckets.
 - Clean data after tests or use disposable environments.
 - Keep fixtures readable and close to the scenario.
-
-## CLI Pattern
-
-- Execute the declared command through a process boundary.
-- Assert exit code, stdout, stderr, files, database state, or emitted events.
-- Use isolated temp directories and test-specific environment variables.
-- Avoid importing CLI internals unless the test is intentionally unit/integration rather than E2E.
-
-## Worker And Queue Pattern
-
-- Publish a realistic message/job to the declared queue or handler boundary.
-- Wait for explicit completion, persisted state, emitted event, or observable side effect.
-- Avoid fixed sleeps; use bounded polling or project-approved wait helpers.
-- Ensure queues are isolated and drained between tests.
 
 ## Anti-patterns
 
