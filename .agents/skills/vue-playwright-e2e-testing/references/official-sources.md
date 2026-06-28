@@ -7,6 +7,7 @@ Use these sources for Vue browser E2E testing with Playwright.
 - Vue Testing Guide: https://vuejs.org/guide/scaling-up/testing.html
 - Vue Router: https://router.vuejs.org/
 - Pinia: https://pinia.vuejs.org/
+- Vue Transition: https://vuejs.org/guide/built-ins/transition.html
 
 ## Playwright
 
@@ -22,4 +23,10 @@ Use these sources for Vue browser E2E testing with Playwright.
 - Playwright Videos: https://playwright.dev/docs/videos
 - Playwright Screenshots: https://playwright.dev/docs/screenshots
 
-Project E2E command, browser matrix, app start/preview command, backend readiness, auth policy, artifact policy, and test data policy come from `CODEX_PROJECT.md` and the target repository.
+## Visible UI behavior
+
+- WCAG Quick Reference: https://www.w3.org/WAI/WCAG22/quickref/
+- MDN Accessibility: https://developer.mozilla.org/en-US/docs/Web/Accessibility
+- MDN CSS Media Queries: https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_media_queries
+
+Project E2E command, browser matrix, app start/preview command, backend readiness, auth policy, artifact policy, test data policy, styling overlays, and UI validation policy come from `CODEX_PROJECT.md` and the target repository.
