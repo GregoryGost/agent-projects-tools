@@ -10,8 +10,7 @@
 - Tailwind Detecting Classes In Source Files: https://tailwindcss.com/docs/detecting-classes-in-source-files
 - Tailwind Functions And Directives: https://tailwindcss.com/docs/functions-and-directives
 - Tailwind Adding Custom Styles: https://tailwindcss.com/docs/adding-custom-styles
-- prettier-plugin-tailwindcss: https://github.com/tailwindlabs/prettier-plugin-tailwindcss
 - Vue Template Syntax: https://vuejs.org/guide/essentials/template-syntax.html
 - Vue Class And Style Bindings: https://vuejs.org/guide/essentials/class-and-style.html
 
-Project Tailwind version, stylesheet/config path, class sorting policy, source detection policy, and validation commands come from `CODEX_PROJECT.md` and the target repository.
+Project Tailwind version, stylesheet/config path, source detection policy, stylesheet entry point policy, Vue class binding policy, and validation commands come from `CODEX_PROJECT.md` and the target repository.
