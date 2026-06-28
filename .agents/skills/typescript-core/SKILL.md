@@ -11,7 +11,8 @@ Apply `CODEX_PROJECT.md` and `.codex/rules/typescript_core.md` together with thi
 
 Load references when needed:
 
-- `references/patterns-and-style.md` for framework-neutral TypeScript code style, class/object modeling, and structure patterns.
+- `references/patterns-and-style.md` for framework-neutral TypeScript code style and structure patterns.
+- `references/classes-and-object-modeling.md` for choosing between functions/modules and classes, and for class-specific patterns.
 - `references/review-checklist.md` for review prompts and anti-patterns.
 - `references/official-sources.md` for official documentation and best-practice references.
 
