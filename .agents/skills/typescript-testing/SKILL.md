@@ -32,6 +32,7 @@ Load references when needed:
 - Prefer typed test helpers and explicit test doubles.
 - Preserve class-based design when TypeScript core selected a class for identity, state, invariants, lifecycle, collaborators, or polymorphism.
 - Do not assume a runner from TypeScript alone.
+- Do not embed runner-specific assertion or mocking APIs in this baseline.
 
 ## Class Testing
 
