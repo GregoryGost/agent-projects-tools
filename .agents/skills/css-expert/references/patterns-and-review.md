@@ -2,7 +2,7 @@
 
 Use this reference when designing or reviewing standalone CSS.
 
-This file contains good and bad CSS patterns with code examples for architecture, selectors, tokens, responsive behavior, progressive enhancement, browser-sensitive UI, and Vue SFC style usage.
+This file contains good and bad CSS patterns with code examples for architecture, selectors, tokens, responsive behavior, progressive enhancement, modern CSS features, browser-sensitive UI, and Vue SFC style usage.
 
 ## Core Principles
 
@@ -156,6 +156,86 @@ Problems:
 - Specificity becomes expensive to override.
 - Small markup changes can break the rule.
 
+## Good: Scoped Component Rules
+
+```css
+@scope (.profile-card) {
+  :scope {
+    border-radius: var(--radius-md);
+    padding: var(--space-4);
+  }
+
+  img {
+    border-radius: 50%;
+  }
+}
+```
+
+Why this is good:
+
+- The selector applies only inside the intended component subtree.
+- The rule avoids long ancestor chains.
+- Component styling remains local without increasing selector specificity.
+
+## Bad: Scope Replaced By Global Descendants
+
+```css
+.profile-page .sidebar .profile-card img {
+  border-radius: 50%;
+}
+```
+
+Problems:
+
+- The selector depends on unrelated page structure.
+- Reusing the component in another location can break the style.
+- Specificity is higher than needed.
+
+## Good: Registered Custom Property For Animatable Token
+
+```css
+@property --meter-value {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+
+.meter {
+  --meter-value: 0;
+  transform: scaleX(calc(var(--meter-value) / 100));
+  transition: --meter-value 180ms ease;
+}
+
+.meter[data-value="75"] {
+  --meter-value: 75;
+}
+```
+
+Why this is good:
+
+- The custom property has a declared type and initial value.
+- Animation behavior is explicit.
+- The property does not accidentally inherit.
+
+## Bad: Animating Untyped Custom Property
+
+```css
+.meter {
+  --meter-value: 0;
+  transition: --meter-value 180ms ease;
+}
+
+.meter[data-value="75"] {
+  --meter-value: 75;
+}
+```
+
+Problems:
+
+- The browser may treat the custom property as an untyped token stream.
+- Interpolation can fail or become discrete.
+- Inheritance behavior is not documented.
+
 ## Good: Baseline First, Enhancement Second
 
 ```css
@@ -202,6 +282,177 @@ Problems:
 - Unsupported browsers may lose important layout behavior.
 - Failures can be silent.
 - Reviewers cannot see the intended fallback.
+
+## Good: Entry Transition With Starting Style
+
+```css
+.popover {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 160ms ease, transform 160ms ease;
+
+  @starting-style {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+}
+```
+
+Why this is good:
+
+- The starting state is visible in CSS.
+- First-render transitions do not need script-only setup.
+- The transition remains attached to the component rule.
+
+## Bad: Hidden Initial State In Script Only
+
+```css
+.popover {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 160ms ease, transform 160ms ease;
+}
+```
+
+Problems:
+
+- The initial transition state is not documented in CSS.
+- Component behavior depends on external timing.
+- Reviewers cannot see the entry animation contract.
+
+## Good: Anchor Positioning With Fallback
+
+```css
+.tooltip {
+  position: absolute;
+  inset-block-start: 100%;
+  inset-inline-start: 0;
+}
+
+@supports (position-anchor: --trigger) {
+  .trigger {
+    anchor-name: --trigger;
+  }
+
+  .tooltip {
+    position-anchor: --trigger;
+    inset-area: block-end;
+  }
+}
+```
+
+Why this is good:
+
+- The tooltip has a baseline position.
+- Anchor positioning is used only when supported.
+- The relationship between trigger and tooltip is explicit.
+
+## Bad: Anchor Positioning Without Fallback
+
+```css
+.trigger {
+  anchor-name: --trigger;
+}
+
+.tooltip {
+  position: absolute;
+  position-anchor: --trigger;
+  inset-area: block-end;
+}
+```
+
+Problems:
+
+- Unsupported browsers can lose the intended placement.
+- The fallback position is not visible.
+- Debugging layout failures becomes harder.
+
+## Good: Scroll-Driven Animation As Enhancement
+
+```css
+.progress {
+  transform-origin: left center;
+  transform: scaleX(0);
+}
+
+@supports (animation-timeline: scroll()) {
+  .progress {
+    animation: progress-grow linear both;
+    animation-timeline: scroll(root block);
+  }
+
+  @keyframes progress-grow {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
+  }
+}
+```
+
+Why this is good:
+
+- The baseline remains stable.
+- Scroll-driven behavior is optional.
+- The animation timeline is clearly scoped.
+
+## Bad: Required UI State Only In Scroll Animation
+
+```css
+.progress {
+  animation: progress-grow linear both;
+  animation-timeline: scroll(root block);
+}
+```
+
+Problems:
+
+- Unsupported browsers can lose the progress indicator behavior.
+- The component has no clear baseline.
+- The animation becomes required instead of progressive.
+
+## Good: View Transition Is Optional
+
+```css
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 180ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 1ms;
+  }
+}
+```
+
+Why this is good:
+
+- Navigation transition behavior is explicit.
+- Reduced-motion preference is respected.
+- The feature stays optional to the page behavior.
+
+## Bad: Long View Transition Without Motion Policy
+
+```css
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 900ms;
+}
+```
+
+Problems:
+
+- Motion-sensitive users are not considered.
+- Navigation can feel slower than necessary.
+- The transition becomes a UX risk instead of enhancement.
 
 ## Good: Responsive Layout Primitive
 
@@ -414,6 +665,7 @@ Problems:
 - Are selectors low-specificity and stable?
 - Are custom properties used for runtime values and repeated design tokens?
 - Does a modern feature need a support check or fallback?
+- Were `@scope`, `@property`, `@starting-style`, anchor positioning, scroll-driven animations, and view transitions checked when affected?
 - Were form controls, scrollbars, viewport units, and mobile browser behavior checked when affected?
 - Are focus, disabled, reduced-motion, forced-colors, and color-scheme states preserved?
 - If Vue is active, is the style placed in the correct SFC or shared CSS layer?
