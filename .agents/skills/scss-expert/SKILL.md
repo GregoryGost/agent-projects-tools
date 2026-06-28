@@ -1,18 +1,20 @@
 ---
 name: scss-expert
-description: "Use for Sass/SCSS styling work: module system, variables, maps, mixins, design tokens, CSS custom properties, component-scoped styles, responsive behavior, theme behavior, Tailwind separation, and style review."
+description: "Use for standalone Sass/SCSS styling work: module system, variables, maps, mixins, design tokens, CSS custom properties, component-scoped styles, responsive behavior, theme behavior, Vue SFC style usage, and style review."
 ---
 
 # SCSS Expert
 
 Use this skill when Sass/SCSS is active in `CODEX_PROJECT.md` or when the task directly touches SCSS.
 
+This skill is standalone and does not require another styling overlay to be present.
+
 Apply `.codex/rules/scss_styling.md` together with this skill.
 
 Load references when needed:
 
 - `references/patterns-and-review.md` for SCSS good/bad patterns and review prompts.
-- `references/official-sources.md` for official Sass and CSS sources.
+- `references/official-sources.md` for official Sass, CSS, and Vue SFC style references.
 
 ## Workflow
 
@@ -20,9 +22,9 @@ Load references when needed:
 2. Confirm Sass implementation, style entry points, component policy, design token source, formatter, linter, and validation commands.
 3. Inspect existing SCSS structure before editing.
 4. Identify the smallest styling layer that solves the task: token, variable, map, mixin, function, shared partial, component scoped style, or local CSS.
-5. Compare the intended change against `references/patterns-and-review.md`.
-6. Preserve responsive and theme behavior.
-7. Keep SCSS independent from Tailwind unless the project explicitly combines them.
+5. If Vue is active, inspect affected `.vue` style blocks and apply the project SFC style policy.
+6. Compare the intended change against `references/patterns-and-review.md`.
+7. Preserve responsive and theme behavior.
 
 ## Guardrails
 
@@ -34,7 +36,7 @@ Load references when needed:
 - Keep nesting shallow and intentional.
 - Avoid duplicate declarations across shared and component styles.
 - Keep component styles scoped only when local styling is actually needed.
-- Do not infer Tailwind usage from SCSS.
+- In Vue SFCs, use `lang="scss"` on style blocks according to project policy.
 
 ## Review Checklist
 
@@ -43,6 +45,6 @@ Load references when needed:
 - [ ] Design token source was respected.
 - [ ] CSS custom properties and Sass variables/maps are used for the correct runtime/compile-time purpose.
 - [ ] Mixins, maps, and nesting remain narrow and justified.
+- [ ] Vue SFC style scope was checked when `.vue` files are affected.
 - [ ] Responsive and theme behavior remain coherent.
-- [ ] Tailwind ownership was not inferred from SCSS.
 - [ ] No unrelated styling layer was changed.
