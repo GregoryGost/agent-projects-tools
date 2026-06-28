@@ -20,6 +20,9 @@ Use existing project conventions first. For a new plain-CSS structure, keep file
 - Avoid ID selectors for styling.
 - Keep descendant chains short.
 - Use `:where()` for low-specificity wrappers.
+- Use `:is()` to group selector alternatives without duplicating rule bodies.
+- Use `:has()` only when browser policy supports it or when the selector is progressive enhancement.
+- Use `@scope` only when browser policy supports it or when scoped rules are optional enhancement.
 - Use native nesting only when supported by the project browser policy or build pipeline.
 - Review the resulting selector, not just the nested source.
 
@@ -38,19 +41,38 @@ Check these areas when touched:
 - forced-colors preferences;
 - color-scheme behavior.
 
-## Modern CSS Features
+## Modern CSS Feature Guardrails
 
 Use a baseline-first approach for:
 
+- cascade layers;
+- `@scope`;
+- `@property` registered custom properties;
+- `@starting-style`;
 - container queries;
 - native nesting;
 - parent-aware selectors;
 - subgrid;
 - new viewport units;
 - modern color functions;
-- scroll-driven animations.
+- anchor positioning;
+- scroll-driven animations;
+- view transitions.
 
-If the feature is not covered by project browser policy, add a fallback or use `@supports`.
+If the feature is not covered by project browser policy, add a fallback or use `@supports` when possible.
+
+## Feature-Specific Review
+
+- `@layer`: define layer order in one entry point and avoid scattering layer order across files.
+- `@scope`: verify scoping roots and limits; do not use it to hide unclear component boundaries.
+- `@property`: declare syntax, inheritance, and initial value for animatable custom properties.
+- `@starting-style`: keep entry-transition starting state next to the component rule.
+- Container queries: keep a baseline layout outside the container query.
+- Anchor positioning: keep a baseline absolute/fixed position before anchor positioning rules.
+- Scroll-driven animations: make scroll-tied animation an enhancement, not the only indicator of state.
+- View transitions: keep motion short and honor reduced-motion preferences.
+- `:has()`: avoid expensive broad selectors and prefer component-local scope.
+- Native nesting: keep nesting shallow and review compiled specificity.
 
 ## Vue SFC Review
 
