@@ -1,8 +1,8 @@
 # TypeScript Class Testing Patterns
 
-Use this reference when tests cover TypeScript classes, object modeling, constructor invariants, stateful behavior, lifecycle, or collaborators.
+Use this reference when Jest tests cover TypeScript classes, object modeling, constructor invariants, stateful behavior, lifecycle, or collaborators.
 
-Examples use neutral `assert*` helpers as placeholders for the project-declared test runner assertion API. Replace them with the assertion style already used by the target project.
+Examples use explicit imports from `@jest/globals`. If the target project intentionally uses Jest globals with `@types/jest`, follow the project style instead.
 
 ## Baseline
 
@@ -10,12 +10,14 @@ Examples use neutral `assert*` helpers as placeholders for the project-declared 
 - Test public behavior instead of private implementation details.
 - Test constructor invariants when a constructor validates or normalizes state.
 - Test state transitions through public methods.
-- Test collaborator interaction through typed fakes, stubs, or mocks.
+- Test collaborator interaction through typed fakes, stubs, or Jest mocks.
 - Keep tests deterministic by controlling time, randomness, IDs, IO, storage, network, and filesystem boundaries.
 
 ## Bad: Testing Private Implementation
 
 ```ts
+import {expect, test} from '@jest/globals'
+
 class Counter {
   private value = 0
 
@@ -28,11 +30,13 @@ class Counter {
   }
 }
 
-const counter = new Counter()
+test('increments value', () => {
+  const counter = new Counter()
 
-counter.increment()
+  counter.increment()
 
-assertEqual((counter as any).value, 1)
+  expect((counter as any).value).toBe(1)
+})
 ```
 
 Problems:
@@ -44,16 +48,22 @@ Problems:
 ## Good: Testing Public Behavior
 
 ```ts
-const counter = new Counter()
+import {expect, test} from '@jest/globals'
 
-counter.increment()
+test('increments the visible count', () => {
+  const counter = new Counter()
 
-assertEqual(counter.current(), 1)
+  counter.increment()
+
+  expect(counter.current()).toBe(1)
+})
 ```
 
 ## Constructor Invariants
 
 ```ts
+import {expect, test} from '@jest/globals'
+
 class Percentage {
   constructor(readonly value: number) {
     if (value < 0 || value > 100) {
@@ -62,15 +72,16 @@ class Percentage {
   }
 }
 
-assertThrows(
-  () => new Percentage(120),
-  'Percentage must be between 0 and 100',
-)
+test('rejects invalid percentage values', () => {
+  expect(() => new Percentage(120)).toThrow('Percentage must be between 0 and 100')
+})
 ```
 
 ## Collaborator Testing With A Typed Fake
 
 ```ts
+import {expect, test} from '@jest/globals'
+
 interface ProductRepository {
   findById(productId: string): Promise<Product | undefined>
 }
@@ -83,12 +94,32 @@ class FakeProductRepository implements ProductRepository {
   }
 }
 
-const service = new ProductPricingService(
-  new FakeProductRepository(undefined),
-  fixedPricePolicy,
-)
+test('returns undefined when product is missing', async () => {
+  const service = new ProductPricingService(
+    new FakeProductRepository(undefined),
+    fixedPricePolicy,
+  )
 
-assertEqual(await service.priceFor('missing'), undefined)
+  await expect(service.priceFor('missing')).resolves.toBeUndefined()
+})
+```
+
+## Collaborator Testing With A Typed Jest Mock
+
+```ts
+import {expect, jest, test} from '@jest/globals'
+
+const products: jest.Mocked<ProductRepository> = {
+  findById: jest.fn(),
+}
+
+test('uses repository result for pricing', async () => {
+  products.findById.mockResolvedValue(sampleProduct)
+
+  const service = new ProductPricingService(products, fixedPricePolicy)
+
+  await expect(service.priceFor(sampleProduct.id)).resolves.toBe(100)
+})
 ```
 
 ## Review Questions
@@ -98,3 +129,4 @@ assertEqual(await service.priceFor('missing'), undefined)
 - Does it cover constructor validation and state transitions when relevant?
 - Are collaborators typed and intentionally fake or mocked?
 - Does it preserve the project error/result convention?
+- Are Jest mocks, spies, and timers cleaned up when used?
