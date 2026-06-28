@@ -12,14 +12,12 @@ Use these sources when CSS syntax, browser support, progressive enhancement, acc
 - MDN CSS Nesting: https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_nesting
 - MDN `@scope`: https://developer.mozilla.org/en-US/docs/Web/CSS/@scope
 - MDN `@property`: https://developer.mozilla.org/en-US/docs/Web/CSS/@property
-- MDN `@starting-style`: https://developer.mozilla.org/en-US/docs/Web/CSS/@starting-style
 
 ## Browser Compatibility And Progressive Enhancement
 
 - MDN Baseline Compatibility: https://developer.mozilla.org/en-US/docs/Glossary/Baseline/Compatibility
 - MDN `@supports`: https://developer.mozilla.org/en-US/docs/Web/CSS/@supports
 - MDN Media Queries: https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_media_queries
-- MDN `prefers-reduced-motion`: https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-reduced-motion
 - MDN `forced-colors`: https://developer.mozilla.org/en-US/docs/Web/CSS/@media/forced-colors
 - MDN `color-scheme`: https://developer.mozilla.org/en-US/docs/Web/CSS/color-scheme
 
@@ -33,11 +31,9 @@ Use these sources when CSS syntax, browser support, progressive enhancement, acc
 - MDN Values And Units: https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_values_and_units
 - MDN Viewport Concepts: https://developer.mozilla.org/en-US/docs/Web/CSS/Viewport_concepts
 
-## Modern Interaction And Motion Features
+## Layout And Positioning Features
 
 - MDN CSS Anchor Positioning: https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_anchor_positioning
-- MDN CSS Scroll-Driven Animations: https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_scroll-driven_animations
-- MDN `@view-transition`: https://developer.mozilla.org/en-US/docs/Web/CSS/@view-transition
 
 ## Selectors, Interaction, And Browser-Sensitive UI
 
