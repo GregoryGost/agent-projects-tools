@@ -12,7 +12,8 @@ Examples:
 - a form submission that calls an API and shows persisted data;
 - a route transition that preserves or resets visible state correctly;
 - a Pinia-backed UI state change verified through the page, not by importing the store;
-- an App/Layout-level behavior that unit/component tests cannot cover.
+- an App/Layout-level behavior that unit/component tests cannot cover;
+- a user-visible responsive, motion, or layout behavior that requires a real browser.
 
 ## Router Pattern
 
@@ -27,6 +28,13 @@ Examples:
 - Do not import stores, composables, or app instances into E2E tests.
 - Set state through auth setup, API fixtures, seed data, local storage policy, or user actions.
 - Assert visible UI state and externally visible effects.
+
+## Styling And UI Pattern
+
+- Apply CSS, CSS animation, Tailwind, SCSS, or UI/UX overlays only when the E2E scenario validates related visible behavior.
+- Assert user-visible outcomes: visibility, text, URL, enabled or disabled state, focus behavior, accessible names, layout presence, or motion-complete state.
+- Do not assert private CSS class implementation unless the class is an explicit public test contract.
+- For responsive behavior, use project-declared browser matrix and viewport policy.
 
 ## Backend And Data Pattern
 
@@ -44,6 +52,12 @@ Examples:
 - Capture trace/screenshot/video artifacts according to project policy.
 - Keep tests isolated: cookies, storage, backend data, auth state, and routes.
 
+## Relationship To MCP UI Checks
+
+- `playwright-ui-checks-mcp` can gather local evidence for a changed route or UI state.
+- Vue Playwright E2E is a persistent regression suite with assertions, fixtures, config, and CI policy.
+- Do not replace one with the other.
+
 ## Anti-patterns
 
 - Importing Vue components, stores, composables, or router instances into E2E tests.
@@ -59,6 +73,7 @@ Examples:
 - Does the test avoid importing Vue internals?
 - Does the scenario justify browser E2E instead of unit/component testing?
 - Are route, state, auth, and backend setup deterministic?
+- Are active styling/UI overlays applied only to visible behavior?
 - Are locators resilient and user-facing?
 - Are traces/screenshots/videos configured according to project policy?
 - Does the test remain independent and safe to run in CI?
