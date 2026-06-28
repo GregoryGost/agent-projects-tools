@@ -2,7 +2,7 @@
 
 Use this reference when designing or reviewing standalone CSS.
 
-This file contains good and bad CSS patterns for architecture, selectors, tokens, responsive behavior, progressive enhancement, browser-sensitive UI, and Vue SFC style usage.
+This file contains good and bad CSS patterns with code examples for architecture, selectors, tokens, responsive behavior, progressive enhancement, browser-sensitive UI, and Vue SFC style usage.
 
 ## Core Principles
 
@@ -15,43 +15,77 @@ This file contains good and bad CSS patterns for architecture, selectors, tokens
 
 ## Good: Layered File Ownership
 
-Use a small set of files with clear responsibility:
+```css
+@layer tokens, base, layout, components, utilities, overrides;
 
-- entry point for imports and cascade order;
-- tokens for custom properties and shared values;
-- base for reset and element defaults;
-- layout for containers, grids, stacks, and page shells;
-- components for reusable component classes;
-- utilities for narrow reusable helpers;
-- overrides for documented integration fixes.
+@import "./tokens.css" layer(tokens);
+@import "./base.css" layer(base);
+@import "./layout.css" layer(layout);
+@import "./components/button.css" layer(components);
+@import "./utilities.css" layer(utilities);
+@import "./overrides.css" layer(overrides);
+```
 
 Why this is good:
 
 - The owner of each rule is clear.
-- Shared styles do not drift into component files.
-- Override rules are isolated and easier to remove later.
+- Cascade order is explicit.
+- Overrides are isolated and easier to remove later.
 
 ## Bad: One Unstructured Global Stylesheet
 
-Avoid putting tokens, base rules, layout rules, component rules, utilities, and third-party fixes in one growing file.
+```css
+:root {
+  --color-brand: #2563eb;
+}
+
+body {
+  margin: 0;
+}
+
+.page .content .card .title {
+  color: #2563eb;
+}
+
+.mt-16 {
+  margin-top: 16px;
+}
+
+.vendor-widget button {
+  border-radius: 0;
+}
+```
 
 Problems:
 
+- Tokens, base rules, component rules, utilities, and overrides are mixed together.
 - Rule ownership becomes unclear.
-- Specificity increases over time.
-- Refactoring requires broad search-and-edit work.
+- Specificity grows over time.
 
 ## Good: Semantic Custom Properties
 
-Use project-level custom properties for reusable runtime values such as color, spacing, radius, shadow, and timing.
+```css
+:root {
+  --color-surface: #ffffff;
+  --color-text: #111827;
+  --space-4: 1rem;
+  --radius-md: 0.5rem;
+  --duration-fast: 160ms;
+}
 
-Good examples of token names:
+[data-theme="dark"] {
+  --color-surface: #111827;
+  --color-text: #f9fafb;
+}
 
-- `--color-surface`;
-- `--color-text`;
-- `--space-4`;
-- `--radius-md`;
-- `--duration-fast`.
+.card {
+  color: var(--color-text);
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  transition-duration: var(--duration-fast);
+}
+```
 
 Why this is good:
 
@@ -61,63 +95,107 @@ Why this is good:
 
 ## Bad: Repeated Literal Values
 
-Avoid repeating the same colors, spacing, radii, and animation durations across unrelated components.
+```css
+.card {
+  color: #111827;
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.panel {
+  color: #111827;
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 16px;
+}
+```
 
 Problems:
 
 - Values drift.
 - Theme and density changes become harder.
-- Intent is hidden behind raw numbers.
+- Intent is hidden behind raw values.
 
-## Good: Low-Specificity Selectors
+## Good: Low-Specificity Component Selectors
 
-Prefer simple class selectors for component contracts and low-specificity helpers for generic patterns.
+```css
+.card {
+  display: grid;
+  gap: var(--space-4);
+  padding: var(--space-4);
+}
 
-Good pattern:
+.card__title {
+  margin: 0;
+  font-size: 1rem;
+}
 
-- component class owns the component block;
-- element class owns a component subpart;
-- utility class does one narrow job;
-- `:where()` is used only when zero-specificity grouping is intentional.
+:where(.stack) > * + * {
+  margin-block-start: var(--stack-space, 1rem);
+}
+```
 
 Why this is good:
 
-- Overrides stay deliberate.
-- Rules are easier to trace.
+- Component contracts are easy to identify.
+- `:where()` keeps the utility cheap to override.
 - Markup changes are less likely to break unrelated styling.
 
 ## Bad: Deep Descendant Chains
 
-Avoid selectors that depend on a long chain of ancestors or exact DOM nesting.
+```css
+.page .content .sidebar .card .header .title {
+  font-size: 1rem;
+}
+```
 
 Problems:
 
-- Styling becomes coupled to markup structure.
+- Styling becomes coupled to exact DOM structure.
 - Specificity becomes expensive to override.
-- Small DOM changes can break the rule.
+- Small markup changes can break the rule.
 
 ## Good: Baseline First, Enhancement Second
 
-Start with CSS that works across the project browser policy, then add modern enhancements behind support checks when needed.
+```css
+.card-grid {
+  display: grid;
+  gap: 1rem;
+}
 
-Good candidates for support checks:
+@supports (container-type: inline-size) {
+  .card-grid {
+    container-type: inline-size;
+  }
 
-- container queries;
-- native CSS nesting;
-- parent-aware selectors;
-- subgrid;
-- new viewport units;
-- modern color functions.
+  @container (min-width: 40rem) {
+    .card-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+}
+```
 
 Why this is good:
 
-- Older supported browsers keep a usable baseline.
-- Modern browsers get better behavior.
+- The base layout works without the modern feature.
+- Supporting browsers receive the enhanced behavior.
 - The fallback is explicit in review.
 
-## Bad: Modern Feature Without Fallback
+## Bad: Modern Feature Without Baseline
 
-Avoid making layout or interaction depend only on a modern feature unless the browser policy clearly allows it.
+```css
+.card-grid {
+  container-type: inline-size;
+}
+
+@container (min-width: 40rem) {
+  .card-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+```
 
 Problems:
 
@@ -125,26 +203,55 @@ Problems:
 - Failures can be silent.
 - Reviewers cannot see the intended fallback.
 
-## Good: Responsive Layout Primitives
+## Good: Responsive Layout Primitive
 
-Prefer reusable layout classes or component-local layout contracts over repeated one-off breakpoints.
+```css
+.content-layout {
+  display: grid;
+  gap: var(--space-4);
+}
 
-Good patterns:
+.content-layout__main,
+.content-layout__aside {
+  min-width: 0;
+}
 
-- mobile-first base rules;
-- project breakpoint tokens when available;
-- consistent grid and flex primitives;
-- `min-width: 0` where long content can overflow grid or flex children.
+@media (min-width: 48rem) {
+  .content-layout {
+    grid-template-columns: minmax(0, 1fr) 20rem;
+  }
+}
+```
 
 Why this is good:
 
-- Responsive behavior is consistent.
-- Long content is less likely to break layout.
-- Reusable primitives reduce duplicated CSS.
+- The small-screen layout works first.
+- The breakpoint is consistent.
+- Long content is less likely to break grid layout.
 
 ## Bad: Repeated Magic Breakpoints
 
-Avoid slightly different breakpoints and layout widths across components unless the variation is intentional and documented.
+```css
+.card-list {
+  display: grid;
+}
+
+@media (min-width: 767px) {
+  .card-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.panel-list {
+  display: grid;
+}
+
+@media (min-width: 781px) {
+  .panel-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+```
 
 Problems:
 
@@ -152,57 +259,151 @@ Problems:
 - Debugging layout issues becomes harder.
 - Components stop feeling like one system.
 
-## Good: Browser-Sensitive UI Is Reviewed Explicitly
+## Good: Accessible Form State
 
-Treat these areas as cross-browser review points when touched:
+```css
+.input {
+  color: inherit;
+  font: inherit;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 0.625rem 0.75rem;
+}
 
-- form controls;
-- scrollbars;
-- overflow behavior;
-- mobile viewport height;
-- font rendering and line-height;
-- hover and pointer media behavior;
-- reduced-motion behavior;
-- forced-colors behavior;
-- color-scheme behavior.
+.input:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.input:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+```
 
 Why this is good:
 
-- Native browser differences are expected.
-- Accessibility states are preserved.
-- Visual regressions are easier to catch.
+- Native control differences are expected.
+- Focus state remains visible.
+- Disabled state remains explicit.
 
-## Bad: Assuming Browser UI Is Identical
+## Bad: Removing Interaction States
 
-Avoid assuming that controls, scrollbars, viewport height, fonts, and pointer behavior render identically across browsers.
+```css
+.input {
+  border: 0;
+  outline: 0;
+}
+
+.input:disabled {
+  opacity: 1;
+}
+```
 
 Problems:
 
-- Styling may work only in one browser family.
-- Mobile browser UI can change viewport behavior.
-- Accessibility modes can expose missing states.
+- Keyboard users can lose visible focus.
+- Disabled controls may look interactive.
+- Browser defaults are removed without replacement.
+
+## Good: Reduced-Motion Fallback
+
+```css
+.toast {
+  transition: transform 180ms ease, opacity 180ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast {
+    transition: none;
+  }
+}
+```
+
+Why this is good:
+
+- Motion-sensitive users are respected.
+- Default animation stays simple.
+- The fallback is scoped to the affected component.
+
+## Bad: Unconditional Motion
+
+```css
+.toast {
+  transition: transform 600ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+```
+
+Problems:
+
+- Reduced-motion preference is ignored.
+- The interaction can feel slow or distracting.
+- Reviewers cannot see the accessibility fallback.
 
 ## Good: Vue SFC Local CSS When Vue Is Active
 
-Use local CSS in Vue only when the project declares both Vue and CSS active, or when an existing SFC already uses local CSS.
+```vue
+<template>
+  <section class="card">
+    <slot />
+  </section>
+</template>
 
-Good patterns:
+<style scoped>
+.card {
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+}
+</style>
+```
 
-- local component-only styles live in the SFC style block;
-- `scoped` is used only when component-local scoping is intended;
-- CSS Modules are used only when the project convention already uses them;
-- CSS `v-bind()` is used only when component state must drive a CSS value;
-- shared tokens, base rules, layout primitives, and shared utilities stay in shared CSS files.
+Why this is good:
+
+- The style belongs to the component.
+- `scoped` is used for local styling.
+- Shared tokens stay outside the component.
+
+## Good: Vue CSS Value From Component State
+
+```vue
+<script setup lang="ts">
+const accentColor = '#2563eb'
+</script>
+
+<template>
+  <button class="button">Save</button>
+</template>
+
+<style scoped>
+.button {
+  color: v-bind(accentColor);
+}
+</style>
+```
+
+Use this only when component state must drive a CSS value.
 
 ## Bad: Shared System Rules Inside One Component
 
-Avoid defining shared tokens, base rules, layout primitives, or reusable utilities inside a single SFC style block.
+```vue
+<style scoped>
+:root {
+  --color-brand: #2563eb;
+  --space-4: 1rem;
+}
+
+.button-reset {
+  border: 0;
+  background: transparent;
+}
+</style>
+```
 
 Problems:
 
-- Shared styling becomes hidden inside one component.
-- Other components duplicate the same idea.
-- The style contract is harder to evolve.
+- Shared tokens are hidden inside one component.
+- Other components may duplicate the same idea.
+- Reusable base styles become harder to evolve.
 
 ## Review Questions
 
