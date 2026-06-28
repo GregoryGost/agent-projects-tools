@@ -37,7 +37,6 @@ Check these areas when touched:
 - flex and grid overflow;
 - logical properties and writing modes;
 - hover and pointer media queries;
-- reduced-motion preferences;
 - forced-colors preferences;
 - color-scheme behavior.
 
@@ -48,16 +47,13 @@ Use a baseline-first approach for:
 - cascade layers;
 - `@scope`;
 - `@property` registered custom properties;
-- `@starting-style`;
 - container queries;
 - native nesting;
 - parent-aware selectors;
 - subgrid;
 - new viewport units;
 - modern color functions;
-- anchor positioning;
-- scroll-driven animations;
-- view transitions.
+- anchor positioning.
 
 If the feature is not covered by project browser policy, add a fallback or use `@supports` when possible.
 
@@ -65,12 +61,9 @@ If the feature is not covered by project browser policy, add a fallback or use `
 
 - `@layer`: define layer order in one entry point and avoid scattering layer order across files.
 - `@scope`: verify scoping roots and limits; do not use it to hide unclear component boundaries.
-- `@property`: declare syntax, inheritance, and initial value for animatable custom properties.
-- `@starting-style`: keep entry-transition starting state next to the component rule.
+- `@property`: declare syntax, inheritance, and initial value for typed custom properties.
 - Container queries: keep a baseline layout outside the container query.
 - Anchor positioning: keep a baseline absolute/fixed position before anchor positioning rules.
-- Scroll-driven animations: make scroll-tied animation an enhancement, not the only indicator of state.
-- View transitions: keep motion short and honor reduced-motion preferences.
 - `:has()`: avoid expensive broad selectors and prefer component-local scope.
 - Native nesting: keep nesting shallow and review compiled specificity.
 
