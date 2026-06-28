@@ -2,7 +2,7 @@
 
 Apply this rule only when `CODEX_PROJECT.md` declares Tailwind CSS active or when the task directly changes Tailwind configuration, utilities, theme variables, source detection, or class usage.
 
-This rule is standalone and does not require another styling overlay to be present.
+This rule is standalone by default. If SCSS is also active, Tailwind stylesheet integration belongs in the existing project SCSS entry point.
 
 ## Required skills
 
@@ -15,11 +15,12 @@ Use together with:
 Before changing Tailwind usage:
 
 1. Read `CODEX_PROJECT.md`.
-2. Check Tailwind version, stylesheet/config path, build integration, source detection policy, class sorting policy, and validation commands.
-3. Inspect existing utility patterns, theme variables, CSS variables, responsive variants, state variants, and class binding conventions.
-4. If Vue is active, inspect affected `.vue` templates, static `class` attributes, `:class` bindings, and component prop-to-class mapping.
-5. Load `tailwind-expert/references/patterns-and-review.md` when adding or changing utility patterns, theme variables, source detection, class maps, responsive behavior, state variants, arbitrary values, or Vue class bindings.
-6. Follow project-declared commands.
+2. Check Tailwind version, stylesheet/config path, build integration, source detection policy, and validation commands.
+3. If SCSS is active, inspect the SCSS stylesheet entry point that imports Tailwind.
+4. Inspect existing utility patterns, theme variables, CSS variables, responsive variants, state variants, and class binding conventions.
+5. If Vue is active, inspect affected `.vue` templates, static `class` attributes, `:class` bindings, and component prop-to-class mapping.
+6. Load `tailwind-expert/references/patterns-and-review.md` when adding or changing utility patterns, theme variables, source detection, class maps, responsive behavior, state variants, arbitrary values, or Vue class bindings.
+7. Follow project-declared commands.
 
 ## Constraints
 
@@ -30,8 +31,9 @@ Before changing Tailwind usage:
 - Keep class lists readable and avoid arbitrary values when project tokens exist.
 - Use arbitrary values only for justified one-off values.
 - Use class maps for prop-driven variants in component frameworks.
-- Use `prettier-plugin-tailwindcss` only when Tailwind class sorting is active.
+- Do not manage class ordering or formatter setup in this rule.
 - Do not add Tailwind plugins, custom variants, or major theme changes without approval or project policy.
+- If SCSS is active, keep Tailwind import/directives in the project SCSS entry point.
 
 ## Vue usage when active
 
