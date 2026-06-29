@@ -24,25 +24,82 @@ Preferred placement:
 
 Avoid caching routers by default. Avoid caching live ORM entities, sessions, connections, request objects, response objects, lazy loaders, or process-local runtime state.
 
+## Good: Service-Level Read Cache
+
+```python
+from cashews import NOT_NONE, cache
+
+
+class ProfileService:
+    def __init__(self, repository: ProfileRepository) -> None:
+        self.repository = repository
+
+    @cache(
+        ttl="5m",
+        key="v1:tenant:{tenant_id}:profile:{profile_id}",
+        tags=["tenant:{tenant_id}:profiles", "profile:{profile_id}"],
+        condition=NOT_NONE,
+        lock=True,
+    )
+    async def get_profile(self, tenant_id: str, profile_id: int) -> ProfileRead | None:
+        profile = await self.repository.get_profile(tenant_id, profile_id)
+        return ProfileRead.model_validate(profile) if profile else None
+```
+
+Why this is good:
+
+- The cache is placed on a read-oriented service method.
+- The key includes tenant and entity scope.
+- The cached value is a detached read model.
+
+## Bad: Caching A Live Persistence Object
+
+```python
+from cashews import cache
+
+
+class ProfileRepository:
+    @cache(ttl="10m", key="v1:profile:{profile_id}")
+    async def get_profile(self, profile_id: int) -> Profile:
+        return await self.session.get(Profile, profile_id)
+```
+
+Problems:
+
+- The value can be tied to a session lifecycle.
+- Lazy relationships can behave incorrectly.
+- Persistence models should not become cached API values.
+
 ## Naming, TTL, And Refresh
 
 - Use explicit TTL.
 - Use stable names based on business identifiers.
 - Include result-shaping inputs such as tenant, user, filters, pagination, locale, feature flags, and schema version when relevant.
 - Change schema version when the cached DTO shape changes.
-- Refresh or delete cached values only after a successful write.
+- Refresh or remove cached values only after a successful write.
 - Treat TTL as a fallback, not as the main consistency strategy for mutable data.
 
-## Cashews When Active
+## Good: Refresh After Write
 
-When the project uses `cashews`:
+```python
+from cashews import cache
 
-- configure `cache.setup(...)` once in the application resource lifecycle;
-- close the cache backend during shutdown when the app owns it;
-- prefer explicit decorator arguments for TTL, name/key policy, conditions, and tags;
-- prefer `delete_tags(...)` or exact deletion for normal write invalidation;
-- avoid broad wildcard deletion in request paths;
-- use an isolated backend for tests.
+
+class ProfileService:
+    async def update_profile(self, tenant_id: str, profile_id: int, data: ProfileUpdate) -> ProfileRead:
+        async with self.unit_of_work.transaction():
+            profile = await self.repository.update_profile(tenant_id, profile_id, data)
+            result = ProfileRead.model_validate(profile)
+
+        await cache.delete_tags(f"profile:{profile_id}")
+        await cache.delete_tags(f"tenant:{tenant_id}:profiles")
+        return result
+```
+
+Why this is good:
+
+- Cache refresh happens after the write transaction has completed.
+- Entity and aggregate scopes are both covered.
 
 ## FastAPI Integration
 
@@ -54,6 +111,26 @@ When FastAPI is active:
 - prefer service-level data caching for business endpoints;
 - use HTTP cache middleware only when HTTP cache semantics are part of the task.
 
+```python
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
+
+from cashews import cache
+from fastapi import FastAPI
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+    cache.setup(settings.CACHE_DSN, suppress=False)
+    try:
+        yield
+    finally:
+        await cache.close()
+
+
+app = FastAPI(lifespan=lifespan)
+```
+
 ## Testing
 
 - Use an isolated backend for tests.
@@ -61,6 +138,14 @@ When FastAPI is active:
 - Test repeated reads.
 - Test refresh after create, update, or delete.
 - Test separate scopes for different users, tenants, filters, or pagination.
+
+```python
+async def test_profile_read_uses_cache(profile_service: ProfileService, repository: ProfileRepository) -> None:
+    await profile_service.get_profile("tenant-a", 10)
+    await profile_service.get_profile("tenant-a", 10)
+
+    assert repository.get_profile_calls == 1
+```
 
 ## Review Questions
 
