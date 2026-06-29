@@ -3,7 +3,7 @@
 Before doing repository work:
 
 1. Read `CODEX_PROJECT.md` first. It is the source of truth for project-specific stack choices, paths, natural-language/style profile, dependency policy, migration policy, validation commands, and enabled external systems.
-2. If `CODEX_PROJECT.md` is missing or incomplete, create or update it from `.codex/project.template.md` before applying stack-specific rules.
+2. If `CODEX_PROJECT.md` is missing or incomplete, create or update it from `.codex/project.template.md` before applying stack-specific rules. If the project type or active profiles cannot be determined from repository files, ask the user before creating the profile.
 3. Read only the `.codex/rules/` files that match the task and the active stack profiles declared in `CODEX_PROJECT.md`.
 4. Apply only the `.agents/skills/` packages that match the task and the active skills declared in `CODEX_PROJECT.md`.
 5. Keep `AGENTS.md` small. Detailed workflows belong in `.codex/rules/`, `.agents/skills/`, or skill `references/`.
