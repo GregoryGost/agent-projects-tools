@@ -47,6 +47,9 @@ List only profiles active in this repository.
 
 Selection examples:
 
+- `python-core`
+- `python-fastapi`
+- `python-cache`
 - `typescript-core`
 - `typescript-testing`
 - `eslint-typescript`
@@ -78,6 +81,7 @@ Active profiles for this project:
 
 List only rule files active in this project.
 
+- Python/backend rules: `<python_fastapi.md / python_cache.md / none>`
 - Formatting/linting rules: `<prettier_formatting.md / eslint_typescript.md / none>`
 - Language rules: `<typescript_core.md / typescript_testing.md / none / other>`
 - Framework rules: `<vue_frontend.md / vue_router.md / pinia.md / vueuse.md / none / other>`
@@ -90,6 +94,7 @@ List only rule files active in this project.
 
 List only reusable skills active in this project.
 
+- Python skills: `<python-core / python-fastapi-expert / python-cache / none / other>`
 - Language skills: `<typescript-core / typescript-testing / none / other>`
 - Formatting/linting skills: `<prettier-formatting / eslint-typescript / none>`
 - Framework skills: `<vue-expert / vue-router-expert / pinia-expert / vueuse-expert / none>`
@@ -114,6 +119,42 @@ Use only project-declared commands.
 - Build: `<command or none>`
 - Preview/start app for browser tests: `<command or none>`
 - Other validation: `<command or none>`
+
+## Python Profile
+
+Keep only when Python is active.
+
+- Python enabled: `<yes/no>`
+- Python version: `<version constraint / none>`
+- Dependency manager: `<poetry / uv / pip / none / other>`
+- Virtual environment policy: `<.venv / project-specific / none>`
+- Source layout: `<src / flat / mixed / project-specific / none>`
+- Active Python base skill: `<python-core / none>`
+
+## Python FastAPI Profile
+
+Keep only when FastAPI is active.
+
+- FastAPI enabled: `<yes/no>`
+- App entry point: `<path / none>`
+- Router layout: `<path or convention / none>`
+- Dependency injection policy: `<Depends / factory functions / container / project-specific / none>`
+- Schema/model policy: `<Pydantic / project-specific / none>`
+- Background task policy: `<BackgroundTasks / worker queue / project-specific / none>`
+- Active FastAPI rule/skill: `<python_fastapi.md + python-fastapi-expert / none>`
+
+## Python Cache Profile
+
+Keep only when Python caching is active.
+
+- Python cache enabled: `<yes/no>`
+- Cache library: `<cashews / functools / cachetools / Redis client / project-specific / none>`
+- Cache backend: `<Redis / memory / process-local / project-specific / none>`
+- Cache lifecycle owner: `<FastAPI lifespan / app resource manager / CLI / worker / project-specific / none>`
+- Cache key scope policy: `<tenant/user/role/filter/pagination/schema-version / project-specific / none>`
+- Cache invalidation policy: `<post-commit tags / exact key delete / TTL-only immutable data / project-specific / none>`
+- Active Python cache rule/skill: `<python_cache.md + python-cache / none>`
+- If FastAPI is active, use FastAPI rule/skill for app wiring and API behavior: `<yes/no/not applicable>`
 
 ## Formatting And Linting Profile
 
