@@ -52,6 +52,30 @@ Why this is good:
 - The key includes tenant and entity scope.
 - The cached value is a detached read model.
 
+## Bad: Route-Level Cache By Default
+
+```python
+from cashews import cache
+from fastapi import APIRouter, Depends
+
+router = APIRouter()
+
+
+@router.get("/profiles/{profile_id}")
+@cache(ttl="10m")
+async def get_profile_route(
+    profile_id: int,
+    service: ProfileService = Depends(),
+) -> ProfileRead:
+    return await service.get_profile(profile_id)
+```
+
+Problems:
+
+- The cache is attached to the HTTP boundary, not to a stable read model.
+- Scope inputs such as tenant, role, locale, filters, or headers are easy to omit.
+- The route hides cache behavior from service-level invalidation tests.
+
 ## Bad: Caching A Live Persistence Object
 
 ```python
@@ -79,6 +103,97 @@ Problems:
 - Refresh or remove cached values only after a successful write.
 - Treat TTL as a fallback, not as the main consistency strategy for mutable data.
 
+## Good: Scoped Key For User-Visible Data
+
+```python
+from cashews import cache
+
+
+class ProfileSearchService:
+    @cache(
+        ttl="2m",
+        key="v1:tenant:{tenant_id}:role:{role}:profiles:q:{query}:page:{page}:size:{size}",
+        tags=["tenant:{tenant_id}:profiles"],
+    )
+    async def search_profiles(
+        self,
+        tenant_id: str,
+        role: str,
+        query: str,
+        page: int,
+        size: int,
+    ) -> ProfilePage:
+        return await self.repository.search_profiles(
+            tenant_id=tenant_id,
+            role=role,
+            query=query,
+            page=page,
+            size=size,
+        )
+```
+
+Why this is good:
+
+- Tenant and role are part of the key.
+- Pagination and query inputs are part of the key.
+- The tag represents the aggregate invalidation scope.
+
+## Bad: Key Missing Scope
+
+```python
+from cashews import cache
+
+
+class ProfileSearchService:
+    @cache(ttl="2m", key="v1:profiles:q:{query}")
+    async def search_profiles(
+        self,
+        tenant_id: str,
+        role: str,
+        query: str,
+    ) -> list[ProfileRead]:
+        return await self.repository.search_profiles(tenant_id, role, query)
+```
+
+Problems:
+
+- Different tenants can collide.
+- Different roles can collide.
+- Pagination, locale, or feature flags can be forgotten as the method grows.
+
+## Good: Explicit Key For Class Method
+
+```python
+from cashews import cache
+
+
+class PricingService:
+    @cache(ttl="1m", key="v1:tenant:{tenant_id}:product:{product_id}:price")
+    async def get_price(self, tenant_id: str, product_id: int) -> PriceRead:
+        price = await self.repository.get_price(tenant_id, product_id)
+        return PriceRead.model_validate(price)
+```
+
+Why this is good:
+
+- The key uses business inputs only.
+- Object identity is not part of the cache key.
+
+## Bad: Implicit Method Key
+
+```python
+from cashews import cache
+
+
+class PricingService:
+    @cache(ttl="1m")
+    async def get_price(self, product_id: int) -> PriceRead:
+        price = await self.repository.get_price(product_id)
+        return PriceRead.model_validate(price)
+```
+
+Problem: implicit method-key generation can include instance details or omit business scope that should be explicit.
+
 ## Good: Refresh After Write
 
 ```python
@@ -100,6 +215,57 @@ Why this is good:
 
 - Cache refresh happens after the write transaction has completed.
 - Entity and aggregate scopes are both covered.
+
+## Bad: Refresh Before The Transaction Outcome Is Known
+
+```python
+from cashews import cache
+
+
+async def update_profile_bad(profile_id: int, data: ProfileUpdate) -> None:
+    async with session.begin():
+        await repository.update_profile(profile_id, data)
+        await cache.delete_tags(f"profile:{profile_id}")
+```
+
+Problem: if the transaction rolls back later, the cache no longer reflects committed state.
+
+## Bad: Broad Wildcard Deletion In Request Path
+
+```python
+from cashews import cache
+
+
+async def update_profile_bad(profile_id: int, data: ProfileUpdate) -> None:
+    await repository.update_profile(profile_id, data)
+    await cache.delete_match("v1:profiles:*")
+```
+
+Problems:
+
+- Wildcard deletion can scan a large keyspace.
+- It can affect unrelated cached values.
+- It hides the actual invalidation domain.
+
+## Negative Caching
+
+Use negative caching only when repeated missing reads are an observed problem.
+
+```python
+from cashews import cache
+
+
+class ProfileService:
+    @cache(ttl="20s", key="v1:profile-missing:{profile_id}")
+    async def profile_exists(self, profile_id: int) -> bool:
+        return await self.repository.profile_exists(profile_id)
+```
+
+Why this can be acceptable:
+
+- The TTL is short.
+- The value is a boolean, not a missing object payload.
+- The behavior is explicit and easy to test.
 
 ## FastAPI Integration
 
@@ -139,12 +305,44 @@ app = FastAPI(lifespan=lifespan)
 - Test refresh after create, update, or delete.
 - Test separate scopes for different users, tenants, filters, or pagination.
 
+## Good: Hit/Miss Test
+
 ```python
-async def test_profile_read_uses_cache(profile_service: ProfileService, repository: ProfileRepository) -> None:
+async def test_profile_read_uses_cache(
+    profile_service: ProfileService,
+    repository: ProfileRepository,
+) -> None:
     await profile_service.get_profile("tenant-a", 10)
     await profile_service.get_profile("tenant-a", 10)
 
     assert repository.get_profile_calls == 1
+```
+
+## Good: Scope Separation Test
+
+```python
+async def test_profile_cache_is_scoped_by_tenant(
+    profile_service: ProfileService,
+    repository: ProfileRepository,
+) -> None:
+    await profile_service.get_profile("tenant-a", 10)
+    await profile_service.get_profile("tenant-b", 10)
+
+    assert repository.get_profile_calls == 2
+```
+
+## Good: Invalidation Test
+
+```python
+async def test_profile_update_refreshes_cache(
+    profile_service: ProfileService,
+    repository: ProfileRepository,
+) -> None:
+    await profile_service.get_profile("tenant-a", 10)
+    await profile_service.update_profile("tenant-a", 10, ProfileUpdate(name="new"))
+    await profile_service.get_profile("tenant-a", 10)
+
+    assert repository.get_profile_calls == 2
 ```
 
 ## Review Questions
