@@ -2,12 +2,20 @@
 
 Use project-approved source documentation before changing cache behavior.
 
-## Sources To Check
+## Cache Libraries
 
-- active cache library documentation;
-- active cache backend documentation;
-- FastAPI lifespan documentation when FastAPI is active;
-- FastAPI dependency documentation when dependencies own cache resources;
-- Python asyncio and context manager documentation for async lifecycle behavior.
+- cashews docs: https://cashews.readthedocs.io/
+- cashews repository: https://github.com/Krukov/cashews
+
+## FastAPI Integration
+
+- FastAPI lifespan events: https://fastapi.tiangolo.com/advanced/events/
+- FastAPI dependencies: https://fastapi.tiangolo.com/tutorial/dependencies/
+- FastAPI background tasks: https://fastapi.tiangolo.com/tutorial/background-tasks/
+
+## Python Runtime
+
+- Python asyncio: https://docs.python.org/3/library/asyncio.html
+- Python contextlib: https://docs.python.org/3/library/contextlib.html
 
 Project cache library, backend, settings, lifecycle ownership, test commands, and dependency policy come from `CODEX_PROJECT.md` and the target repository.
