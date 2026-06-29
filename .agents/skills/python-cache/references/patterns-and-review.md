@@ -297,6 +297,186 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 app = FastAPI(lifespan=lifespan)
 ```
 
+## FastAPI Good: Route Delegates To Scoped Cached Service
+
+```python
+from fastapi import APIRouter, Depends, Query
+
+router = APIRouter()
+
+
+@router.get("/profiles")
+async def list_profiles(
+    query: str = Query(default=""),
+    page: int = Query(default=1, ge=1),
+    size: int = Query(default=50, ge=1, le=100),
+    principal: Principal = Depends(require_principal),
+    service: ProfileSearchService = Depends(get_profile_search_service),
+) -> ProfilePage:
+    return await service.search_profiles(
+        tenant_id=principal.tenant_id,
+        role=principal.role,
+        query=query,
+        page=page,
+        size=size,
+    )
+```
+
+Why this is good:
+
+- The route resolves HTTP and auth context.
+- The service owns cache policy.
+- Tenant, role, query, and pagination reach the cached method as explicit arguments.
+
+## FastAPI Bad: Hidden Tenant Scope From Context
+
+```python
+from cashews import cache
+
+
+class ProfileSearchService:
+    @cache(ttl="2m", key="v1:profiles:q:{query}")
+    async def search_profiles(self, query: str) -> ProfilePage:
+        tenant_id = current_tenant_id.get()
+        return await self.repository.search_profiles(tenant_id, query)
+```
+
+Problems:
+
+- The tenant affects the result but is absent from the key.
+- Hidden context makes cache behavior hard to test.
+- Different tenants can receive the same cached result.
+
+## FastAPI Bad: Caching Request Or Response Objects
+
+```python
+from cashews import cache
+from fastapi import Request, Response
+
+
+class AuditService:
+    @cache(ttl="1m", key="v1:audit:{request.url.path}")
+    async def audit_summary(self, request: Request, response: Response) -> AuditSummary:
+        return await self.repository.audit_summary(request.headers, response.status_code)
+```
+
+Problems:
+
+- `Request` and `Response` are runtime HTTP objects, not stable cache inputs.
+- Headers can include sensitive values or high-cardinality data.
+- Response status can depend on work that should not be part of a read cache key.
+
+## FastAPI Good: Extract Stable HTTP Inputs Before Cached Call
+
+```python
+from fastapi import Header
+
+
+@router.get("/reports/{report_id}")
+async def get_report(
+    report_id: int,
+    accept_language: str = Header(default="en"),
+    principal: Principal = Depends(require_principal),
+    service: ReportService = Depends(get_report_service),
+) -> ReportRead:
+    locale = normalize_locale(accept_language)
+    return await service.get_report(
+        tenant_id=principal.tenant_id,
+        user_id=principal.user_id,
+        report_id=report_id,
+        locale=locale,
+    )
+```
+
+Why this is good:
+
+- The route extracts and normalizes HTTP details.
+- The cached service can include stable locale and user scope in the key.
+- Raw headers do not enter the cache key.
+
+## FastAPI Bad: Authenticated Response Cache Without Scope
+
+```python
+from cashews import cache
+
+
+class ReportService:
+    @cache(ttl="10m", key="v1:report:{report_id}")
+    async def get_report(self, user_id: int, report_id: int) -> ReportRead:
+        return await self.repository.get_report_for_user(user_id, report_id)
+```
+
+Problems:
+
+- User permissions affect the result.
+- The key ignores `user_id`.
+- A report view for one user can be served to another.
+
+## FastAPI Good: Public HTTP Cache Case
+
+```python
+from fastapi import APIRouter, Response
+
+router = APIRouter()
+
+
+@router.get("/public/catalog")
+async def public_catalog(response: Response, service: CatalogService = Depends(get_catalog_service)) -> CatalogRead:
+    response.headers["Cache-Control"] = "public, max-age=60"
+    return await service.get_public_catalog()
+```
+
+Why this can be acceptable:
+
+- The endpoint is public and does not depend on user permissions.
+- HTTP cache semantics are explicit in headers.
+- Server-side data caching can still live in the service if needed.
+
+## FastAPI Bad: HTTP Cache Header On User-Specific Endpoint
+
+```python
+@router.get("/me")
+async def me(response: Response, principal: Principal = Depends(require_principal)) -> UserRead:
+    response.headers["Cache-Control"] = "public, max-age=300"
+    return principal.user
+```
+
+Problem: user-specific data must not be marked as public shared-cache content.
+
+## FastAPI Bad: Cache Setup At Module Import
+
+```python
+from cashews import cache
+
+cache.setup("redis://localhost:6379/0")
+
+app = FastAPI()
+```
+
+Problems:
+
+- Resource setup happens during import.
+- Tests cannot easily isolate configuration.
+- Shutdown ownership is unclear.
+- The DSN is hardcoded outside settings.
+
+## FastAPI Good: Dependency Uses Already-Owned Cache Resources
+
+```python
+from cashews import cache
+from fastapi import Depends
+
+
+def get_profile_service(repository: ProfileRepository = Depends(get_profile_repository)) -> ProfileService:
+    return ProfileService(repository=repository, cache=cache)
+```
+
+Why this can be good:
+
+- The cache resource is configured by the app lifecycle.
+- The dependency only wires services.
+- Tests can override the dependency or configure an isolated backend.
+
 ## Testing
 
 - Use an isolated backend for tests.
@@ -345,6 +525,47 @@ async def test_profile_update_refreshes_cache(
     assert repository.get_profile_calls == 2
 ```
 
+## FastAPI Good: Endpoint Test Keeps Cache Scope Visible
+
+```python
+async def test_profile_endpoint_cache_is_tenant_scoped(
+    client: AsyncClient,
+    repository: ProfileRepository,
+) -> None:
+    await client.get("/profiles/10", headers={"X-Tenant-ID": "tenant-a"})
+    await client.get("/profiles/10", headers={"X-Tenant-ID": "tenant-b"})
+
+    assert repository.get_profile_calls == 2
+```
+
+Why this is useful:
+
+- The test crosses the FastAPI boundary.
+- It verifies that dependency-derived tenant scope reaches cache key inputs.
+- It catches accidental route-level or hidden-context caching.
+
+## FastAPI Good: Lifespan Test Uses Isolated Backend
+
+```python
+from cashews import cache
+
+
+async def test_cache_backend_is_isolated(app: FastAPI) -> None:
+    cache.setup("mem://")
+    try:
+        await cache.set("test-key", "value", expire="1m")
+        assert await cache.get("test-key") == "value"
+    finally:
+        await cache.clear()
+        await cache.close()
+```
+
+Why this is useful:
+
+- The test does not reuse production cache state.
+- Cleanup is explicit.
+- The resource lifecycle is visible.
+
 ## Review Questions
 
 - What problem does caching solve?
@@ -353,3 +574,5 @@ async def test_profile_update_refreshes_cache(
 - Which writes refresh cached values?
 - Are cached values detached from live resources?
 - Is test isolation explicit?
+- If FastAPI is active, are dependency-derived tenant/user/role values explicit cache inputs?
+- If HTTP cache headers or middleware are used, are the responses public and safe for shared caches?
