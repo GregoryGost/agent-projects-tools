@@ -9,8 +9,6 @@ Use this skill when `CODEX_PROJECT.md` declares FastAPI active, or when a task c
 
 Apply `CODEX_PROJECT.md`, `python-core`, `.codex/rules/python_fastapi.md`, and this skill together.
 
-Cache behavior is handled by `python-cache`. If a task touches Python cache behavior, cache backends, cache keys, TTL, invalidation, `cashews`, or HTTP/data caching, add `.codex/rules/python_cache.md` and `python-cache`.
-
 Before using this skill to modify code, inspect relevant Python source files, tests, settings, and project documentation. Do not act from assumptions about the codebase.
 
 Load references when needed:
@@ -47,7 +45,6 @@ Before implementation:
 4. Identify request and response Pydantic models.
 5. Identify transaction boundaries and error/status behavior.
 6. Identify required tests and validation commands.
-7. If caching is considered, stop and apply `python-cache` for the cache decision, TTL, key scope, invalidation, and tests.
 
 ## Act Mode
 
@@ -84,7 +81,6 @@ When reviewing FastAPI backend changes:
 - Verify that transaction boundaries are explicit.
 - Verify that background work uses the correct FastAPI, worker, or queue mechanism.
 - Review tests together with implementation changes: API contract tests, service tests, repository integration tests, and schema regression tests where applicable.
-- If caching is touched, verify that `python-cache` was applied for cache-specific decisions and tests.
 
 ## HTTP Models And OpenAPI Schemas
 
@@ -114,4 +110,3 @@ For concrete examples, review checklist, and anti-patterns, load `references/ope
 - [ ] Transaction boundaries are explicit and not hidden in unrelated repository calls.
 - [ ] Background work uses the correct FastAPI, worker, or queue mechanism.
 - [ ] Tests cover API contracts, service behavior, repository integration, and schema changes where relevant.
-- [ ] Cache-related work uses `python-cache`.
