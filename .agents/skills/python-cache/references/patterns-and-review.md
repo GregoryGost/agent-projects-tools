@@ -33,6 +33,17 @@ Avoid caching routers by default. Avoid caching live ORM entities, sessions, con
 - Refresh or delete cached values only after a successful write.
 - Treat TTL as a fallback, not as the main consistency strategy for mutable data.
 
+## Cashews When Active
+
+When the project uses `cashews`:
+
+- configure `cache.setup(...)` once in the application resource lifecycle;
+- close the cache backend during shutdown when the app owns it;
+- prefer explicit decorator arguments for TTL, name/key policy, conditions, and tags;
+- prefer `delete_tags(...)` or exact deletion for normal write invalidation;
+- avoid broad wildcard deletion in request paths;
+- use an isolated backend for tests.
+
 ## FastAPI Integration
 
 When FastAPI is active:
