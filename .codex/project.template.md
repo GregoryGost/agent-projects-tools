@@ -48,6 +48,7 @@ List only profiles active in this repository.
 Selection examples:
 
 - `python-core`
+- `python-testing`
 - `python-fastapi`
 - `python-cache`
 - `typescript-core`
@@ -94,7 +95,7 @@ List only rule files active in this project.
 
 List only reusable skills active in this project.
 
-- Python skills: `<python-core / python-fastapi-expert / python-cache / none / other>`
+- Python skills: `<python-core / python-testing / python-fastapi-expert / python-cache / none / other>`
 - Language skills: `<typescript-core / typescript-testing / none / other>`
 - Formatting/linting skills: `<prettier-formatting / eslint-typescript / none>`
 - Framework skills: `<vue-expert / vue-router-expert / pinia-expert / vueuse-expert / none>`
@@ -114,6 +115,7 @@ Use only project-declared commands.
 - Type check / static analysis: `<command or none>`
 - Unit tests: `<command or none>`
 - Integration tests: `<command or none>`
+- Parallel tests / pytest-xdist: `<command or none>`
 - E2E tests: `<command or none>`
 - UI validation / Playwright MCP workflow: `<workflow or none>`
 - Build: `<command or none>`
@@ -130,6 +132,22 @@ Keep only when Python is active.
 - Virtual environment policy: `<.venv / project-specific / none>`
 - Source layout: `<src / flat / mixed / project-specific / none>`
 - Active Python base skill: `<python-core / none>`
+
+## Python Testing Profile
+
+Keep only when Python tests are active.
+
+- Python testing enabled: `<yes/no>`
+- Test runner: `<pytest / project-specific / none>`
+- Async test plugin: `<pytest-asyncio / project-specific / none>`
+- Coverage tool: `<pytest-cov / coverage.py / project-specific / none>`
+- Parallel test execution enabled: `<yes/no>`
+- Parallel test plugin: `<pytest-xdist / none>`
+- Parallel test command: `<python -m pytest -n auto / project-specific / none>`
+- Serial rerun command for parallel failures: `<python -m pytest -n 0 / project-specific / none>`
+- xdist distribution mode: `<load / loadscope / loadfile / loadgroup / worksteal / project-specific / none>`
+- Worker resource isolation policy: `<isolated tmp_path/db/cache/ports per worker / project-specific / none>`
+- Active Python testing skill: `<python-testing / none>`
 
 ## Python FastAPI Profile
 
