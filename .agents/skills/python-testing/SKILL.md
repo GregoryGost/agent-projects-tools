@@ -1,11 +1,15 @@
 ---
 name: python-testing
-description: Python 3.14+ testing workflow with pytest, pytest-asyncio, and coverage.py. Use when Codex writes, changes, reviews, organizes, or verifies Python tests; designs pytest configuration; handles async tests, fixtures, parametrization, mocks, test doubles, unit/integration boundaries, or coverage requirements.
+description: Python 3.14+ testing workflow with pytest, pytest-asyncio, pytest-xdist when declared by the project, and coverage.py. Use when Codex writes, changes, reviews, organizes, or verifies Python tests; designs pytest configuration; handles async tests, fixtures, parametrization, mocks, test doubles, unit/integration boundaries, parallel test execution, or coverage requirements.
 ---
 
 # Python Testing
 
 Use pytest as the only test framework unless the project already requires something else. Prefer facts from the repository over assumptions: read `pyproject.toml`, existing tests, and relevant production files before changing test behavior or configuration.
+
+Load references when needed:
+
+- `references/pytest-xdist.md` when `pytest-xdist` is declared in dependencies, `CODEX_PROJECT.md` declares parallel pytest execution active, or the task touches parallel test execution.
 
 ## Baseline
 
@@ -14,6 +18,7 @@ Use pytest as the only test framework unless the project already requires someth
 - Test behavior and externally observable results, not private implementation details.
 - Keep business logic testable separately from handlers, repositories, ORM/SQL, framework wiring, HTTP clients, workers, CLI wrappers, and serializers.
 - Use `pytest`, `pytest-asyncio`, and `coverage.py` for Python 3.14+ projects.
+- Use `pytest-xdist` only when it is declared in project dependencies or `CODEX_PROJECT.md`; do not add it without explicit user approval.
 - Do not introduce `unittest`, `src/` layout, mixed production/test files, or manual `sys.path` hacks unless the repository already requires them.
 - Do not add dependencies such as `pytest-mock` or property-based testing tools without explicit user approval.
 - It is necessary to check not only the test coverage to close the coverage percentage, but also the possible verification of any parameters and other functions, even if they are not yet used in other files or business logic.
@@ -28,7 +33,8 @@ Use pytest as the only test framework unless the project already requires someth
 2. Read existing nearby tests and configuration before choosing patterns.
 3. Add or update tests first when feasible, especially for bug fixes and business rules.
 4. Cover success paths, failure paths, boundary values, meaningful branches, and side effects.
-5. Run relevant tests and coverage checks before finishing; report commands and results.
+5. Run relevant focused tests serially before broad validation; if `pytest-xdist` is active, use it for broad validation only after focused serial tests pass.
+6. Run coverage checks before finishing; report commands and results.
 
 For bug fixes, add a regression test that fails before the fix and passes after it. Never delete, weaken, skip, xfail, or mark code `no cover` merely to make checks pass.
 
@@ -71,6 +77,23 @@ asyncio_default_fixture_loop_scope = "function"
 - Never add `pythonpath = ["src"]` to a non-`src` project.
 - Never use `sys.path.append(...)` or `sys.path.insert(...)` inside tests.
 - Register custom markers and keep `--strict-markers` enabled.
+- Do not put `-n auto` into default `addopts` until the suite is proven parallel-safe and the project explicitly wants every test run to use xdist.
+
+## pytest-xdist / Parallel Execution
+
+Use this section only when `pytest-xdist` is declared in project dependencies or `CODEX_PROJECT.md` explicitly declares parallel pytest execution active.
+
+- Run focused tests serially first, especially while developing or debugging failures.
+- Use xdist for broad validation when the suite is parallel-safe.
+- Use `python -m pytest -n auto` for broad local parallel validation.
+- Use `python -m pytest -n 0` to disable xdist and rerun failures in the main process.
+- Use `--dist loadscope` when module-level or class-level fixtures should stay in the same worker.
+- Use `--dist loadfile` when tests in the same file share expensive or coupled setup.
+- Do not use xdist for tests that share a writable SQLite file, fixed ports, fixed temp paths, global mutable state, shared cache namespaces, or external resources unless those resources are isolated per worker.
+- Keep parametrization deterministic; avoid unordered sets, dict iteration, and generators when collected tests must be identical across workers.
+- Rerun parallel failures serially before debugging or changing production code.
+
+Load `references/pytest-xdist.md` before changing xdist configuration, adding xdist-specific tests, or reviewing parallel-test failures.
 
 ## Coverage
 
@@ -122,6 +145,7 @@ Prefer extracting business rules into pure functions, domain services, validator
 - Use small explicit test data; use builders only when they reduce noise.
 - Use `tmp_path` for temporary files and `monkeypatch` for environment variables.
 - Restore global/process-wide state after each test.
+- When xdist is active, ensure databases, cache namespaces, ports, files, and other mutable resources are unique per worker or fully isolated.
 
 ## Async Tests
 
@@ -153,6 +177,7 @@ Prefer extracting business rules into pure functions, domain services, validator
 - Avoid real sleeps; wait for events or explicit idle/shutdown hooks.
 - Avoid order assertions unless order is part of the contract.
 - Do not depend on machine-specific absolute paths or environment variables.
+- When xdist is active, test collection order and amount must be stable across workers.
 
 ## Domain-Specific Checks
 
@@ -176,6 +201,7 @@ When reviewing tests:
 - Verify that integration tests cover actual repository, database, HTTP, framework, filesystem, or serialization behavior when unit tests use mocks.
 - Verify that coverage changes reflect meaningful business coverage, not only line execution.
 - Verify that generated coverage files such as `.coverage` and `.coverage.*` are not left in the project root.
+- When xdist is active, verify worker-safe resource isolation, deterministic parametrization, and serial rerun of failures with `-n 0`.
 
 ## Commands
 
@@ -188,6 +214,15 @@ python -m pytest -m "not integration"
 python -m pytest tests/unit/path/test_file.py -q
 python -m coverage run -m pytest
 python -m coverage report --show-missing
+```
+
+When `pytest-xdist` is active:
+
+```bash
+python -m pytest -n auto
+python -m pytest -n 0
+python -m pytest -n auto --dist loadscope
+python -m pytest -n auto --dist loadfile
 ```
 
 Run the smallest useful test set during iteration, then broaden to full pytest and coverage when the change has wider impact. If checks cannot be run, state the reason explicitly.
