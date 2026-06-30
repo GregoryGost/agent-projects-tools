@@ -16,6 +16,8 @@ Before doing repository work:
 - Do not apply programming-language, framework, database, cache, HTTP client, styling, testing, UI validation, E2E, or external-system rules unless `CODEX_PROJECT.md` declares the corresponding active stack profile or the task explicitly requires reviewing that inactive area.
 - If Obsidian is enabled in `CODEX_PROJECT.md`, use only the configured Obsidian MCP server for vault content.
 - If Obsidian MCP is unavailable, use only the fallback outbox paths declared in `CODEX_PROJECT.md`, then synchronize through MCP after successful verification.
+- You need to remember what rules and what skills are available and use them when necessary.
+- It is impossible to draw any conclusions based only on superficial data; it is necessary to conduct an analysis as deeply and in detail as possible.
 
 ## Review expectations
 
