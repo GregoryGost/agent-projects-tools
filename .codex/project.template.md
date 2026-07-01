@@ -49,6 +49,7 @@ Selection examples:
 
 - `python-core`
 - `python-testing`
+- `python-service-e2e-testing`
 - `python-fastapi`
 - `python-cache`
 - `typescript-core`
@@ -89,7 +90,7 @@ List only rule files active in this project.
 - Framework rules: `<vue_frontend.md / vue_router.md / pinia.md / vueuse.md / none / other>`
 - Styling rules: `<css.md / css_animation.md / tailwind_css.md / scss_styling.md / none>`
 - UI/browser validation rules: `<ui_ux_validation.md / playwright_ui_validation.md / none>`
-- E2E rules: `<vue_playwright_e2e_testing.md / nodejs_service_e2e_testing.md / none>`
+- E2E rules: `<python_service_e2e_testing.md / vue_playwright_e2e_testing.md / nodejs_service_e2e_testing.md / none>`
 - External-system rules: `<active list or none>`
 
 ## Active Skills
@@ -102,7 +103,7 @@ List only reusable skills active in this project.
 - Framework skills: `<vue-expert / vue-router-expert / pinia-expert / vueuse-expert / none>`
 - Styling skills: `<css-expert / css-animation-expert / tailwind-expert / scss-expert / none>`
 - UI/browser validation skills: `<ui-ux-review / playwright-ui-checks-mcp / none>`
-- E2E skills: `<vue-playwright-e2e-testing / nodejs-service-e2e-testing / none>`
+- E2E skills: `<python-service-e2e-testing / vue-playwright-e2e-testing / nodejs-service-e2e-testing / none>`
 - External-system skills: `<obsidian-semantic-notes-mcp / jira-data-center / none / other>`
 
 ## Build And Validation Commands
@@ -279,6 +280,18 @@ Keep only when UI/UX validation or Playwright MCP validation is active.
 ## Testing Profiles
 
 Keep only testing subsections used by the project.
+
+### Python Service E2E Testing
+
+- Python service E2E enabled: `<yes/no>`
+- E2E boundary: `<HTTP API / CLI / worker / queue consumer / scheduled job / filesystem flow / database-backed flow / mixed>`
+- E2E command: `<command / none>`
+- App/process start policy: `<subprocess / project entrypoint / Docker Compose / Testcontainers / in-process app boundary / project-specific / none>`
+- Dependency setup: `<Testcontainers / Docker Compose / project-specific / none>`
+- External dependency stub policy: `<pytest-httpserver / RESPX / provider sandbox / contract fake / none / project-specific>`
+- Data isolation policy: `<unique DB/schema/queue/bucket/temp-dir/test IDs / project-specific>`
+- Parallel E2E policy: `<serial / xdist-safe / project-specific>`
+- Active Python service E2E rule/skill: `<python_service_e2e_testing.md + python-service-e2e-testing / none>`
 
 ### TypeScript Unit / Integration Testing
 
