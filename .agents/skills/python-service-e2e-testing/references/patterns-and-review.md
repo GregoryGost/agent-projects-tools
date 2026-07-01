@@ -196,7 +196,11 @@ def eventually(assertion: Callable[[], None], *, timeout: float = 5.0, interval:
         raise last_error
 
 
-def test_worker_sends_email(queue: Queue, sent_emails: SentEmailStore) -> None:
+def assert_sent_email_exists(sent_emails, message_id: str) -> None:
+    assert sent_emails.count_by_message_id(message_id) == 1
+
+
+def test_worker_sends_email(queue, sent_emails) -> None:
     queue.publish({"type": "send-email", "id": "msg-123"})
 
     eventually(lambda: assert_sent_email_exists(sent_emails, "msg-123"))
