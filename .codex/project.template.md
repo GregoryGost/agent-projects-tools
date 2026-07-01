@@ -82,6 +82,7 @@ Active profiles for this project:
 
 List only rule files active in this project.
 
+- Core rules: `<.codex/rules/request_routing.md / none>`
 - Python/backend rules: `<python_fastapi.md / python_cache.md / none>`
 - Formatting/linting rules: `<prettier_formatting.md / eslint_typescript.md / none>`
 - Language rules: `<typescript_core.md / typescript_testing.md / none / other>`
