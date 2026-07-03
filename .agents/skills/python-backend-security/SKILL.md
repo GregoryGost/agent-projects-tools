@@ -19,6 +19,8 @@ Use it together with:
 - `python-httpx-client` for outbound HTTP clients, callbacks, webhooks, previews, proxy-like fetches, redirects, and SSRF risk.
 - `python-testing` for pytest structure, async tests, fixtures, mocks/fakes, coverage, and security regression tests.
 
+Read `CODEX_PROJECT.md` and repository metadata before changing security behavior. Confirm security-sensitive libraries, password hashing or key-derivation choices, dependency source of truth, and dependency approval policy before adding, removing, or replacing security dependencies.
+
 Do not replace those skills. Use this skill to identify and preserve security boundaries, then defer framework-specific mechanics to the matching specialist skill.
 
 ## Security Workflow
@@ -129,7 +131,7 @@ For lifecycle, retry, streaming, timeout, and HTTPX test details, apply `python-
 - Include tenant, user, role, permission scope, and visibility-affecting filters in cache keys whenever response visibility depends on them.
 - Do not cache authenticated or permission-filtered responses unless scope, invalidation, and TTL are explicit.
 - Do not put raw tokens, passwords, emails, or long sensitive values into cache keys.
-- Reference the active cache policy declared by `CODEX_PROJECT.md`; for this FastAPI project, use `python-fastapi-expert` for cashews TTL, key, tag, lifecycle, and invalidation policy instead of duplicating cache mechanics here.
+- Reference the active cache policy declared by `CODEX_PROJECT.md`; use active cache and framework skills for TTL, key, tag, lifecycle, and invalidation policy instead of duplicating cache mechanics here.
 
 ## Rate Limiting And Abuse Controls
 
@@ -141,6 +143,7 @@ For lifecycle, retry, streaming, timeout, and HTTPX test details, apply `python-
 ## Dependency And Supply-Chain Safety
 
 - Do not add security-sensitive dependencies without clear need and user approval when project policy requires it.
+- Do not replace the project-declared password hashing, key derivation, signing, token, or encryption libraries without explicit user approval and migration plan.
 - Prefer maintained libraries already used by the project.
 - Pin or constrain dependencies according to project policy.
 - Review new packages for maintenance status, transitive risk, import-time side effects, and whether the standard library or existing dependency is enough.
