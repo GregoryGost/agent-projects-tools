@@ -279,12 +279,6 @@ if isinstance(value, str):
 - Catching broad exceptions and silently continuing.
 - Adding dependencies to avoid a small amount of straightforward project-local code without user approval.
 
-## Comment And Docstring Language Audit
-
-Apply `comment-language-audit` when the task creates, edits, reviews, translates, or audits Python comments/docstrings, or when language compliance is part of the task.
-
-Keep Python-specific docstring syntax and placement checks in this reference. Keep portable natural-language checks, mixed-language prose rules, grammar checks, and noun-phrase audit rules in `comment-language-audit`.
-
 ## Review Checklist
 
 - [ ] Python is active in `CODEX_PROJECT.md` or the task explicitly asks about Python files.
@@ -295,7 +289,7 @@ Keep Python-specific docstring syntax and placement checks in this reference. Ke
 - [ ] Public functions and methods have useful type hints when they form a stable project contract.
 - [ ] Type annotations avoid deprecated/private typing APIs and are compatible with the active Python version.
 - [ ] Runtime annotation introspection uses documented APIs.
-- [ ] Comments and docstrings follow the natural-language policy declared in `CODEX_PROJECT.md`; apply `comment-language-audit` when language-policy compliance is part of the task.
+- [ ] Comments and docstrings follow the natural-language policy declared in `CODEX_PROJECT.md`.
 - [ ] Public docstrings follow PEP 257 structure where applicable.
 - [ ] No mutable default arguments are introduced.
 - [ ] No bare `except` or silent broad exception handling is introduced.
