@@ -35,6 +35,7 @@ Do not use this skill alone for backend-specific decisions. Always pair it with 
 - Apply `python-fastapi-expert` when SQLAlchemy code is used by FastAPI routes, dependencies, services, or OpenAPI-facing models.
 - Apply `python-backend-security` when SQL construction, authorization predicates, tenant isolation, secrets, logging, or user-controlled input are involved.
 - Apply the active database-specific skill from `CODEX_PROJECT.md` for backend-specific behavior.
+- Read the database profile declared in `CODEX_PROJECT.md` for active database, driver, pooling layer, migration tool, runtime write policy, dependency versions, and source of truth before changing persistence behavior.
 - Follow the migration policy declared in `CODEX_PROJECT.md`. Do not introduce or replace migration tooling without explicit user approval.
 
 ## Repository-First Database Access
