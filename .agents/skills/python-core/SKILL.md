@@ -85,6 +85,10 @@ For concrete examples, anti-patterns, and review checklist items, load `referenc
 
 - Follow the natural-language policy declared in `CODEX_PROJECT.md` for comments, docstrings, test comments, and documentation.
 - Keep identifiers, library names, class names, protocol names, commands, paths, and other proper names in their original form.
+- When a repository declares a target natural language for comments and docstrings, treat each comment/docstring as full prose in that language. Foreign-language tokens are allowed only when they are exact code identifiers, API fields, class/function/module/package names, commands, paths, protocols, standards, external product names, or real contract values.
+- Do not partially translate comments or docstrings. After editing one, reread the entire final sentence and rewrite remaining explanatory foreign-language words into the target language unless they match the allowed exact-token categories above.
+- Do not copy mixed-language task, backlog, issue, design-note, or documentation phrasing into code comments/docstrings. Convert explanatory wording into the repository target language while preserving exact identifiers and contract tokens.
+- Linters, formatters, type checkers, and tests do not validate comment/docstring language policy. When language compliance is part of the task, perform a separate language-policy check.
 - Use triple double quotes for docstrings.
 - Put docstrings immediately after the module, class, function, or method definition.
 - Public modules, exported functions/classes, and public methods should have docstrings when they are part of a stable project contract.
