@@ -279,17 +279,6 @@ if isinstance(value, str):
 - Catching broad exceptions and silently continuing.
 - Adding dependencies to avoid a small amount of straightforward project-local code without user approval.
 
-## Comment And Docstring Language Audit
-
-Use this checklist when the task asks to clean, review, or enforce comment/docstring language policy.
-
-- Do not rely on searches for known bad phrases as the final audit gate. Phrase searches are only locators.
-- Build a complete inventory of comments and docstrings in the affected scope. For Python, prefer AST extraction for docstrings and tokenization for comments.
-- Review every extracted comment/docstring containing foreign-language words.
-- Keep foreign-language tokens only when they are exact identifiers, API fields, class/function/module/package names, commands, paths, protocols, standards, external product names, or real contract values.
-- Rewrite explanatory prose as a complete sentence in the target natural language. Partial translation is not sufficient.
-- In the final report for a language-policy task, state that all comments/docstrings with foreign-language tokens in the affected scope were reviewed, and state what category of tokens was intentionally left.
-
 ## Review Checklist
 
 - [ ] Python is active in `CODEX_PROJECT.md` or the task explicitly asks about Python files.
@@ -301,8 +290,6 @@ Use this checklist when the task asks to clean, review, or enforce comment/docst
 - [ ] Type annotations avoid deprecated/private typing APIs and are compatible with the active Python version.
 - [ ] Runtime annotation introspection uses documented APIs.
 - [ ] Comments and docstrings follow the natural-language policy declared in `CODEX_PROJECT.md`.
-- [ ] Edited comments/docstrings were reread as complete final sentences, not checked only for the originally targeted phrase.
-- [ ] For language-policy audits, all comments/docstrings in the affected scope were inventoried and every entry with foreign-language words was classified or rewritten.
 - [ ] Public docstrings follow PEP 257 structure where applicable.
 - [ ] No mutable default arguments are introduced.
 - [ ] No bare `except` or silent broad exception handling is introduced.
