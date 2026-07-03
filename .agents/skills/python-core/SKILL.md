@@ -92,6 +92,7 @@ For concrete examples, anti-patterns, and review checklist items, load `referenc
 - Comments and docstrings in the target language must read as grammatically correct prose, not as a word-by-word translation.
 - For languages with inflection and agreement, check case, government, word agreement, verb-form consistency, and complete sentence structure.
 - Rewrite awkward literal translations into simple natural sentences while preserving exact code names and contract tokens.
+- For target languages where noun modifiers require case, agreement, hyphenation, adjective forms, or genitive constructions, do not keep source-language noun stacks as-is. Rewrite them into natural target-language noun phrases.
 - Use triple double quotes for docstrings.
 - Put docstrings immediately after the module, class, function, or method definition.
 - Public modules, exported functions/classes, and public methods should have docstrings when they are part of a stable project contract.
