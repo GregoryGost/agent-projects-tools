@@ -13,7 +13,7 @@ This skill covers natural-language quality only: target-language consistency, mi
 ## Scope And Coordination
 
 - Read `CODEX_PROJECT.md` before editing code prose. Use its declared target natural language for comments, docstrings, test comments, and documentation blocks.
-- Apply this skill when the task creates, edits, reviews, translates, or audits comments, docstrings, doc comments, JSDoc/TSDoc blocks, XML documentation comments, or other explanatory code-adjacent prose.
+- Apply this skill when it is listed in `CODEX_PROJECT.md` active skills and the task creates, edits, reviews, translates, or audits comments, docstrings, doc comments, JSDoc/TSDoc blocks, XML documentation comments, or other explanatory code-adjacent prose.
 - Keep language-specific syntax, placement, tags, and formatting rules in the active programming-language or framework skill.
 - Do not add language-policy checks to linters, formatters, type checkers, or tests unless the project already has approved tooling for that purpose.
 
