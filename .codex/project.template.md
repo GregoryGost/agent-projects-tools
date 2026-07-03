@@ -97,6 +97,7 @@ List only rule files active in this project.
 
 List only reusable skills active in this project.
 
+- Code prose / language-policy skills: `<comment-language-audit / none>`
 - Python skills: `<python-core / python-testing / python-fastapi-expert / python-cache / none / other>`
 - Language skills: `<typescript-core / typescript-testing / none / other>`
 - Formatting/linting skills: `<prettier-formatting / eslint-typescript / none>`
