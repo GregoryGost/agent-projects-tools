@@ -288,6 +288,9 @@ Use this checklist when the task asks to clean, review, or enforce comment/docst
 - Review every extracted comment/docstring containing foreign-language words.
 - Keep foreign-language tokens only when they are exact identifiers, API fields, class/function/module/package names, commands, paths, protocols, standards, external product names, or real contract values.
 - Rewrite explanatory prose as a complete sentence in the target natural language. Partial translation is not sufficient.
+- Review edited comments/docstrings as complete target-language sentences, not only as translated token sequences.
+- For languages with inflection and agreement, check case, government, word agreement, verb-form consistency, and complete sentence structure.
+- Rewrite awkward literal translations into natural target-language prose while preserving exact code names and contract tokens.
 - In the final report for a language-policy task, state that all comments/docstrings with foreign-language tokens in the affected scope were reviewed, and state what category of tokens was intentionally left.
 
 ## Review Checklist
@@ -303,6 +306,8 @@ Use this checklist when the task asks to clean, review, or enforce comment/docst
 - [ ] Comments and docstrings follow the natural-language policy declared in `CODEX_PROJECT.md`.
 - [ ] Edited comments/docstrings were reread as complete final sentences, not checked only for the originally targeted phrase.
 - [ ] For language-policy audits, all comments/docstrings in the affected scope were inventoried and every entry with foreign-language words was classified or rewritten.
+- [ ] Edited comments/docstrings are grammatically valid complete prose in the repository target natural language.
+- [ ] For languages with inflection and agreement, case, government, word agreement, verb-form consistency, and sentence structure were checked after translation or rewrite.
 - [ ] Public docstrings follow PEP 257 structure where applicable.
 - [ ] No mutable default arguments are introduced.
 - [ ] No bare `except` or silent broad exception handling is introduced.
