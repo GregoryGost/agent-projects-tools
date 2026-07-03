@@ -22,14 +22,16 @@ Load references when needed:
 
 1. Read `CODEX_PROJECT.md`.
 2. Confirm cache library, backend, settings, dependency policy, validation commands, and active Python overlays.
-3. Inspect cached functions, callers, write paths, settings, tests, and deployment assumptions.
-4. Decide whether the read path is deterministic and whether bounded staleness is acceptable.
-5. Define TTL, key scope, invalidation triggers, backend, and test coverage before adding cache behavior.
-6. Run or report project-declared validation commands.
+3. Confirm the dependency source of truth and existing cache dependency versions from repository metadata before changing cache behavior.
+4. Inspect cached functions, callers, write paths, settings, tests, and deployment assumptions.
+5. Decide whether the read path is deterministic and whether bounded staleness is acceptable.
+6. Define TTL, key scope, invalidation triggers, backend, and test coverage before adding cache behavior.
+7. Run or report project-declared validation commands.
 
 ## Guardrails
 
 - Do not add caching mechanically.
+- Do not use cache behavior before a cache backend and lifecycle owner are declared in project settings/configuration or `CODEX_PROJECT.md`.
 - Prefer service/domain read methods for business data caching.
 - Keep routers and HTTP handlers free of cache decisions unless HTTP cache semantics are the explicit task.
 - Use stable cache names that include all visibility-affecting inputs.
@@ -43,6 +45,7 @@ Load references when needed:
 ## Review Checklist
 
 - [ ] Cache behavior is active in `CODEX_PROJECT.md` or directly touched by the task.
+- [ ] Cache library, backend, lifecycle owner, and dependency source of truth were checked.
 - [ ] Cached operation is deterministic and read-oriented.
 - [ ] TTL and cache naming are explicit.
 - [ ] Visibility scope is included in cache naming when needed.
