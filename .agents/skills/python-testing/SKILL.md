@@ -19,6 +19,7 @@ Load references when needed:
 - Keep business logic testable separately from handlers, repositories, ORM/SQL, framework wiring, HTTP clients, workers, CLI wrappers, and serializers.
 - Use `pytest`, `pytest-asyncio`, and `coverage.py` for Python 3.14+ projects.
 - Use `pytest-xdist` only when it is declared in project dependencies or `CODEX_PROJECT.md`; do not add it without explicit user approval.
+- Treat repository metadata and `CODEX_PROJECT.md` as the source of truth for pytest paths, file/class/function patterns, import mode, asyncio mode, loop scopes, coverage branch tracking, fail-under thresholds, and parallel-test commands.
 - Do not introduce `unittest`, `src/` layout, mixed production/test files, or manual `sys.path` hacks unless the repository already requires them.
 - Do not add dependencies such as `pytest-mock` or property-based testing tools without explicit user approval.
 - It is necessary to check not only the test coverage to close the coverage percentage, but also the possible verification of any parameters and other functions, even if they are not yet used in other files or business logic.
@@ -48,6 +49,14 @@ For bug fixes, add a regression test that fails before the fix and passes after 
 - Name files `test_*.py` and test functions `test_<behavior>()`.
 
 Do not assume a `src/` layout. If production packages live at the repository root, imports and configuration must reflect that.
+
+## Repository Configuration Discovery
+
+- Before changing test layout, marks, commands, import behavior, asyncio behavior, coverage, or parallel execution, read `CODEX_PROJECT.md` and repository test configuration first.
+- For pytest, prefer `[tool.pytest.ini_options]` in `pyproject.toml` when present. Check `testpaths`, `python_files`, `python_classes`, `python_functions`, `addopts`, `markers`, `asyncio_mode`, and pytest-asyncio loop-scope settings.
+- For coverage, prefer `[tool.coverage.run]` and `[tool.coverage.report]` when present. Check branch tracking, source/omit rules, excluded lines, and `fail_under` before adding or changing tests.
+- Do not rewrite pytest or coverage configuration just to match examples in this skill. Examples are defaults for new or unconfigured projects only.
+- When config and `CODEX_PROJECT.md` disagree, report the conflict and avoid changing test behavior until the source of truth is clear.
 
 ## pytest Configuration
 
@@ -85,11 +94,12 @@ Use this section only when `pytest-xdist` is declared in project dependencies or
 
 - Run focused tests serially first, especially while developing or debugging failures.
 - Use xdist for broad validation when the suite is parallel-safe.
-- Use `python -m pytest -n auto` for broad local parallel validation.
+- Use the project-declared xdist command and distribution mode when `CODEX_PROJECT.md` defines them; otherwise use `python -m pytest -n auto` for broad local validation.
 - Use `python -m pytest -n 0` to disable xdist and rerun failures in the main process.
 - Use `--dist loadscope` when module-level or class-level fixtures should stay in the same worker.
 - Use `--dist loadfile` when tests in the same file share expensive or coupled setup.
 - Do not use xdist for tests that share a writable SQLite file, fixed ports, fixed temp paths, global mutable state, shared cache namespaces, or external resources unless those resources are isolated per worker.
+- When xdist is active, isolate SQLite files, cache namespaces, temporary paths, ports, generated test IDs, and other mutable resources per worker, or mark the affected tests to run serially according to project policy.
 - Keep parametrization deterministic; avoid unordered sets, dict iteration, and generators when collected tests must be identical across workers.
 - Rerun parallel failures serially before debugging or changing production code.
 

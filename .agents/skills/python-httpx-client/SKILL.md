@@ -7,6 +7,8 @@ description: "Use for outgoing HTTP integrations in Python 3.14+ backend project
 
 Apply this skill when creating, changing, reviewing, or testing outgoing HTTP clients based on `httpx` and the already selected `httpx-retries` retry layer.
 
+Read `CODEX_PROJECT.md` and repository metadata before changing HTTP client behavior. Confirm the active HTTP client library, retry layer, dependency versions, dependency source of truth, timeout policy, and project-declared validation commands.
+
 Use it for FastAPI features only when the feature calls an external HTTP API. Do not use it for inbound FastAPI routing unless outbound HTTP behavior is part of the work. Apply `python-testing` for general pytest policy, `python-fastapi-expert` for routing/service/DI rules, and the active database skill from `CODEX_PROJECT.md` when outbound HTTP behavior interacts with transactions, repositories, or persistence.
 
 For concrete bad/good examples and a compact review checklist, read `references/patterns-and-review.md` when implementing or reviewing an integration client.
@@ -25,6 +27,7 @@ When reviewing an HTTPX integration client:
 - Check that user-influenced URLs have scheme, host, redirect, and network-target validation.
 - Check that streaming responses are closed and bounded where response size matters.
 - Check that rate-limit handling, retry budget, `Retry-After`, and final failure mapping are centralized and tested.
+- Check that tests use local transports, fake servers, or project-approved provider sandboxes instead of real uncontrolled external APIs.
 - Review tests together with code changes. Do not approve an HTTPX client change when important success, failure, timeout, retry, rate-limit, SSRF, logging, or cleanup behavior is untested.
 
 ## Client Lifecycle
@@ -193,5 +196,5 @@ The integration client still owns:
 
 ## Caching
 
-- For cached external reads, follow the active cache policy declared by `CODEX_PROJECT.md`; for this FastAPI project, use `python-fastapi-expert` for cashews rules.
+- For cached external reads, follow the active cache policy declared by `CODEX_PROJECT.md`; use active cache and framework skills for cache mechanics.
 - Do not duplicate cache policy inside HTTPX clients; cache only deterministic, idempotent reads where bounded staleness is acceptable.

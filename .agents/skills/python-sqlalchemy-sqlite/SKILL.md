@@ -13,7 +13,7 @@ Do not use this skill for generic FastAPI routing unless database behavior, tran
 
 Align with `python-fastapi-expert`: keep SQL and ORM query details in repositories; services coordinate business rules, transaction boundaries, and post-commit side effects.
 
-Follow the migration policy declared in `CODEX_PROJECT.md`. When the active project declares raw SQL migrations, use the project migration runner and do not introduce or replace migration tooling without explicit user approval.
+Follow the database, migration, and runtime write policy declared in `CODEX_PROJECT.md`. Confirm the active SQLite driver, pooling library, raw SQL migration policy, single-writer queue policy, and dependency source of truth before changing persistence behavior.
 
 For concrete bad/good examples and a compact review checklist, read `references/patterns-and-review.md` when implementing or reviewing SQLite engines, repositories, migrations, single-writer queues, transaction boundaries, or tests.
 
@@ -91,9 +91,9 @@ When `CODEX_PROJECT.md` declares the SQLite single-writer queue pattern, one bac
 
 ## 7. Raw SQL Migrations
 
-- Use raw SQL migrations, not Alembic. In this project, migration files live under `migrations/`, are ordered by filename, and expose async `upgrade(conn)` and `downgrade(conn)` callables.
+- Use the migration tool declared in `CODEX_PROJECT.md`. When the active project declares raw SQL migrations, use the project migration runner and do not introduce or replace migration tooling without explicit user approval.
 - Keep migration scripts ordered, deterministic, idempotency-aware, and manually reviewed. Do not edit already-applied migration files without an explicit checksum/history decision.
-- Migration functions receive the caller-owned `AsyncConnection`. They must not call `commit()`, `rollback()`, or `close()`.
+- Migration functions receive the caller-owned connection declared by the project migration runner. They must not call `commit()`, `rollback()`, or `close()` unless that runner explicitly requires it.
 - Use `sqlalchemy.text()` with bound parameters for raw SQL that includes values.
 - For SQLite schema changes that `ALTER TABLE` cannot perform directly, use the table-rebuild pattern: create a new table with the target schema, copy mapped data explicitly, recreate indexes/constraints/triggers, drop the old table, and rename the new table.
 - Never silently drop data during rebuilds. Any omitted column, lossy conversion, deduplication, or default fill must be deliberate and visible in the migration body and review.
@@ -117,7 +117,7 @@ When `CODEX_PROJECT.md` declares the SQLite single-writer queue pattern, one bac
 - Do not rely only on a pre-check before insert/update; be prepared for a constraint violation at flush/commit.
 - Keep transaction ownership clear: service/unit-of-work code should own multi-repository commits; repositories should not surprise callers with commits.
 - Perform cache invalidation only after a successful commit. If the transaction rolls back, cache state must remain unchanged.
-- Reference the active cache policy declared by `CODEX_PROJECT.md`; for this FastAPI project, use `python-fastapi-expert` for cashews cache keys, TTLs, tags, and invalidation. Do not duplicate or fork those rules here.
+- Reference the active cache policy declared by `CODEX_PROJECT.md`; use the active cache and FastAPI skills for cache keys, TTLs, tags, and invalidation. Do not duplicate or fork those rules here.
 
 ## 10. Testing Requirements
 

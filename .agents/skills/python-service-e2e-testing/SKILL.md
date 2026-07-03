@@ -51,6 +51,14 @@ Choose the narrowest public boundary that proves the user/system flow:
 - Filesystem pipeline: provide input files/directories and verify output artifacts.
 - Database-backed flow: run migrations/seeds and verify behavior through the application boundary, not by calling repository internals.
 
+## Dependency Policy
+
+- Use real dependencies only when they are disposable, local, containerized, project-declared, or otherwise explicitly approved.
+- Do not call real paid, production, shared uncontrolled, or user-owned external systems from automated E2E tests.
+- Stub third-party providers when they are outside the E2E scope, unsafe, paid, unstable, unavailable in CI, or not controlled by the test run.
+- Prefer contract-faithful fakes, local fake servers, `pytest-httpserver`, RESPX, provider sandboxes, or project-approved adapters over patching internals.
+- Keep dependency setup and teardown deterministic; clean containers, app instances, queues, cache keys, temp files, ports, and environment variables.
+
 ## Guardrails
 
 - Do not mock the application under test.
@@ -71,6 +79,7 @@ Choose the narrowest public boundary that proves the user/system flow:
 - [ ] The scenario covers a critical user/system flow.
 - [ ] The application under test is not mocked.
 - [ ] Real/containerized/stubbed dependencies are justified.
+- [ ] No real paid, production, or shared uncontrolled external system is called.
 - [ ] Migrations/seeds/test data are deterministic and isolated.
 - [ ] Setup and teardown clean up app instances, containers, connections, env, ports, queues, cache keys, child processes, and temp files.
 - [ ] Assertions target externally visible behavior.
