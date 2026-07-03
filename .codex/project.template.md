@@ -83,7 +83,7 @@ Active profiles for this project:
 
 List only rule files active in this project.
 
-- Core rules: `<.codex/rules/request_routing.md / none>`
+- Core rules: `<.codex/rules/request_routing.md / source_code_hygiene.md / none>`
 - Python/backend rules: `<python_fastapi.md / python_cache.md / none>`
 - Formatting/linting rules: `<prettier_formatting.md / eslint_typescript.md / none>`
 - Language rules: `<typescript_core.md / typescript_testing.md / none / other>`
@@ -105,12 +105,17 @@ List only reusable skills active in this project.
 - Styling skills: `<css-expert / css-animation-expert / tailwind-expert / scss-expert / none>`
 - UI/browser validation skills: `<ui-ux-review / playwright-ui-checks-mcp / none>`
 - E2E skills: `<python-service-e2e-testing / vue-playwright-e2e-testing / nodejs-service-e2e-testing / none>`
+- Database skills: `<python-sqlalchemy-core / python-sqlalchemy-sqlite / none / other>`
+- HTTP/client skills: `<python-httpx-client / none / other>`
+- Security skills: `<python-backend-security / none / other>`
 - External-system skills: `<obsidian-semantic-notes-mcp / jira-data-center / none / other>`
 
 ## Build And Validation Commands
 
 Use only project-declared commands.
 
+- Command source of truth: `<CODEX_PROJECT.md / package scripts / pyproject.toml / Makefile / task runner / none>`
+- Tool executable policy: `<project venv / package-manager scripts / global tools allowed / project-specific / none>`
 - Install dependencies: `<command or none>`
 - Format: `<command or none>`
 - Format check: `<command or none>`
@@ -132,6 +137,7 @@ Keep only when Python is active.
 - Python enabled: `<yes/no>`
 - Python version: `<version constraint / none>`
 - Dependency manager: `<poetry / uv / pip / none / other>`
+- Python package mode: `<package / non-package / project-specific / none>`
 - Virtual environment policy: `<.venv / project-specific / none>`
 - Source layout: `<src / flat / mixed / project-specific / none>`
 - Active Python base skill: `<python-core / none>`
@@ -142,8 +148,15 @@ Keep only when Python tests are active.
 
 - Python testing enabled: `<yes/no>`
 - Test runner: `<pytest / project-specific / none>`
+- Pytest configuration source: `<pyproject.toml / pytest.ini / setup.cfg / tox.ini / none>`
+- Pytest test paths/patterns source: `<tool.pytest.ini_options / project-specific / none>`
+- Pytest import mode: `<importlib / prepend / append / project-specific / none>`
 - Async test plugin: `<pytest-asyncio / project-specific / none>`
+- Asyncio mode / loop scope source: `<pyproject.toml / project-specific / none>`
 - Coverage tool: `<pytest-cov / coverage.py / project-specific / none>`
+- Coverage configuration source: `<pyproject.toml / .coveragerc / setup.cfg / none>`
+- Coverage branch tracking: `<yes/no/project-specific/none>`
+- Coverage fail-under: `<number / project-specific / none>`
 - Parallel test execution enabled: `<yes/no>`
 - Parallel test plugin: `<pytest-xdist / none>`
 - Parallel test command: `<python -m pytest -n auto / project-specific / none>`
@@ -176,6 +189,53 @@ Keep only when Python caching is active.
 - Cache invalidation policy: `<post-commit tags / exact key delete / TTL-only immutable data / project-specific / none>`
 - Active Python cache rule/skill: `<python_cache.md + python-cache / none>`
 - If FastAPI is active, use FastAPI rule/skill for app wiring and API behavior: `<yes/no/not applicable>`
+
+## Database Profile
+
+Keep only when the project has a database.
+
+- Database enabled: `<yes/no>`
+- Database toolkit/ORM: `<SQLAlchemy / Prisma / Django ORM / raw SQL / none / other>`
+- Active database: `<SQLite / PostgreSQL / MySQL / none / other>`
+- Database driver: `<aiosqlite / asyncpg / psycopg / mysqlclient / none / other>`
+- Database pool library: `<aiosqlitepool / SQLAlchemy pool / none / other>`
+- Migration tool: `<Alembic / raw SQL / Prisma migrations / project-specific / none>`
+- Migration policy: `<policy / none>`
+- Active database rule/skill: `<rule + skill / none>`
+- Dependency versions source: `<pyproject.toml / package.json / go.mod / project-specific / none>`
+
+## Persistence / Runtime Write Policy
+
+Keep only when the project has persistence-specific runtime write constraints.
+
+- Runtime write policy: `<single writer queue / direct sessions / unit of work / project-specific / none>`
+- Read path policy: `<read sessions / read replicas / direct reads / project-specific / none>`
+- Write path owner: `<writer loop / service unit-of-work / repository / project-specific / none>`
+- Durability/backpressure policy: `<bounded queue / durable queue / reject on overload / project-specific / none>`
+- Deployment process/worker assumption: `<single worker / multi-worker / project-specific / none>`
+
+## HTTP Client Profile
+
+Keep only when the project makes outgoing HTTP calls.
+
+- HTTP client enabled: `<yes/no>`
+- HTTP client library: `<HTTPX / requests / fetch / Axios / none / other>`
+- Retry layer: `<httpx-retries / urllib3 retries / custom / none / other>`
+- Timeout policy source: `<settings / CODEX_PROJECT.md / project-specific / none>`
+- External dependency stub policy: `<MockTransport / RESPX / pytest-httpserver / provider sandbox / contract fake / none / project-specific>`
+- Active HTTP client skill: `<python-httpx-client / none / other>`
+- Dependency versions source: `<pyproject.toml / package.json / project-specific / none>`
+
+## Security Profile
+
+Keep only when the project has security-sensitive code.
+
+- Security enabled: `<yes/no>`
+- Authentication/authorization policy source: `<project code / docs / none / other>`
+- Password hashing / key derivation library: `<argon2-cffi / bcrypt / passlib / none / other>`
+- Secrets/configuration policy: `<environment / secret manager / settings provider / project-specific / none>`
+- Active security skill: `<python-backend-security / none / other>`
+- Dependency versions source: `<pyproject.toml / package.json / project-specific / none>`
 
 ## Formatting And Linting Profile
 
@@ -339,9 +399,16 @@ Keep only external-system subsections used by the project.
 - Obsidian enabled: `<yes/no>`
 - Obsidian access: `<MCP only / none / other>`
 - Active Obsidian skill: `<obsidian-semantic-notes-mcp / none>`
+- Obsidian project logical root: `<MCP-configured logical root / none>`
+- Obsidian Templater enabled: `<yes/no>`
+- Obsidian Templater policy: `<templates through MCP / no executable template changes without approval / project-specific / none>`
+- Local fallback context outbox: `<path / none>`
+- Local fallback task outbox: `<path / none>`
+- Physical vault filesystem access policy: `<MCP-only; no shell/editor/Git access / project-specific / none>`
 
 ## Dependency Policy
 
+- Existing dependency source of truth: `<pyproject.toml / package.json / go.mod / pom.xml / project-specific / none>`
 - New dependencies require explicit user approval: `<yes/no>`
 - Runtime dependencies policy: `<policy>`
 - Development dependencies policy: `<policy>`
