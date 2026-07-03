@@ -281,18 +281,9 @@ if isinstance(value, str):
 
 ## Comment And Docstring Language Audit
 
-Use this checklist when the task asks to clean, review, or enforce comment/docstring language policy.
+Apply `comment-language-audit` when the task creates, edits, reviews, translates, or audits Python comments/docstrings, or when language compliance is part of the task.
 
-- Do not rely on searches for known bad phrases as the final audit gate. Phrase searches are only locators.
-- Build a complete inventory of comments and docstrings in the affected scope. For Python, prefer AST extraction for docstrings and tokenization for comments.
-- Review every extracted comment/docstring containing foreign-language words.
-- Keep foreign-language tokens only when they are exact identifiers, API fields, class/function/module/package names, commands, paths, protocols, standards, external product names, or real contract values.
-- Rewrite explanatory prose as a complete sentence in the target natural language. Partial translation is not sufficient.
-- Review edited comments/docstrings as complete target-language sentences, not only as translated token sequences.
-- For languages with inflection and agreement, check case, government, word agreement, verb-form consistency, and complete sentence structure.
-- Rewrite awkward literal translations into natural target-language prose while preserving exact code names and contract tokens.
-- Source-language noun stacks must be rewritten into natural target-language noun phrases when the target language requires case, agreement, hyphenation, adjective forms, or genitive constructions.
-- In the final report for a language-policy task, state that all comments/docstrings with foreign-language tokens in the affected scope were reviewed, and state what category of tokens was intentionally left.
+Keep Python-specific docstring syntax and placement checks in this reference. Keep portable natural-language checks, mixed-language prose rules, grammar checks, and noun-phrase audit rules in `comment-language-audit`.
 
 ## Review Checklist
 
@@ -304,12 +295,7 @@ Use this checklist when the task asks to clean, review, or enforce comment/docst
 - [ ] Public functions and methods have useful type hints when they form a stable project contract.
 - [ ] Type annotations avoid deprecated/private typing APIs and are compatible with the active Python version.
 - [ ] Runtime annotation introspection uses documented APIs.
-- [ ] Comments and docstrings follow the natural-language policy declared in `CODEX_PROJECT.md`.
-- [ ] Edited comments/docstrings were reread as complete final sentences, not checked only for the originally targeted phrase.
-- [ ] For language-policy audits, all comments/docstrings in the affected scope were inventoried and every entry with foreign-language words was classified or rewritten.
-- [ ] Edited comments/docstrings are grammatically valid complete prose in the repository target natural language.
-- [ ] For languages with inflection and agreement, case, government, word agreement, verb-form consistency, and sentence structure were checked after translation or rewrite.
-- [ ] Source-language noun stacks were rewritten into natural target-language noun phrases when required by target-language grammar.
+- [ ] Comments and docstrings follow the natural-language policy declared in `CODEX_PROJECT.md`; apply `comment-language-audit` when language-policy compliance is part of the task.
 - [ ] Public docstrings follow PEP 257 structure where applicable.
 - [ ] No mutable default arguments are introduced.
 - [ ] No bare `except` or silent broad exception handling is introduced.
