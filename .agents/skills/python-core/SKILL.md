@@ -84,7 +84,6 @@ For concrete examples, anti-patterns, and review checklist items, load `referenc
 ## Comments And Docstrings
 
 - Follow the natural-language policy declared in `CODEX_PROJECT.md` for comments, docstrings, test comments, and documentation.
-- Apply `comment-language-audit` when the task creates, edits, reviews, translates, or audits comment/docstring prose, or when language compliance is part of the task.
 - Use triple double quotes for docstrings.
 - Put docstrings immediately after the module, class, function, or method definition.
 - Public modules, exported functions/classes, and public methods should have docstrings when they are part of a stable project contract.
