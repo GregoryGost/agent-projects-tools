@@ -314,7 +314,7 @@ Keep only styling subsections used by the project.
 - Tailwind enabled: `<yes/no>`
 - Tailwind version/integration: `<v4 / v3 / project-specific / none>`
 - Tailwind stylesheet entry point: `<path / none>`
-- If SCSS is active, Tailwind import/directives live in SCSS entry point: `<yes/no/not applicable>`
+- Tailwind and SCSS coexistence policy: `<v4 separate plain CSS entry point / existing v3 build pipeline / project-specific / not applicable>`
 - Tailwind class sorting enabled through Prettier: `<yes/no>`
 - Active Tailwind rule/skill: `<tailwind_css.md + tailwind-expert / none>`
 
