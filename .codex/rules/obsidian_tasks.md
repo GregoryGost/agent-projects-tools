@@ -9,6 +9,17 @@ To understand how to work with Obsidian, please use the MCP `Context7`.
 
 The Obsidian project logical root is declared in `CODEX_PROJECT.md` under `Obsidian Project Profile`.
 
+## Request mode and side-effect gate
+
+Before any Obsidian task write, task status change, fallback-outbox write, or fallback synchronization, apply `.codex/rules/request_routing.md` and resolve the request mode and allowed surfaces.
+
+- This rule cannot expand the side effects allowed by `request_routing.md`.
+- In `review-only` and `analysis-only`, do not create, update, move, archive, close, or synchronize tasks; do not change task statuses; and do not create or update task/context fallback files. Perform the requested inspection or analysis and report findings only.
+- In other modes that do not authorize taskbook changes, including `question-only`, `status-only`, `commit-text-only`, `wiki-only`, and `documentation-only`, do not perform taskbook side effects.
+- Read-only Obsidian queries are allowed only when they are relevant to the request and the selected mode allows access to the Obsidian MCP surface.
+- Use the task workflow only when the selected mode and surface gate explicitly allow taskbook changes, such as `taskbook-only` or implementation work with task tracking enabled by `CODEX_PROJECT.md` or explicitly requested by the user.
+- A request for analysis, research, review, or explanation does not by itself authorize task creation or any other taskbook write.
+
 ## Hard rule: Obsidian MCP-only vault access
 
 All Obsidian vault operations must go through the connected Obsidian MCP. The paths `raw/`, `wiki/`, `tasks/`, `archive/`, and the Obsidian project logical root declared in `CODEX_PROJECT.md` are logical Obsidian vault paths for MCP operations, not permission to access the vault through the repository filesystem.
@@ -28,7 +39,7 @@ Fallback files are not Obsidian notes and must not be treated as a second source
 
 ## Workflow: Fallback Synchronization
 
-Use this workflow only for local fallback files created while the Obsidian MCP was unavailable.
+Use this workflow only for local fallback files created while the Obsidian MCP was unavailable and only when the selected request mode and surface gate allow the corresponding Obsidian writes.
 
 1. Before starting new Obsidian-related work, check whether the local fallback outboxes declared in `CODEX_PROJECT.md` contain pending fallback files.
 1. For each pending context or analysis file, create the corresponding Obsidian `raw/` note through the connected Obsidian MCP.
@@ -45,7 +56,7 @@ This repository may be paired with an Obsidian-backed project knowledge base, ta
 
 ## Rules of work
 
-1. Create tasks only when you need to start changing the code.
+1. Create tasks only when implementation is requested and the selected request mode and side-effect gate allow taskbook changes.
 1. Record context (work history) only in the `raw/` folder through the connected Obsidian MCP. If MCP is unavailable, save it temporarily to the local context fallback outbox declared in `CODEX_PROJECT.md` and synchronize it to Obsidian `raw/` through MCP as soon as MCP becomes available.
 1. DO NOT read context (work history) directly from the `raw/` folder. Use Obsidian MCP mechanisms to retrieve this information based on the current hierarchy (see also `Workflow: Query`). Unsynchronized fallback files may be consulted only to continue or recover work created while MCP was unavailable.
 
@@ -102,11 +113,13 @@ When a user asks a question or needs to find historical data on a project:
 The Obsidian plugin is used to work with tasks. Please refer to its documentation - <https://publish.obsidian.md/tasks/Introduction>.
 Formatting and content according to the plugin's requirements, recomendations and best practice.
 
-If requests are received for analysis, research, or code correction, it is necessary:
+Use this workflow only when the selected request mode and side-effect gate allow taskbook changes. Do not enter it for `review-only`, `analysis-only`, or another mode that forbids taskbook side effects.
+
+When this workflow is enabled:
 
 1. The task performer will be the `codex` AI agent; tasks must be created taking into account the specifics of its work, so that the agent correctly completes the task and does not invent unnecessary things.
-1. Be sure to plan and divide the work into tasks before you start.
-1. Get them into Obsidian through the connected Obsidian MCP right away and only then start the main work on these tasks. If MCP is unavailable, save the task draft temporarily to the local task fallback outbox declared in `CODEX_PROJECT.md`, continue only when the task intent is clear, and synchronize the task into Obsidian through MCP as soon as MCP becomes available.
+1. Be sure to plan and divide the implementation work into tasks before you start.
+1. Get them into Obsidian through the connected Obsidian MCP right away and only then start the main implementation work on these tasks. If MCP is unavailable, save the task draft temporarily to the local task fallback outbox declared in `CODEX_PROJECT.md`, continue only when the task intent is clear, and synchronize the task into Obsidian through MCP as soon as MCP becomes available.
 1. Manage existing task statuses through the connected Obsidian MCP. For tasks you've already started working on, set the status to `in progress`. If MCP is unavailable, save the intended status change to the local task fallback outbox declared in `CODEX_PROJECT.md` and synchronize it through MCP as soon as MCP becomes available.
 1. Close tasks through the connected Obsidian MCP as you complete them. If MCP is unavailable, save the intended close/update entry to the local task fallback outbox declared in `CODEX_PROJECT.md` and synchronize it through MCP as soon as MCP becomes available.
 1. If the project is part of a workspace, there should be a root file called `all-tasks-workflow` with an overview of the main project task files, `all-tasks-{project_key}`. The overview page should not have separate sections for `Open Tasks`, `Closed Tasks`, etc. Tasks should be arranged hierarchically (newest on top).
@@ -117,7 +130,7 @@ If requests are received for analysis, research, or code correction, it is neces
 1. Tasks after transitioning to the `done` state should be placed in the `tasks/archive/{project_key}` folder
 1. The task must contain links to notes in the `raw/` folder related to the work on this task, including the most recent context(or analysis or another). This means we first save and write the context and then link it to the task or tasks. If MCP is unavailable, preserve the context in the local context fallback outbox declared in `CODEX_PROJECT.md`, preserve the pending task link/update in the local task fallback outbox declared in `CODEX_PROJECT.md`, and complete the links during fallback synchronization.
 1. The list of sources should not be at the beginning of the article.
-1. Checks performed following corrections should be recorded in the task in a separate "Checks" section. Each check should reflect the date and time of the check in its title and contain a brief summary. If this is a final successful result that moves the task to the "done" category, then the result of this check is marked with an emoji icon and is also recorded as a check.
+1. Checks performed following corrections should be recorded in the task in a separate "Checks" section. Each check should reflect the date and time of the check in its title and contain a brief summary. If this is a final successful result that moves the task to the `done` category, then the result of this check is marked with an emoji icon and is also recorded as a check.
 1. If something changes other than what was necessary for the task, then only what is related to the task needs to be checked and evaluated.
 1. Task statuses should be color-coded (preferably in the background): green for `done`, red for `canceled`, and blue for `in progress`.
 1. DO NOT make edits to the wiki.
