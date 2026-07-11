@@ -13,12 +13,12 @@ import httpx
 
 
 async def fetch_issue(issue_id: int) -> dict:
-  """Получить задачу из внешней системы."""
-  # Плохо: новый connection pool создается на каждый вызов.
-  async with httpx.AsyncClient() as client:
-    response = await client.get(f"https://tracker.example/issues/{issue_id}")
-    response.raise_for_status()
-    return response.json()
+    """Получить задачу из внешней системы."""
+    # Плохо: новый connection pool создается на каждый вызов.
+    async with httpx.AsyncClient() as client:
+        response = await client.get(f"https://tracker.example/issues/{issue_id}")
+        response.raise_for_status()
+        return response.json()
 ```
 
 Good:
@@ -28,16 +28,16 @@ import httpx
 
 
 class TrackerClient:
-  """Клиент для обращений к внешнему tracker API."""
+    """Клиент для обращений к внешнему tracker API."""
 
-  def __init__(self, client: httpx.AsyncClient) -> None:
-    self._client = client
+    def __init__(self, client: httpx.AsyncClient) -> None:
+        self._client = client
 
-  async def fetch_issue(self, issue_id: int) -> dict:
-    """Получить задачу через управляемый HTTPX client."""
-    response = await self._client.get(f"/issues/{issue_id}")
-    response.raise_for_status()
-    return response.json()
+    async def fetch_issue(self, issue_id: int) -> dict:
+        """Получить задачу через управляемый HTTPX client."""
+        response = await self._client.get(f"/issues/{issue_id}")
+        response.raise_for_status()
+        return response.json()
 ```
 
 ### Timeout Omitted
@@ -49,11 +49,11 @@ import httpx
 
 
 async def load_user(client: httpx.AsyncClient, user_id: str) -> dict:
-  """Загрузить пользователя из внешней системы."""
-  # Плохо: политика timeout не задана явно.
-  response = await client.get(f"/users/{user_id}")
-  response.raise_for_status()
-  return response.json()
+    """Загрузить пользователя из внешней системы."""
+    # Плохо: политика timeout не задана явно.
+    response = await client.get(f"/users/{user_id}")
+    response.raise_for_status()
+    return response.json()
 ```
 
 Good:
@@ -66,10 +66,10 @@ timeout = httpx.Timeout(connect=2.0, read=5.0, write=5.0, pool=1.0)
 
 
 async def load_user(client: httpx.AsyncClient, user_id: str) -> dict:
-  """Загрузить пользователя с явной политикой timeout."""
-  response = await client.get(f"/users/{user_id}", timeout=timeout)
-  response.raise_for_status()
-  return response.json()
+    """Загрузить пользователя с явной политикой timeout."""
+    response = await client.get(f"/users/{user_id}", timeout=timeout)
+    response.raise_for_status()
+    return response.json()
 ```
 
 ### Ad-Hoc Retry Instead Of httpx-retries
@@ -83,18 +83,18 @@ import httpx
 
 
 async def load_user(client: httpx.AsyncClient, user_id: str) -> dict:
-  """Загрузить пользователя с самодельным retry."""
-  # Плохо: ad-hoc retry дублирует RetryTransport и легко теряет Retry-After/budget.
-  for _ in range(3):
-    response = await client.get(f"/users/{user_id}")
-    if response.status_code not in {429, 502, 503, 504}:
-      response.raise_for_status()
-      return response.json()
+    """Загрузить пользователя с самодельным retry."""
+    # Плохо: ad-hoc retry дублирует RetryTransport и легко теряет Retry-After/budget.
+    for _ in range(3):
+        response = await client.get(f"/users/{user_id}")
+        if response.status_code not in {429, 502, 503, 504}:
+            response.raise_for_status()
+            return response.json()
 
-    await response.aclose()
-    await asyncio.sleep(1)
+        await response.aclose()
+        await asyncio.sleep(1)
 
-  raise RuntimeError("user request failed")
+    raise RuntimeError("user request failed")
 ```
 
 Good:
@@ -105,26 +105,26 @@ from httpx_retries import Retry, RetryTransport
 
 
 retry = Retry(
-  total=3,
-  backoff_factor=0.5,
-  max_backoff_wait=2.0,
-  status_forcelist={429, 502, 503, 504},
-  allowed_methods={"GET", "HEAD", "OPTIONS"},
-  respect_retry_after_header=True,
-  backoff_jitter=1.0,
-  total_timeout=10.0,
+    total=3,
+    backoff_factor=0.5,
+    max_backoff_wait=2.0,
+    status_forcelist={429, 502, 503, 504},
+    allowed_methods={"GET", "HEAD", "OPTIONS"},
+    respect_retry_after_header=True,
+    backoff_jitter=1.0,
+    total_timeout=10.0,
 )
 transport = RetryTransport(retry=retry)
 
 
 async def create_client() -> httpx.AsyncClient:
-  """Создать HTTPX client с управляемой retry-политикой."""
-  return httpx.AsyncClient(
-    base_url="https://partner.example",
-    transport=transport,
-    timeout=httpx.Timeout(connect=2.0, read=5.0, write=5.0, pool=1.0),
-    trust_env=False,
-  )
+    """Создать HTTPX client с управляемой retry-политикой."""
+    return httpx.AsyncClient(
+        base_url="https://partner.example",
+        transport=transport,
+        timeout=httpx.Timeout(connect=2.0, read=5.0, write=5.0, pool=1.0),
+        trust_env=False,
+    )
 ```
 
 ### HTTPX Transport Retries Treated As Full Retry Policy
@@ -136,13 +136,13 @@ import httpx
 
 
 def create_partner_client() -> httpx.AsyncClient:
-  """Создать HTTP client с ошибочным ожиданием retry по статусам."""
-  # Плохо: AsyncHTTPTransport retries не повторяют ответы 429/502/503/504.
-  transport = httpx.AsyncHTTPTransport(retries=3)
-  return httpx.AsyncClient(
-    base_url="https://partner.example",
-    transport=transport,
-  )
+    """Создать HTTP client с ошибочным ожиданием retry по статусам."""
+    # Плохо: AsyncHTTPTransport retries не повторяют ответы 429/502/503/504.
+    transport = httpx.AsyncHTTPTransport(retries=3)
+    return httpx.AsyncClient(
+        base_url="https://partner.example",
+        transport=transport,
+    )
 ```
 
 Good:
@@ -153,21 +153,21 @@ from httpx_retries import Retry, RetryTransport
 
 
 def create_partner_transport() -> RetryTransport:
-  """Создать transport с retry по HTTP-статусам и Retry-After."""
-  retry = Retry(
-    total=3,
-    backoff_factor=0.5,
-    max_backoff_wait=2.0,
-    status_forcelist={429, 502, 503, 504},
-    allowed_methods={"GET", "HEAD", "OPTIONS"},
-    respect_retry_after_header=True,
-    backoff_jitter=1.0,
-    total_timeout=10.0,
-  )
-  base_transport = httpx.AsyncHTTPTransport(
-    limits=httpx.Limits(max_connections=20, max_keepalive_connections=10),
-  )
-  return RetryTransport(transport=base_transport, retry=retry)
+    """Создать transport с retry по HTTP-статусам и Retry-After."""
+    retry = Retry(
+        total=3,
+        backoff_factor=0.5,
+        max_backoff_wait=2.0,
+        status_forcelist={429, 502, 503, 504},
+        allowed_methods={"GET", "HEAD", "OPTIONS"},
+        respect_retry_after_header=True,
+        backoff_jitter=1.0,
+        total_timeout=10.0,
+    )
+    base_transport = httpx.AsyncHTTPTransport(
+        limits=httpx.Limits(max_connections=20, max_keepalive_connections=10),
+    )
+    return RetryTransport(transport=base_transport, retry=retry)
 ```
 
 ### Connection Limits Treated As Rate Limits
@@ -179,12 +179,12 @@ import httpx
 
 
 def create_partner_client() -> httpx.AsyncClient:
-  """Создать HTTP client с ошибочным ожиданием request-per-second лимита."""
-  # Плохо: max_connections ограничивает пул соединений, а не квоту запросов в секунду.
-  return httpx.AsyncClient(
-    base_url="https://partner.example",
-    limits=httpx.Limits(max_connections=5),
-  )
+    """Создать HTTP client с ошибочным ожиданием request-per-second лимита."""
+    # Плохо: max_connections ограничивает пул соединений, а не квоту запросов в секунду.
+    return httpx.AsyncClient(
+        base_url="https://partner.example",
+        limits=httpx.Limits(max_connections=5),
+    )
 ```
 
 Good:
@@ -196,36 +196,36 @@ import httpx
 
 
 class RateLimiter(Protocol):
-  """Интерфейс rate limiter, уже принятый в проекте."""
+    """Интерфейс rate limiter, уже принятый в проекте."""
 
-  async def acquire(self) -> None:
-    """Дождаться доступного quota slot."""
-    ...
+    async def acquire(self) -> None:
+        """Дождаться доступного quota slot."""
+        ...
 
 
 class PartnerClient:
-  """Клиент partner API с отдельными connection и request-rate лимитами."""
+    """Клиент partner API с отдельными connection и request-rate лимитами."""
 
-  def __init__(self, client: httpx.AsyncClient, rate_limiter: RateLimiter) -> None:
-    self._client = client
-    self._rate_limiter = rate_limiter
+    def __init__(self, client: httpx.AsyncClient, rate_limiter: RateLimiter) -> None:
+        self._client = client
+        self._rate_limiter = rate_limiter
 
-  async def load_user(self, user_id: str) -> dict:
-    """Загрузить пользователя с соблюдением quota upstream API."""
-    await self._rate_limiter.acquire()
-    response = await self._client.get(f"/users/{user_id}")
-    response.raise_for_status()
-    return response.json()
+    async def load_user(self, user_id: str) -> dict:
+        """Загрузить пользователя с соблюдением quota upstream API."""
+        await self._rate_limiter.acquire()
+        response = await self._client.get(f"/users/{user_id}")
+        response.raise_for_status()
+        return response.json()
 
 
 def create_partner_client() -> httpx.AsyncClient:
-  """Создать HTTP client с настройкой connection pool."""
-  return httpx.AsyncClient(
-    base_url="https://partner.example",
-    limits=httpx.Limits(max_connections=20, max_keepalive_connections=10),
-    timeout=httpx.Timeout(connect=2.0, read=5.0, write=5.0, pool=1.0),
-    trust_env=False,
-  )
+    """Создать HTTP client с настройкой connection pool."""
+    return httpx.AsyncClient(
+        base_url="https://partner.example",
+        limits=httpx.Limits(max_connections=20, max_keepalive_connections=10),
+        timeout=httpx.Timeout(connect=2.0, read=5.0, write=5.0, pool=1.0),
+        trust_env=False,
+    )
 ```
 
 ### Blindly Retrying POST
@@ -238,19 +238,19 @@ from httpx_retries import Retry, RetryTransport
 
 
 retry = Retry(
-  total=3,
-  status_forcelist={429, 502, 503, 504},
-  # Плохо: POST добавлен в retry без idempotency contract.
-  allowed_methods={"GET", "POST"},
+    total=3,
+    status_forcelist={429, 502, 503, 504},
+    # Плохо: POST добавлен в retry без idempotency contract.
+    allowed_methods={"GET", "POST"},
 )
 client = httpx.AsyncClient(transport=RetryTransport(retry=retry))
 
 
 async def create_payment(payload: dict) -> dict:
-  """Создать платеж во внешней системе."""
-  response = await client.post("/payments", json=payload)
-  response.raise_for_status()
-  return response.json()
+    """Создать платеж во внешней системе."""
+    response = await client.post("/payments", json=payload)
+    response.raise_for_status()
+    return response.json()
 ```
 
 Good:
@@ -261,24 +261,24 @@ from httpx_retries import Retry, RetryTransport
 
 
 retry = Retry(
-  total=3,
-  status_forcelist={429, 502, 503, 504},
-  allowed_methods={"POST"},
-  respect_retry_after_header=True,
-  total_timeout=10.0,
+    total=3,
+    status_forcelist={429, 502, 503, 504},
+    allowed_methods={"POST"},
+    respect_retry_after_header=True,
+    total_timeout=10.0,
 )
 client = httpx.AsyncClient(transport=RetryTransport(retry=retry))
 
 
 async def create_payment(payload: dict, idempotency_key: str) -> dict:
-  """Создать платеж с upstream idempotency key."""
-  response = await client.post(
-    "/payments",
-    json=payload,
-    headers={"Idempotency-Key": idempotency_key},
-  )
-  response.raise_for_status()
-  return response.json()
+    """Создать платеж с upstream idempotency key."""
+    response = await client.post(
+        "/payments",
+        json=payload,
+        headers={"Idempotency-Key": idempotency_key},
+    )
+    response.raise_for_status()
+    return response.json()
 ```
 
 ### Retry-After Ignored After Retries Are Exhausted
@@ -295,11 +295,11 @@ client = httpx.AsyncClient(transport=RetryTransport(retry=retry))
 
 
 async def load_profile(user_id: str) -> dict:
-  """Загрузить профиль пользователя."""
-  # Плохо: если после всех retry остался 429, он теряется как обычный HTTPStatusError.
-  response = await client.get(f"/profiles/{user_id}")
-  response.raise_for_status()
-  return response.json()
+    """Загрузить профиль пользователя."""
+    # Плохо: если после всех retry остался 429, он теряется как обычный HTTPStatusError.
+    response = await client.get(f"/profiles/{user_id}")
+    response.raise_for_status()
+    return response.json()
 ```
 
 Good:
@@ -313,58 +313,58 @@ from httpx_retries import Retry, RetryTransport
 
 
 class UpstreamRateLimitedError(RuntimeError):
-  """Upstream API вернул rate-limit ответ после исчерпания retry."""
+    """Upstream API вернул rate-limit ответ после исчерпания retry."""
 
-  def __init__(self, retry_after: float | None) -> None:
-    super().__init__("upstream rate limit exceeded")
-    self.retry_after = retry_after
+    def __init__(self, retry_after: float | None) -> None:
+        super().__init__("upstream rate limit exceeded")
+        self.retry_after = retry_after
 
 
 def parse_retry_after(value: str | None, now: datetime) -> float | None:
-  """Преобразовать Retry-After в задержку в секундах."""
-  if value is None:
-    return None
+    """Преобразовать Retry-After в задержку в секундах."""
+    if value is None:
+        return None
 
-  try:
-    delay = int(value)
-  except ValueError:
     try:
-      retry_at = parsedate_to_datetime(value)
-    except (TypeError, ValueError):
-      return None
+        delay = int(value)
+    except ValueError:
+        try:
+            retry_at = parsedate_to_datetime(value)
+        except (TypeError, ValueError):
+            return None
 
-    if retry_at.tzinfo is None:
-      retry_at = retry_at.replace(tzinfo=UTC)
+        if retry_at.tzinfo is None:
+            retry_at = retry_at.replace(tzinfo=UTC)
 
-    return max(0.0, (retry_at - now).total_seconds())
+        return max(0.0, (retry_at - now).total_seconds())
 
-  return max(0.0, float(delay))
+    return max(0.0, float(delay))
 
 
 retry = Retry(
-  total=2,
-  status_forcelist={429},
-  allowed_methods={"GET"},
-  respect_retry_after_header=True,
-  max_backoff_wait=2.0,
-  total_timeout=5.0,
+    total=2,
+    status_forcelist={429},
+    allowed_methods={"GET"},
+    respect_retry_after_header=True,
+    max_backoff_wait=2.0,
+    total_timeout=5.0,
 )
 client = httpx.AsyncClient(transport=RetryTransport(retry=retry))
 
 
 async def load_profile(user_id: str) -> dict:
-  """Загрузить профиль пользователя с явной обработкой финального 429."""
-  response = await client.get(f"/profiles/{user_id}")
+    """Загрузить профиль пользователя с явной обработкой финального 429."""
+    response = await client.get(f"/profiles/{user_id}")
 
-  if response.status_code == 429:
-    retry_after = parse_retry_after(
-      response.headers.get("Retry-After"),
-      now=datetime.now(tz=UTC),
-    )
-    raise UpstreamRateLimitedError(retry_after=retry_after)
+    if response.status_code == 429:
+        retry_after = parse_retry_after(
+            response.headers.get("Retry-After"),
+            now=datetime.now(tz=UTC),
+        )
+        raise UpstreamRateLimitedError(retry_after=retry_after)
 
-  response.raise_for_status()
-  return response.json()
+    response.raise_for_status()
+    return response.json()
 ```
 
 ### Large Retry-After Without Total Timeout
@@ -377,11 +377,11 @@ from httpx_retries import Retry, RetryTransport
 
 
 retry = Retry(
-  total=3,
-  status_forcelist={429},
-  respect_retry_after_header=True,
-  # Плохо: нет total_timeout, а max_backoff_wait слишком велик для request path.
-  max_backoff_wait=3600.0,
+    total=3,
+    status_forcelist={429},
+    respect_retry_after_header=True,
+    # Плохо: нет total_timeout, а max_backoff_wait слишком велик для request path.
+    max_backoff_wait=3600.0,
 )
 client = httpx.AsyncClient(transport=RetryTransport(retry=retry))
 ```
@@ -394,18 +394,18 @@ from httpx_retries import Retry, RetryTransport
 
 
 retry = Retry(
-  total=3,
-  status_forcelist={429},
-  allowed_methods={"GET", "HEAD", "OPTIONS"},
-  respect_retry_after_header=True,
-  backoff_factor=0.5,
-  backoff_jitter=1.0,
-  max_backoff_wait=2.0,
-  total_timeout=5.0,
+    total=3,
+    status_forcelist={429},
+    allowed_methods={"GET", "HEAD", "OPTIONS"},
+    respect_retry_after_header=True,
+    backoff_factor=0.5,
+    backoff_jitter=1.0,
+    max_backoff_wait=2.0,
+    total_timeout=5.0,
 )
 client = httpx.AsyncClient(
-  transport=RetryTransport(retry=retry),
-  timeout=httpx.Timeout(connect=2.0, read=5.0, write=5.0, pool=1.0),
+    transport=RetryTransport(retry=retry),
+    timeout=httpx.Timeout(connect=2.0, read=5.0, write=5.0, pool=1.0),
 )
 ```
 
@@ -418,12 +418,12 @@ import httpx
 
 
 async def fetch_preview(url: str) -> bytes:
-  """Скачать страницу для предпросмотра."""
-  # Плохо: пользователь может указать внутренний адрес.
-  async with httpx.AsyncClient() as client:
-    response = await client.get(url)
-    response.raise_for_status()
-    return response.content
+    """Скачать страницу для предпросмотра."""
+    # Плохо: пользователь может указать внутренний адрес.
+    async with httpx.AsyncClient() as client:
+        response = await client.get(url)
+        response.raise_for_status()
+        return response.content
 ```
 
 Good:
@@ -438,20 +438,20 @@ ALLOWED_HOSTS = {"example.com", "cdn.example.com"}
 
 
 def validate_external_url(url: str) -> str:
-  """Проверить внешний URL по allowlist."""
-  parsed = urlparse(url)
-  if parsed.scheme not in {"http", "https"}:
-    raise ValueError("unsupported URL scheme")
-  if parsed.hostname not in ALLOWED_HOSTS:
-    raise ValueError("unsupported URL host")
-  return url
+    """Проверить внешний URL по allowlist."""
+    parsed = urlparse(url)
+    if parsed.scheme not in {"http", "https"}:
+        raise ValueError("unsupported URL scheme")
+    if parsed.hostname not in ALLOWED_HOSTS:
+        raise ValueError("unsupported URL host")
+    return url
 
 
 async def fetch_preview(client: httpx.AsyncClient, url: str) -> bytes:
-  """Скачать страницу только после проверки URL."""
-  response = await client.get(validate_external_url(url), follow_redirects=False)
-  response.raise_for_status()
-  return response.content
+    """Скачать страницу только после проверки URL."""
+    response = await client.get(validate_external_url(url), follow_redirects=False)
+    response.raise_for_status()
+    return response.content
 ```
 
 ### Leaking Authorization Header In Logs
@@ -468,12 +468,12 @@ logger = logging.getLogger(__name__)
 
 
 async def call_partner(client: httpx.AsyncClient, token: str) -> dict:
-  """Вызвать partner API."""
-  headers = {"Authorization": f"Bearer {token}"}
-  logger.info("partner request headers=%s", headers)
-  response = await client.get("/profile", headers=headers)
-  response.raise_for_status()
-  return response.json()
+    """Вызвать partner API."""
+    headers = {"Authorization": f"Bearer {token}"}
+    logger.info("partner request headers=%s", headers)
+    response = await client.get("/profile", headers=headers)
+    response.raise_for_status()
+    return response.json()
 ```
 
 Good:
@@ -488,12 +488,12 @@ logger = logging.getLogger(__name__)
 
 
 async def call_partner(client: httpx.AsyncClient, token: str) -> dict:
-  """Вызвать partner API без утечки токена в лог."""
-  headers = {"Authorization": f"Bearer {token}"}
-  logger.info("partner request method=GET path=/profile")
-  response = await client.get("/profile", headers=headers)
-  response.raise_for_status()
-  return response.json()
+    """Вызвать partner API без утечки токена в лог."""
+    headers = {"Authorization": f"Bearer {token}"}
+    logger.info("partner request method=GET path=/profile")
+    response = await client.get("/profile", headers=headers)
+    response.raise_for_status()
+    return response.json()
 ```
 
 ### Streaming Response Not Closed
@@ -505,10 +505,10 @@ import httpx
 
 
 async def download_report(client: httpx.AsyncClient) -> bytes:
-  """Скачать отчет потоком."""
-  # Плохо: response не закрывается явно.
-  response = await client.stream("GET", "/reports/current").__aenter__()
-  return await response.aread()
+    """Скачать отчет потоком."""
+    # Плохо: response не закрывается явно.
+    response = await client.stream("GET", "/reports/current").__aenter__()
+    return await response.aread()
 ```
 
 Good:
@@ -518,19 +518,19 @@ import httpx
 
 
 async def download_report(client: httpx.AsyncClient, max_bytes: int) -> bytes:
-  """Скачать отчет с ограничением размера."""
-  chunks: list[bytes] = []
-  received = 0
+    """Скачать отчет с ограничением размера."""
+    chunks: list[bytes] = []
+    received = 0
 
-  async with client.stream("GET", "/reports/current") as response:
-    response.raise_for_status()
-    async for chunk in response.aiter_bytes():
-      received += len(chunk)
-      if received > max_bytes:
-        raise ValueError("response is too large")
-      chunks.append(chunk)
+    async with client.stream("GET", "/reports/current") as response:
+        response.raise_for_status()
+        async for chunk in response.aiter_bytes():
+            received += len(chunk)
+            if received > max_bytes:
+                raise ValueError("response is too large")
+            chunks.append(chunk)
 
-  return b"".join(chunks)
+    return b"".join(chunks)
 ```
 
 ### External HTTP Call Inside DB Transaction
@@ -542,11 +542,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 
 async def sync_customer(session: AsyncSession, customer_id: int, crm_client) -> None:
-  """Синхронизировать клиента с внешней CRM."""
-  async with session.begin():
-    # Плохо: transaction удерживается во время сетевого вызова.
-    customer_payload = await crm_client.get_customer(customer_id)
-    await repository.update_customer(session, customer_id, customer_payload)
+    """Синхронизировать клиента с внешней CRM."""
+    async with session.begin():
+        # Плохо: transaction удерживается во время сетевого вызова.
+        customer_payload = await crm_client.get_customer(customer_id)
+        await repository.update_customer(session, customer_id, customer_payload)
 ```
 
 Good:
@@ -556,11 +556,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 
 async def sync_customer(session: AsyncSession, customer_id: int, crm_client) -> None:
-  """Синхронизировать клиента короткой DB transaction."""
-  customer_payload = await crm_client.get_customer(customer_id)
+    """Синхронизировать клиента короткой DB transaction."""
+    customer_payload = await crm_client.get_customer(customer_id)
 
-  async with session.begin():
-    await repository.update_customer(session, customer_id, customer_payload)
+    async with session.begin():
+        await repository.update_customer(session, customer_id, customer_payload)
 ```
 
 ### Implicit trust_env Behavior
@@ -572,9 +572,9 @@ import httpx
 
 
 def create_partner_client() -> httpx.AsyncClient:
-  """Создать HTTP client для partner API."""
-  # Плохо: client неявно доверяет proxy/SSL переменным окружения.
-  return httpx.AsyncClient(base_url="https://partner.example")
+    """Создать HTTP client для partner API."""
+    # Плохо: client неявно доверяет proxy/SSL переменным окружения.
+    return httpx.AsyncClient(base_url="https://partner.example")
 ```
 
 Good:
@@ -584,11 +584,11 @@ import httpx
 
 
 def create_partner_client() -> httpx.AsyncClient:
-  """Создать HTTP client с явной политикой окружения."""
-  return httpx.AsyncClient(
-    base_url="https://partner.example",
-    trust_env=False,
-  )
+    """Создать HTTP client с явной политикой окружения."""
+    return httpx.AsyncClient(
+        base_url="https://partner.example",
+        trust_env=False,
+    )
 ```
 
 ## Review Checklist
