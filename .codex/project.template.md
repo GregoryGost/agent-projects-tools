@@ -87,7 +87,7 @@ List only rule files active in this project.
 - Python/backend rules: `<python_fastapi.md / python_cache.md / none>`
 - Formatting/linting rules: `<prettier_formatting.md / eslint_typescript.md / none>`
 - Language rules: `<typescript_core.md / typescript_testing.md / none / other>`
-- Framework rules: `<vue_frontend.md / vue_router.md / pinia.md / vueuse.md / none / other>`
+- Framework rules: `<vue3_typescript_vite.md / vue_router.md / pinia.md / vueuse.md / none / other>`
 - Styling rules: `<css.md / css_animation.md / tailwind_css.md / scss_styling.md / none>`
 - UI/browser validation rules: `<ui_ux_validation.md / playwright_ui_validation.md / none>`
 - E2E rules: `<python_service_e2e_testing.md / vue_playwright_e2e_testing.md / nodejs_service_e2e_testing.md / none>`
@@ -101,7 +101,7 @@ List only reusable skills active in this project.
 - Python skills: `<python-core / python-testing / python-fastapi-expert / python-cache / none / other>`
 - Language skills: `<typescript-core / typescript-testing / none / other>`
 - Formatting/linting skills: `<prettier-formatting / eslint-typescript / none>`
-- Framework skills: `<vue-expert / vue-router-expert / pinia-expert / vueuse-expert / none>`
+- Framework skills: `<vue3-typescript-vite-expert / vue-router-expert / pinia-expert / vueuse-expert / none>`
 - Styling skills: `<css-expert / css-animation-expert / tailwind-expert / scss-expert / none>`
 - UI/browser validation skills: `<ui-ux-review / playwright-ui-checks-mcp / none>`
 - E2E skills: `<python-service-e2e-testing / vue-playwright-e2e-testing / nodejs-service-e2e-testing / none>`
@@ -279,7 +279,7 @@ Keep only for non-browser Node.js services.
 
 ## Vue 3 + TypeScript + Vite Profile
 
-Keep only when `vue3-typescript-vite` is active. This profile and the `vue_frontend.md + vue-expert` pair do not apply to Vue 2, JavaScript-only Vue projects, or Vue projects using a build tool other than Vite; use a separate project-specific profile, rule, and skill for those stacks.
+Keep only when `vue3-typescript-vite` is active. This profile and the `vue3_typescript_vite.md + vue3-typescript-vite-expert` pair do not apply to Vue 2, JavaScript-only Vue projects, or Vue projects using a build tool other than Vite; use a separate project-specific profile, rule, and skill for those stacks.
 
 - Vue frontend enabled: `<yes/no>`
 - Vue version: `3.x`
