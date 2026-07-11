@@ -2,7 +2,7 @@
 
 Use this reference when designing or reviewing VueUse usage in Vue + TypeScript projects.
 
-This reference complements `vue-expert` and `typescript-core`: Vue component and TypeScript rules stay in those base skills, while this file focuses on VueUse utility selection, lifecycle cleanup, browser API wrappers, reactive arguments, storage, event filters, SSR/browser guards, and project exclusions.
+This reference complements `vue3-typescript-vite-expert` and `typescript-core`: Vue component and TypeScript rules stay in those base skills, while this file focuses on VueUse utility selection, lifecycle cleanup, browser API wrappers, reactive arguments, storage, event filters, SSR/browser guards, and project exclusions.
 
 ## Core Principles
 
