@@ -9,7 +9,7 @@ This rule is for Vue frontend projects only. It does not replace Jest TypeScript
 Use together with:
 
 - `typescript-core`;
-- `vue-expert`;
+- `vue3-typescript-vite-expert`;
 - `vue-playwright-e2e-testing`.
 
 Use related overlay skills only when active:
