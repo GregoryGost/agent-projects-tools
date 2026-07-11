@@ -358,8 +358,8 @@ Keep only testing subsections used by the project.
 
 - TypeScript testing enabled: `<yes/no>`
 - Test runner: `<Jest / Vitest / project-specific / none>`
-- Unit test command: `<command or none>`
-- Integration test command: `<command or none>`
+- Unit test command: `<command / none>`
+- Integration test command: `<command / none>`
 - Active test rules/skills: `<typescript_testing.md + typescript-testing / none>`
 
 ### Vue Unit / Component Testing
