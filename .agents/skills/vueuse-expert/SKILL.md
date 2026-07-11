@@ -7,7 +7,7 @@ description: "Use for VueUse work and review: composable utility selection, vers
 
 Use this skill only when VueUse is active in `CODEX_PROJECT.md` or the task directly touches existing VueUse usage.
 
-Apply `.codex/rules/vueuse.md`, `vue-expert`, and `typescript-core` together with this skill.
+Apply `.codex/rules/vueuse.md`, `vue3-typescript-vite-expert`, and `typescript-core` together with this skill.
 
 Load references when needed:
 
