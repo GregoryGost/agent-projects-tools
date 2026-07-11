@@ -5,7 +5,7 @@ Load this file when implementing or reviewing Vue frontend changes.
 ## Project Context
 
 - [ ] `CODEX_PROJECT.md` was read.
-- [ ] `vue-frontend` is active or the task explicitly touches Vue code.
+- [ ] `vue3-typescript-vite` is active or the task explicitly touches Vue code.
 - [ ] Active overlays are known and not assumed.
 - [ ] Package versions and project scripts were checked when relevant.
 
