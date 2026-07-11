@@ -335,6 +335,10 @@ async def create_event(writer_queue: EventWriterQueue, payload: EventCreateReque
 
 ## Review Checklist
 
+Apply the general checklist to every SQLAlchemy + SQLite project. Apply the single-writer queue checklist only when `CODEX_PROJECT.md` declares `Runtime write policy: single writer queue` or the task directly reviews that architecture. When another runtime write policy is active, review that policy without requiring a writer queue.
+
+### General SQLite Checklist
+
 - [ ] SQL/ORM details stay in repositories; services own orchestration and transactions.
 - [ ] Engines are configured once; sessions are short-lived and not shared across concurrent tasks.
 - [ ] Repositories do not commit unexpectedly.
@@ -347,6 +351,12 @@ async def create_event(writer_queue: EventWriterQueue, payload: EventCreateReque
 - [ ] `IntegrityError` is mapped to domain/API errors outside repositories.
 - [ ] Cache invalidation happens only after successful commit and follows existing cashews rules.
 - [ ] Integration tests use temporary file SQLite when PRAGMA, WAL, locking, or multiple connections matter.
+- [ ] The implementation matches the runtime write policy declared in `CODEX_PROJECT.md`; direct sessions and unit-of-work writes are not rejected merely because they do not use a queue.
+
+### Single-Writer Queue Checklist
+
+Apply this subsection only when `CODEX_PROJECT.md` declares `Runtime write policy: single writer queue` or the task directly reviews that pattern.
+
 - [ ] All normal runtime SQLite writes go through the single writer queue.
 - [ ] Runtime mutations are modeled as explicit write commands/events.
 - [ ] Routers, request dependencies, ordinary services, read repositories, and arbitrary background tasks do not open write sessions directly.
