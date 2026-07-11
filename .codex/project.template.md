@@ -57,7 +57,7 @@ Selection examples:
 - `eslint-typescript`
 - `prettier-formatting`
 - `nodejs-service-e2e-testing`
-- `vue-frontend`
+- `vue3-typescript-vite`
 - `vue-router`
 - `pinia`
 - `vueuse`
@@ -277,14 +277,14 @@ Keep only for non-browser Node.js services.
 - Active Node.js service E2E rule: `<nodejs_service_e2e_testing.md / none>`
 - Active Node.js service E2E skill: `<nodejs-service-e2e-testing / none>`
 
-## Vue Frontend Profile
+## Vue 3 + TypeScript + Vite Profile
 
-Keep only when `vue-frontend` is active.
+Keep only when `vue3-typescript-vite` is active. This profile and the `vue_frontend.md + vue-expert` pair do not apply to Vue 2, JavaScript-only Vue projects, or Vue projects using a build tool other than Vite; use a separate project-specific profile, rule, and skill for those stacks.
 
 - Vue frontend enabled: `<yes/no>`
-- Vue version: `<3.x / project-specific / none>`
-- TypeScript in Vue SFCs: `<yes/no>`
-- Build tool: `<Vite / project-specific / none>`
+- Vue version: `3.x`
+- TypeScript in Vue SFCs: `yes`
+- Build tool: `Vite`
 - SFC style policy: `<plain CSS / SCSS / CSS Modules / Tailwind utilities / mixed / project-specific>`
 - Vue Router enabled: `<yes/no>`
 - Pinia enabled: `<yes/no>`
