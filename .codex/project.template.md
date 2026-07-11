@@ -72,7 +72,9 @@ Selection examples:
 - `scss`
 - `ui-ux-validation`
 - `playwright-ui-validation-mcp`
-- `obsidian-mcp`
+- `obsidian-mcp-core`
+- `obsidian-llm-wiki`
+- `obsidian-taskbook`
 - `jira-data-center`
 
 Active profiles for this project:
@@ -91,6 +93,7 @@ List only rule files active in this project.
 - Styling rules: `<css.md / css_animation.md / tailwind_css.md / scss_styling.md / none>`
 - UI/browser validation rules: `<ui_ux_validation.md / playwright_ui_validation.md / none>`
 - E2E rules: `<python_service_e2e_testing.md / vue_playwright_e2e_testing.md / nodejs_service_e2e_testing.md / none>`
+- Obsidian rules: `<obsidian_llm_wiki.md / obsidian_taskbook.md / none>`
 - External-system rules: `<active list or none>`
 
 ## Active Skills
@@ -108,7 +111,8 @@ List only reusable skills active in this project.
 - Database skills: `<python-sqlalchemy-core / python-sqlalchemy-sqlite / none / other>`
 - HTTP/client skills: `<python-httpx-client / none / other>`
 - Security skills: `<python-backend-security / none / other>`
-- External-system skills: `<obsidian-semantic-notes-mcp / jira-data-center / none / other>`
+- Obsidian skills: `<obsidian-mcp-core / obsidian-llm-wiki / obsidian-taskbook / none>`
+- External-system skills: `<jira-data-center / none / other>`
 
 ## Build And Validation Commands
 
@@ -399,17 +403,45 @@ Keep only when framework-neutral TypeScript unit or integration testing through 
 
 Keep only external-system subsections used by the project.
 
-### Obsidian
+### Obsidian MCP Core
 
-- Obsidian enabled: `<yes/no>`
-- Obsidian access: `<MCP only / none / other>`
-- Active Obsidian skill: `<obsidian-semantic-notes-mcp / none>`
+Keep whenever any Obsidian profile is active. The wiki and taskbook profiles require this core profile but do not activate each other.
+
+- Obsidian MCP core enabled: `<yes/no>`
+- Semantic Notes Vault MCP server name: `<name / none>`
 - Obsidian project logical root: `<MCP-configured logical root / none>`
+- Active core skill: `<obsidian-mcp-core / none>`
+- Physical vault filesystem access policy: `MCP-only; no shell/editor/script/Git access`
 - Obsidian Templater enabled: `<yes/no>`
-- Obsidian Templater policy: `<templates through MCP / no executable template changes without approval / project-specific / none>`
-- Local fallback context outbox: `<path / none>`
-- Local fallback task outbox: `<path / none>`
-- Physical vault filesystem access policy: `<MCP-only; no shell/editor/Git access / project-specific / none>`
+- Templater policy: `<templates through MCP / no executable template changes without approval / project-specific / none>`
+- PUML Viewer enabled: `<yes/no>`
+
+### Obsidian LLM Wiki
+
+Keep only when `obsidian-llm-wiki` is active. Requires `obsidian-mcp-core`.
+
+- Obsidian LLM Wiki enabled: `<yes/no>`
+- Active wiki rule/skill: `<obsidian_llm_wiki.md + obsidian-llm-wiki / none>`
+- Raw sources logical path: `<raw/ / project-specific / none>`
+- Wiki logical path: `<wiki/ / project-specific / none>`
+- Archive logical path: `<archive/ / project-specific / none>`
+- Wiki index path: `<wiki/index.md / project-specific / none>`
+- Source register path: `<wiki/Source Notes.md / project-specific / none>`
+- Wiki log path: `<wiki/log.md / project-specific / none>`
+- Local context fallback outbox: `<path / none>`
+
+### Obsidian Taskbook
+
+Keep only when `obsidian-taskbook` is active. Requires `obsidian-mcp-core`; does not require `obsidian-llm-wiki`.
+
+- Obsidian taskbook enabled: `<yes/no>`
+- Active taskbook rule/skill: `<obsidian_taskbook.md + obsidian-taskbook / none>`
+- Task root logical path: `<tasks/{project_key} / project-specific / none>`
+- Project task overview path: `<tasks/all-tasks-{project_key} / project-specific / none>`
+- Workspace task overview path: `<all-tasks-workflow / project-specific / none>`
+- Task archive logical path: `<tasks/archive/{project_key} / project-specific / none>`
+- Local task fallback outbox: `<path / none>`
+- Request-routing side-effect gate required: `yes`
 
 ## Dependency Policy
 
