@@ -33,10 +33,10 @@ from pydantic import BaseModel, Field
 
 
 class UserRead(BaseModel):
-  """Публичная модель пользователя."""
+    """Публичная модель пользователя."""
 
-  id: int = Field(description="ID")
-  status: str = Field(description="Status")
+    id: int = Field(description="ID")
+    status: str = Field(description="Status")
 ```
 
 Good:
@@ -49,46 +49,46 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class UserStatus(StrEnum):
-  """Статус пользователя в публичном API."""
+    """Статус пользователя в публичном API."""
 
-  ACTIVE = "active"
-  BLOCKED = "blocked"
+    ACTIVE = "active"
+    BLOCKED = "blocked"
 
 
 class UserRead(BaseModel):
-  """Публичная модель пользователя."""
+    """Публичная модель пользователя."""
 
-  model_config = ConfigDict(
-    json_schema_extra={
-      "examples": [
-        {
-          "id": 1001,
-          "email": "user@example.test",
-          "status": "active",
-          "created_at": "2026-06-19T12:30:00Z",
+    model_config = ConfigDict(
+        json_schema_extra={
+            "examples": [
+                {
+                    "id": 1001,
+                    "email": "user@example.test",
+                    "status": "active",
+                    "created_at": "2026-06-19T12:30:00Z",
+                }
+            ]
         }
-      ]
-    }
-  )
+    )
 
-  id: int = Field(
-    description="Server-generated stable user identifier.",
-    examples=[1001],
-    ge=1,
-  )
-  email: str = Field(
-    description="User email address used for notifications and login.",
-    examples=["user@example.test"],
-    max_length=320,
-  )
-  status: UserStatus = Field(
-    description="Current account state. `active` users can use the API; `blocked` users cannot authenticate.",
-    examples=[UserStatus.ACTIVE],
-  )
-  created_at: datetime = Field(
-    description="UTC timestamp when the user record was created by the server.",
-    examples=["2026-06-19T12:30:00Z"],
-  )
+    id: int = Field(
+        description="Server-generated stable user identifier.",
+        examples=[1001],
+        ge=1,
+    )
+    email: str = Field(
+        description="User email address used for notifications and login.",
+        examples=["user@example.test"],
+        max_length=320,
+    )
+    status: UserStatus = Field(
+        description="Current account state. `active` users can use the API; `blocked` users cannot authenticate.",
+        examples=[UserStatus.ACTIVE],
+    )
+    created_at: datetime = Field(
+        description="UTC timestamp when the user record was created by the server.",
+        examples=["2026-06-19T12:30:00Z"],
+    )
 ```
 
 ## Request And Response Model Separation
@@ -102,12 +102,12 @@ from pydantic import BaseModel
 
 
 class User(BaseModel):
-  """Плохо: одна модель используется для всех API-контрактов."""
+    """Плохо: одна модель используется для всех API-контрактов."""
 
-  id: int | None = None
-  email: str
-  password: str | None = None
-  is_admin: bool = False
+    id: int | None = None
+    email: str
+    password: str | None = None
+    is_admin: bool = False
 ```
 
 Good:
@@ -117,56 +117,56 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class UserCreateRequest(BaseModel):
-  """Тело запроса создания пользователя."""
+    """Тело запроса создания пользователя."""
 
-  model_config = ConfigDict(
-    json_schema_extra={
-      "examples": [
-        {
-          "email": "user@example.test",
-          "password": "correct-horse-battery-staple",
+    model_config = ConfigDict(
+        json_schema_extra={
+            "examples": [
+                {
+                    "email": "user@example.test",
+                    "password": "correct-horse-battery-staple",
+                }
+            ]
         }
-      ]
-    }
-  )
+    )
 
-  email: str = Field(
-    description="Email address for the new user account.",
-    examples=["user@example.test"],
-    max_length=320,
-  )
-  password: str = Field(
-    description="Initial password. It is accepted only in requests and is never returned.",
-    examples=["correct-horse-battery-staple"],
-    min_length=12,
-    max_length=128,
-  )
+    email: str = Field(
+        description="Email address for the new user account.",
+        examples=["user@example.test"],
+        max_length=320,
+    )
+    password: str = Field(
+        description="Initial password. It is accepted only in requests and is never returned.",
+        examples=["correct-horse-battery-staple"],
+        min_length=12,
+        max_length=128,
+    )
 
 
 class UserUpdateRequest(BaseModel):
-  """Тело запроса обновления пользователя."""
+    """Тело запроса обновления пользователя."""
 
-  email: str | None = Field(
-    default=None,
-    description="New email address. If omitted, the current email is not changed.",
-    examples=["new-user@example.test"],
-    max_length=320,
-  )
+    email: str | None = Field(
+        default=None,
+        description="New email address. If omitted, the current email is not changed.",
+        examples=["new-user@example.test"],
+        max_length=320,
+    )
 
 
 class UserReadResponse(BaseModel):
-  """Ответ с публичными данными пользователя."""
+    """Ответ с публичными данными пользователя."""
 
-  id: int = Field(
-    description="Server-generated stable user identifier.",
-    examples=[1001],
-    ge=1,
-  )
-  email: str = Field(
-    description="Email address of the user.",
-    examples=["user@example.test"],
-    max_length=320,
-  )
+    id: int = Field(
+        description="Server-generated stable user identifier.",
+        examples=[1001],
+        ge=1,
+    )
+    email: str = Field(
+        description="Email address of the user.",
+        examples=["user@example.test"],
+        max_length=320,
+    )
 ```
 
 ## Path, Query, Header, And Body Metadata
@@ -180,45 +180,45 @@ from fastapi import Body, Header, Path, Query
 
 
 UserIdPath = Annotated[
-  int,
-  Path(
-    title="User ID",
-    description="Stable server-generated identifier of the user.",
-    examples=[1001],
-    ge=1,
-  ),
+    int,
+    Path(
+        title="User ID",
+        description="Stable server-generated identifier of the user.",
+        examples=[1001],
+        ge=1,
+    ),
 ]
 
 PageQuery = Annotated[
-  int,
-  Query(
-    description="One-based page number for paginated list responses.",
-    examples=[1],
-    ge=1,
-  ),
+    int,
+    Query(
+        description="One-based page number for paginated list responses.",
+        examples=[1],
+        ge=1,
+    ),
 ]
 
 RequestIdHeader = Annotated[
-  str | None,
-  Header(
-    alias="X-Request-ID",
-    description="Optional client-provided request identifier used for tracing.",
-    examples=["req-20260619-001"],
-    max_length=128,
-  ),
+    str | None,
+    Header(
+        alias="X-Request-ID",
+        description="Optional client-provided request identifier used for tracing.",
+        examples=["req-20260619-001"],
+        max_length=128,
+    ),
 ]
 
 UserCreateBody = Annotated[
-  UserCreateRequest,
-  Body(
-    description="User creation payload.",
-    examples=[
-      {
-        "email": "user@example.test",
-        "password": "correct-horse-battery-staple",
-      }
-    ],
-  ),
+    UserCreateRequest,
+    Body(
+        description="User creation payload.",
+        examples=[
+            {
+                "email": "user@example.test",
+                "password": "correct-horse-battery-staple",
+            }
+        ],
+    ),
 ]
 ```
 
@@ -233,22 +233,22 @@ router = APIRouter(prefix="/users", tags=["users"])
 
 
 @router.post(
-  "",
-  response_model=UserReadResponse,
-  status_code=status.HTTP_201_CREATED,
-  summary="Create user",
-  description="Create a new user account and return its public representation.",
-  response_description="Created user.",
-  responses={
-    409: {
-      "model": ErrorResponse,
-      "description": "A user with this email already exists.",
+    "",
+    response_model=UserReadResponse,
+    status_code=status.HTTP_201_CREATED,
+    summary="Create user",
+    description="Create a new user account and return its public representation.",
+    response_description="Created user.",
+    responses={
+        409: {
+            "model": ErrorResponse,
+            "description": "A user with this email already exists.",
+        },
     },
-  },
 )
 async def create_user(payload: UserCreateBody) -> UserReadResponse:
-  """Создать пользователя."""
-  ...
+    """Создать пользователя."""
+    ...
 ```
 
 ## Error Models
@@ -259,32 +259,33 @@ Use stable error response models for documented non-2xx responses.
 * Do not expose raw exception strings, SQL details, stack traces, internal URLs, or internal service names.
 * Document important 400, 401, 403, 404, 409, 422, 429, and 5xx responses when clients must handle them.
 
-  from pydantic import BaseModel, ConfigDict, Field
+```python
+from pydantic import BaseModel, ConfigDict, Field
 
-  class ErrorResponse(BaseModel):
-  """Стандартная ошибка публичного API."""
 
-  ```python
-  model_config = ConfigDict(
-    json_schema_extra={
-      "examples": [
-        {
-          "code": "user.email_already_exists",
-          "message": "A user with this email already exists.",
+class ErrorResponse(BaseModel):
+    """Стандартная ошибка публичного API."""
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            "examples": [
+                {
+                    "code": "user.email_already_exists",
+                    "message": "A user with this email already exists.",
+                }
+            ]
         }
-      ]
-    }
-  )
+    )
 
-  code: str = Field(
-    description="Stable machine-readable error code.",
-    examples=["user.email_already_exists"],
-  )
-  message: str = Field(
-    description="Human-readable client-safe error message.",
-    examples=["A user with this email already exists."],
-  )
-  ```
+    code: str = Field(
+        description="Stable machine-readable error code.",
+        examples=["user.email_already_exists"],
+    )
+    message: str = Field(
+        description="Human-readable client-safe error message.",
+        examples=["A user with this email already exists."],
+    )
+```
 
 ## Nullable And Optional Fields
 
@@ -300,9 +301,9 @@ from pydantic import BaseModel
 
 
 class UserPatchRequest(BaseModel):
-  """Плохо: неясно, что означает None."""
+    """Плохо: неясно, что означает None."""
 
-  display_name: str | None = None
+    display_name: str | None = None
 ```
 
 Good:
@@ -312,14 +313,14 @@ from pydantic import BaseModel, Field
 
 
 class UserPatchRequest(BaseModel):
-  """Тело частичного обновления пользователя."""
+    """Тело частичного обновления пользователя."""
 
-  display_name: str | None = Field(
-    default=None,
-    description="New display name. If omitted, the value is not changed. If set to null, the display name is cleared.",
-    examples=["Gregory"],
-    max_length=120,
-  )
+    display_name: str | None = Field(
+        default=None,
+        description="New display name. If omitted, the value is not changed. If set to null, the display name is cleared.",
+        examples=["Gregory"],
+        max_length=120,
+    )
 ```
 
 ## OpenAPI Review Checklist
