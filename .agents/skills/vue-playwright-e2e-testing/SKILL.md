@@ -30,7 +30,7 @@ Load references when needed:
 - Use Playwright Test for Vue browser E2E.
 - Do not import Vue app internals into E2E tests.
 - Do not use Vue Test Utils here; that belongs to `vitest-vue-testing`.
-- Do not rely on Jest rules from `typescript-testing`; this is a Playwright browser suite.
+- Do not rely on Jest rules from `typescript-jest-testing`; this is a Playwright browser suite.
 - Prefer production preview or project-declared app startup for E2E.
 - Keep type checking separate from Playwright execution unless the project declares another policy.
 
