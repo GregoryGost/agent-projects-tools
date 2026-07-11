@@ -7,9 +7,11 @@ description: "Use for the Obsidian LLM Wiki workflow: querying project knowledge
 
 Use this skill only when `CODEX_PROJECT.md` declares the `obsidian-llm-wiki` profile active, or when the task directly queries, ingests, creates, changes, or reviews LLM Wiki content.
 
-Apply `.codex/rules/obsidian_wiki.md` and `obsidian-mcp-core` together with this skill.
+Apply `.codex/rules/obsidian_llm_wiki.md` and `obsidian-mcp-core` together with this skill.
 
 The `obsidian-mcp-core` profile and skill are required. This overlay does not authorize taskbook changes.
+
+Load `references/wiki-workflow.md` for detailed Query/Ingest, structure, source, index, and log conventions.
 
 ## Scope
 
@@ -39,7 +41,7 @@ It does not own:
 
 1. Read `CODEX_PROJECT.md` and confirm `obsidian-llm-wiki` is active or wiki content is directly in scope.
 2. Apply `obsidian-mcp-core` for all vault access and edits.
-3. Apply `.codex/rules/obsidian_wiki.md` for Query/Ingest structure and source policy.
+3. Apply `.codex/rules/obsidian_llm_wiki.md` and `references/wiki-workflow.md` for Query/Ingest structure and source policy.
 4. Use the project logical root and declared wiki paths.
 5. Re-read and verify every changed wiki note through MCP.
 
