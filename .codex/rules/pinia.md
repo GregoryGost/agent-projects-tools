@@ -6,7 +6,7 @@ Apply this rule only when `CODEX_PROJECT.md` declares Pinia active for a Vue fro
 
 Use together with:
 
-- `vue-expert`;
+- `vue3-typescript-vite-expert`;
 - `pinia-expert`.
 
 ## Source of truth
