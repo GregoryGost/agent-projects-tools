@@ -37,7 +37,7 @@ Before changing CSS animation or motion:
 
 ## Vue usage when active
 
-- Use CSS animation in Vue only when the `vue-frontend` profile and CSS animation profile are active, or when existing Vue transition CSS is directly touched.
+- Use CSS animation in Vue only when the `vue3-typescript-vite` profile and CSS animation profile are active, or when existing Vue transition CSS is directly touched.
 - Prefer Vue transition classes for component enter/leave motion.
 - Keep reusable motion tokens in shared CSS files.
 - Keep component-specific transition rules in local SFC style blocks when they belong only to that component.
