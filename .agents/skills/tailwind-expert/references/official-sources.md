@@ -1,6 +1,7 @@
 # Tailwind CSS Official Sources
 
 - Tailwind CSS Docs: https://tailwindcss.com/docs
+- Tailwind CSS Compatibility And Preprocessors: https://tailwindcss.com/docs/compatibility
 - Tailwind CSS With Vite: https://tailwindcss.com/docs/installation/using-vite
 - Tailwind Styling With Utility Classes: https://tailwindcss.com/docs/styling-with-utility-classes
 - Tailwind Responsive Design: https://tailwindcss.com/docs/responsive-design

@@ -7,7 +7,7 @@ This reference focuses only on Tailwind CSS: utility class usage, theme variable
 ## Core Principles
 
 - Treat Tailwind CSS as an optional standalone styling overlay activated by `CODEX_PROJECT.md`.
-- If SCSS is also active, place Tailwind import/directives in the existing project SCSS stylesheet entry point.
+- Resolve stylesheet integration from the declared Tailwind version and the project's actual build pipeline. Do not assume that Tailwind belongs in an SCSS entry point.
 - Prefer existing utility patterns and theme variables before adding new design tokens.
 - Use complete, statically detectable class names.
 - Do not build class names with string concatenation or interpolation.
@@ -18,7 +18,7 @@ This reference focuses only on Tailwind CSS: utility class usage, theme variable
 
 ## Tailwind Stylesheet Entry Point
 
-Default standalone CSS entry point:
+Tailwind CSS v4 plain CSS entry point:
 
 ```css
 @import "tailwindcss";
@@ -28,9 +28,10 @@ Default standalone CSS entry point:
 }
 ```
 
-SCSS project entry point:
+When Tailwind CSS v4 and SCSS coexist, keep separate source entry points:
 
-```scss
+```css
+/* tailwind.css */
 @import "tailwindcss";
 
 @theme {
@@ -38,7 +39,15 @@ SCSS project entry point:
 }
 ```
 
-Use the SCSS entry point only when the project already routes styles through SCSS and the build chain processes that entry point with Tailwind. Do not add a second CSS entry point only for Tailwind in an SCSS-based project.
+```scss
+// app.scss
+@use "tokens";
+@use "components";
+```
+
+Load both generated styles through the project-declared application imports or bundler configuration. Do not place Tailwind v4 imports or directives in `.scss`, and do not route the Tailwind v4 source through Sass, Less, or Stylus.
+
+For Tailwind CSS v3 or a project-specific legacy pipeline, inspect the existing PostCSS, Tailwind, and Sass processing order before changing entry points. Preserve the repository's working integration unless the task explicitly requests a migration.
 
 ## Good: Direct Utility Classes For Local Styling
 
@@ -248,7 +257,9 @@ Problem: the full utility class names are not present as static source text.
 
 - Is Tailwind CSS active for this project or directly touched by the task?
 - Is the Tailwind version and integration path known?
-- If SCSS is active, is Tailwind integrated through the SCSS entry point?
+- For Tailwind CSS v4, is the Tailwind source a plain CSS entry point that bypasses Sass, Less, and Stylus?
+- If SCSS is also active with Tailwind CSS v4, are their source entry points and preprocessing responsibilities separate?
+- For Tailwind CSS v3 or a legacy pipeline, was the existing processing order inspected and preserved?
 - Are utility class names complete and statically detectable?
 - Are theme variables used for reusable design tokens?
 - Are arbitrary values justified as local one-offs?
