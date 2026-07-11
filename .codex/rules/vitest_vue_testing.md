@@ -10,7 +10,7 @@ Use together with:
 
 - `vitest-vue-testing`;
 - `typescript-core`;
-- `vue-expert`.
+- `vue3-typescript-vite-expert`.
 
 ## Source of truth
 
