@@ -2,13 +2,13 @@
 
 Apply this rule only when `CODEX_PROJECT.md` declares VueUse active for a Vue frontend project or when the task directly touches an existing VueUse integration.
 
-This rule is a VueUse overlay. General Vue component, Composition API, Vite, and TypeScript rules remain in `vue-expert` and `typescript-core`.
+This rule is a VueUse overlay. General Vue component, Composition API, Vite, and TypeScript rules remain in `vue3-typescript-vite-expert` and `typescript-core`.
 
 ## Required skills
 
 Use together with:
 
-- `vue-expert`;
+- `vue3-typescript-vite-expert`;
 - `vueuse-expert`.
 
 ## Source of truth
