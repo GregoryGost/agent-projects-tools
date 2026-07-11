@@ -1,6 +1,6 @@
 # Vue frontend rules
 
-Apply this rule only when `CODEX_PROJECT.md` declares the `vue-frontend` active stack profile.
+Apply this rule only when `CODEX_PROJECT.md` declares the `vue3-typescript-vite` active stack profile.
 
 The portable Vue frontend baseline assumes:
 
