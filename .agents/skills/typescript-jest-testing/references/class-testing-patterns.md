@@ -1,4 +1,4 @@
-# TypeScript Class Testing Patterns
+# TypeScript Jest Class Testing Patterns
 
 Use this reference when Jest tests cover TypeScript classes, object modeling, constructor invariants, stateful behavior, lifecycle, or collaborators.
 

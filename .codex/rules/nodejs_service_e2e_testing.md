@@ -9,7 +9,7 @@ This rule is for non-browser TypeScript projects. Do not use Playwright, browser
 Use together with:
 
 - `typescript-core`;
-- `typescript-testing`;
+- `typescript-jest-testing`;
 - `nodejs-service-e2e-testing`.
 
 ## Source of truth
@@ -27,7 +27,7 @@ Before adding or changing Node.js service E2E tests:
 ## Relationship to existing rules
 
 - `typescript-core` defines TypeScript structure, type boundaries, and class/object modeling.
-- `typescript-testing` defines Jest-based unit and integration testing.
+- `typescript-jest-testing` defines Jest-based unit and integration testing.
 - This rule adds service-level E2E behavior across real process/application boundaries.
 - Do not duplicate unit or integration tests here when a narrower Jest test gives the same confidence.
 
@@ -59,7 +59,7 @@ Use the real public boundary of the service:
 
 ## Jest E2E policy
 
-- Use Jest as the runner because TypeScript testing is Jest-based.
+- Use Jest as the runner because TypeScript Jest testing is active.
 - Keep E2E Jest config, file pattern, timeout, setup, teardown, and environment explicit.
 - Use `node` environment by default.
 - Keep type checking as a separate validation step unless the project explicitly performs it through the Jest toolchain.

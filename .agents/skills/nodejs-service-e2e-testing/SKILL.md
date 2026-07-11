@@ -7,7 +7,7 @@ description: "Use for E2E testing of non-browser TypeScript Node.js services: HT
 
 Use this skill for TypeScript Node.js projects that do not expose a browser UI: APIs, CLIs, workers, queue consumers, scheduled jobs, or mixed services.
 
-Apply `CODEX_PROJECT.md`, `.codex/rules/nodejs_service_e2e_testing.md`, `typescript-core`, and `typescript-testing` together with this skill.
+Apply `CODEX_PROJECT.md`, `.codex/rules/nodejs_service_e2e_testing.md`, `typescript-core`, and `typescript-jest-testing` together with this skill.
 
 Load references when needed:
 
@@ -43,7 +43,7 @@ Load references when needed:
 - Keep scenario data isolated and cleaned up.
 - Prefer readiness checks, health probes, observable events, or bounded polling over fixed sleeps.
 - Clean up app instances, containers, connections, temp files, queues, child processes, and ports.
-- Preserve Jest mock cleanup and timer cleanup policy from `typescript-testing`.
+- Preserve Jest mock cleanup and timer cleanup policy from `typescript-jest-testing`.
 
 ## Review Checklist
 

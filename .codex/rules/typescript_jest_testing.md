@@ -1,14 +1,14 @@
-# TypeScript testing rules
+# TypeScript Jest testing rules
 
-Apply this rule when `CODEX_PROJECT.md` declares Jest-based TypeScript unit or integration testing active, or when the task directly changes Jest tests for TypeScript code.
+Apply this rule when `CODEX_PROJECT.md` declares framework-neutral TypeScript unit or integration testing through Jest active, or when the task directly changes Jest tests for TypeScript code.
 
-This rule is framework-neutral but Jest-based. Vue, DOM, component, E2E, and browser UI testing belong in stack-specific overlays.
+This rule is framework-neutral and Jest-based. Vue, DOM, component, E2E, and browser UI testing belong in stack-specific overlays.
 
 ## Required skills
 
 Use together with:
 
-- `typescript-testing`;
+- `typescript-jest-testing`;
 - `typescript-core`.
 
 ## Source of truth

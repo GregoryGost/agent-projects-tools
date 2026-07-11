@@ -1,4 +1,4 @@
-# TypeScript Testing Official Sources
+# TypeScript Jest Testing Official Sources
 
 Use these sources for Jest-based TypeScript unit and integration testing.
 

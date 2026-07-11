@@ -1,13 +1,13 @@
 ---
-name: typescript-testing
+name: typescript-jest-testing
 description: "Use for Jest-based, framework-neutral TypeScript unit and integration testing: functions, modules, classes, object model invariants, typed Jest mocks/fakes, deterministic tests, coverage policy, and review."
 ---
 
-# TypeScript Testing
+# TypeScript Jest Testing
 
-Use this skill when Jest-based TypeScript unit or integration testing is active, or when the task directly adds, changes, or reviews Jest tests for TypeScript code.
+Use this skill when framework-neutral TypeScript unit or integration testing through Jest is active, or when the task directly adds, changes, or reviews Jest tests for TypeScript code.
 
-Apply `.codex/rules/typescript_testing.md` and `typescript-core` together with this skill.
+Apply `.codex/rules/typescript_jest_testing.md` and `typescript-core` together with this skill.
 
 Load references when needed:
 
