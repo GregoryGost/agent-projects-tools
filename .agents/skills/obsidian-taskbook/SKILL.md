@@ -7,9 +7,11 @@ description: "Use for the Obsidian project taskbook workflow: request-mode gatin
 
 Use this skill only when `CODEX_PROJECT.md` declares the `obsidian-taskbook` profile active, or when the user directly requests taskbook creation, updates, status changes, planning, checks, or archive work.
 
-Apply `.codex/rules/request_routing.md`, `.codex/rules/obsidian_tasks.md`, and `obsidian-mcp-core` together with this skill.
+Apply `.codex/rules/request_routing.md`, `.codex/rules/obsidian_taskbook.md`, and `obsidian-mcp-core` together with this skill.
 
 The `obsidian-mcp-core` profile and skill are required. This overlay does not authorize wiki ingest or wiki edits.
+
+Load `references/taskbook-workflow.md` for detailed task identity, structure, lifecycle, overview, checks, context-link, template, and archive conventions.
 
 ## Scope
 
@@ -40,7 +42,7 @@ It does not own:
 1. Read `CODEX_PROJECT.md` and confirm the profile, project key, task language, logical root, and fallback paths.
 2. Resolve the allowed request mode and surfaces.
 3. Apply `obsidian-mcp-core` for all vault access and safe edits.
-4. Apply `.codex/rules/obsidian_tasks.md` for task structure, lifecycle, overview pages, checks, and archive.
+4. Apply `.codex/rules/obsidian_taskbook.md` and `references/taskbook-workflow.md` for task structure, lifecycle, overview pages, checks, and archive.
 5. Do not edit wiki pages during taskbook-only work.
 6. Re-read and verify every taskbook mutation through MCP.
 
