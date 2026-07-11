@@ -1,6 +1,6 @@
 # Vitest Vue testing rules
 
-Apply this rule whenever `CODEX_PROJECT.md` declares the `vue-frontend` active stack profile, unless the target project explicitly documents another testing stack or an approved no-tests policy.
+Apply this rule whenever `CODEX_PROJECT.md` declares the `vue3-typescript-vite` active stack profile, unless the target project explicitly documents another testing stack or an approved no-tests policy.
 
 This rule covers unit tests and component-level integration tests for Vue 3 + TypeScript + Vite. It does not replace browser UI validation or full end-to-end testing.
 
@@ -10,7 +10,7 @@ Use together with:
 
 - `vitest-vue-testing`;
 - `typescript-core`;
-- `vue-expert`.
+- `vue3-typescript-vite-expert`.
 
 ## Source of truth
 

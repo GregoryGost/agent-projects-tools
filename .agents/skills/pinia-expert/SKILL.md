@@ -7,7 +7,7 @@ description: "Use for Pinia store work and review: store boundaries, state shape
 
 Use this skill only when Pinia is active in `CODEX_PROJECT.md` or the task directly touches Pinia stores.
 
-Apply `.codex/rules/pinia.md`, `vue-expert`, and `typescript-core` together with this skill.
+Apply `.codex/rules/pinia.md`, `vue3-typescript-vite-expert`, and `typescript-core` together with this skill.
 
 Load references when needed:
 

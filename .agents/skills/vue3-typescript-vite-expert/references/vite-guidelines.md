@@ -1,4 +1,4 @@
-# Vite Guidelines For Vue Expert
+# Vite Guidelines For Vue 3 + TypeScript + Vite Expert
 
 Use this reference when Vue frontend work touches Vite-specific behavior.
 

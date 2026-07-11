@@ -1,4 +1,4 @@
-# Vue Expert Official Sources
+# Vue 3 + TypeScript + Vite Expert Official Sources
 
 Use these sources when Vue, Vite, or Vue TypeScript behavior needs verification.
 

@@ -1,6 +1,6 @@
-# Vue frontend rules
+# Vue 3 + TypeScript + Vite rules
 
-Apply this rule only when `CODEX_PROJECT.md` declares the `vue-frontend` active stack profile.
+Apply this rule only when `CODEX_PROJECT.md` declares the `vue3-typescript-vite` active stack profile.
 
 The portable Vue frontend baseline assumes:
 
@@ -16,7 +16,7 @@ The portable Vue frontend baseline assumes:
 Use together with:
 
 - `typescript-core`;
-- `vue-expert`.
+- `vue3-typescript-vite-expert`.
 
 Router, Pinia, VueUse, Tailwind, SCSS, UI validation, and testing are separate stages and must be activated by their own rules and skills.
 

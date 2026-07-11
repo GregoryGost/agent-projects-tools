@@ -216,7 +216,7 @@ Why this is good:
 
 ## Vue Usage When Vue Is Active
 
-Use Tailwind in Vue only when the `vue-frontend` profile and the Tailwind profile are active, or when an existing `.vue` file already uses Tailwind utilities.
+Use Tailwind in Vue only when the `vue3-typescript-vite` profile and the Tailwind profile are active, or when an existing `.vue` file already uses Tailwind utilities.
 
 Good static classes:
 

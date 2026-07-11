@@ -39,7 +39,7 @@ Before changing Tailwind usage:
 
 ## Vue usage when active
 
-- Use Tailwind in Vue only when the `vue-frontend` profile and the Tailwind profile are both active, or when an existing Vue SFC already uses Tailwind utilities.
+- Use Tailwind in Vue only when the `vue3-typescript-vite` profile and the Tailwind profile are both active, or when an existing Vue SFC already uses Tailwind utilities.
 - Prefer static `class` attributes for fixed utility sets.
 - Use `:class` arrays or objects for conditional full utility class strings.
 - Map prop values to complete utility class strings; do not construct partial class names from props.

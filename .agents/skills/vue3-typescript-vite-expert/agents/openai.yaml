@@ -1,0 +1,4 @@
+interface:
+  display_name: "Vue 3 TypeScript Vite Expert"
+  short_description: "Vue 3 + TypeScript + Vite guidance"
+  default_prompt: "Use $vue3-typescript-vite-expert to build or review a Vue 3 frontend using TypeScript and Vite."

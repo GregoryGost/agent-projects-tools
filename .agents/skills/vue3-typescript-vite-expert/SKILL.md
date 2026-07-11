@@ -1,13 +1,13 @@
 ---
-name: vue-expert
+name: vue3-typescript-vite-expert
 description: "Use for Vue 3 frontend work with TypeScript and Vite: SFCs, Composition API, script setup, props/emits/slots, composables, Vite-aware changes, and Vue review."
 ---
 
-# Vue Expert
+# Vue 3 + TypeScript + Vite Expert
 
-Use this skill for Vue 3 frontend implementation, review, refactoring, and diagnosis in projects that declare the `vue-frontend` profile.
+Use this skill for Vue 3 frontend implementation, review, refactoring, and diagnosis in projects that declare the `vue3-typescript-vite` profile.
 
-Apply `.codex/rules/vue_frontend.md`, `typescript-core`, and `CODEX_PROJECT.md` together with this skill.
+Apply `.codex/rules/vue3_typescript_vite.md`, `typescript-core`, and `CODEX_PROJECT.md` together with this skill.
 
 Load references when needed:
 
