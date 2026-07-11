@@ -1,8 +1,8 @@
 # Python cache rules
 
-Apply this rule when `CODEX_PROJECT.md` declares Python caching active, or when the task changes Python cache setup, cached read paths, TTL, invalidation, or cache backend configuration.
+Apply this rule when `CODEX_PROJECT.md` declares Python caching with `cashews` active, or when the task directly changes `cashews` setup, cached read paths, TTL, invalidation, or cache backend configuration.
 
-This rule is standalone. Combine it with FastAPI, database, HTTP client, or testing skills only when those profiles are active.
+This rule is the `cashews` cache profile. Do not apply it to `functools`, `cachetools`, direct Redis clients, or another cache library unless the project has a separate rule for that library. Combine it with FastAPI, database, HTTP client, or testing skills only when those profiles are active.
 
 ## Required skills
 
@@ -15,8 +15,8 @@ Use together with:
 
 Before changing cache behavior:
 
-1. Read `CODEX_PROJECT.md`.
-2. Check cache library, backend, settings, dependency policy, validation commands, and active Python profiles.
+1. Read `CODEX_PROJECT.md` and confirm `Cache library: cashews`.
+2. Check the `cashews` version, backend, settings, dependency policy, validation commands, and active Python profiles.
 3. Inspect cached functions, callers, write paths, settings, tests, and deployment assumptions.
 4. Use project-declared commands.
 

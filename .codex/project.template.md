@@ -179,10 +179,10 @@ Keep only when FastAPI is active.
 
 ## Python Cache Profile
 
-Keep only when Python caching is active.
+Keep only when Python caching through `cashews` is active. This profile and the `python_cache.md + python-cache` pair do not apply to `functools`, `cachetools`, direct Redis clients, or another cache library; use a separate project-specific profile, rule, and skill for those libraries.
 
 - Python cache enabled: `<yes/no>`
-- Cache library: `<cashews / functools / cachetools / Redis client / project-specific / none>`
+- Cache library: `cashews`
 - Cache backend: `<Redis / memory / process-local / project-specific / none>`
 - Cache lifecycle owner: `<FastAPI lifespan / app resource manager / CLI / worker / project-specific / none>`
 - Cache key scope policy: `<tenant/user/role/filter/pagination/schema-version / project-specific / none>`
