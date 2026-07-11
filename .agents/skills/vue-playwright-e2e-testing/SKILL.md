@@ -7,7 +7,7 @@ description: "Use for Vue frontend browser E2E testing with Playwright: user flo
 
 Use this skill for Vue frontend browser E2E tests. It covers Playwright Test suites that exercise the Vue application as a user through real browser pages.
 
-Apply `CODEX_PROJECT.md`, `.codex/rules/vue_playwright_e2e_testing.md`, `typescript-core`, and `vue-expert` together with this skill.
+Apply `CODEX_PROJECT.md`, `.codex/rules/vue_playwright_e2e_testing.md`, `typescript-core`, and `vue3-typescript-vite-expert` together with this skill.
 
 Load references when needed:
 
