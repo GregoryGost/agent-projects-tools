@@ -5,7 +5,7 @@ description: "Use for Vue 3 frontend work with TypeScript and Vite: SFCs, Compos
 
 # Vue Expert
 
-Use this skill for Vue 3 frontend implementation, review, refactoring, and diagnosis in projects that declare the `vue-frontend` profile.
+Use this skill for Vue 3 frontend implementation, review, refactoring, and diagnosis in projects that declare the `vue3-typescript-vite` profile.
 
 Apply `.codex/rules/vue_frontend.md`, `typescript-core`, and `CODEX_PROJECT.md` together with this skill.
 
