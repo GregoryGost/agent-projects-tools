@@ -216,7 +216,7 @@ Why this is good:
 
 ## Vue Usage When Vue Is Active
 
-Use Tailwind in Vue only when the `vue-frontend` profile and the Tailwind profile are active, or when an existing `.vue` file already uses Tailwind utilities.
+Use Tailwind in Vue only when the `vue3-typescript-vite` profile and the Tailwind profile are active, or when an existing `.vue` file already uses Tailwind utilities.
 
 Good static classes:
 
@@ -266,4 +266,4 @@ Problem: the full utility class names are not present as static source text.
 - Are responsive variants mobile-first unless project policy says otherwise?
 - Are hover, focus, active, disabled, motion, contrast, and dark-mode states preserved when relevant?
 - Is Vue class binding using complete utility strings when Vue is active?
-- Was class ordering left to project formatting rules?
+- Was class ordering left to the project formatting rules?
