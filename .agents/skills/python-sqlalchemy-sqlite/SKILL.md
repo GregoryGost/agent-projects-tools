@@ -135,18 +135,18 @@ When reviewing SQLAlchemy + SQLite code:
 
 - Load `references/patterns-and-review.md` for concrete anti-patterns and the final review checklist.
 - Apply `python-core`, `python-testing`, and `python-sqlalchemy-core` together with this skill.
-- Inspect models, repositories, session/engine setup, writer queue code, raw SQL migrations, settings, tests, and existing DB conventions.
+- Inspect models, repositories, session/engine setup, raw SQL migrations, settings, tests, existing DB conventions, and the runtime write policy declared in `CODEX_PROJECT.md`. Inspect writer queue code only when that policy enables the single-writer queue pattern or the task directly touches it.
 - Verify that SQL/ORM details stay inside repositories and do not leak into routers or unrelated services.
 - Verify that sessions are scoped to one unit of work, request, task, or writer batch and are not shared across concurrent tasks.
 - Verify that transaction boundaries are explicit and write transactions are short.
-- Verify that all normal runtime SQLite mutations go through the single writer queue.
-- Verify that routers, request dependencies, ordinary services, read repositories, and arbitrary background tasks do not open write sessions or call mutating repositories directly.
-- Verify that direct write access exists only for startup migrations, maintenance scripts, test setup, or explicitly documented emergency/admin paths.
-- Verify that the writer loop is the only normal runtime owner of the write session factory, batch transaction boundary, queue drain behavior, shutdown behavior, and failure policy.
-- Verify that the current deployment assumption is one FastAPI worker/process. If deployment changes to multiple workers, the single-writer guarantee must be redesigned or explicitly accepted as process-local.
-- If `asyncio.Event` is used, verify that it controls pause/resume or auxiliary lifecycle signals, not the only stop mechanism for a task blocked on `queue.get()`.
-- Verify that stop and restart use queue shutdown, queue drain, task lifecycle, and resource cleanup rather than only flipping an event flag.
-- Verify that queued writes are documented as asynchronous/eventually committed unless the caller explicitly waits for flush/commit acknowledgement.
+- Verify that the implementation follows the runtime write policy declared in `CODEX_PROJECT.md`. Direct sessions, unit-of-work writes, and single-writer queues are separate supported policies; do not require queue architecture when another policy is active.
+- When `CODEX_PROJECT.md` declares `Runtime write policy: single writer queue`, also verify that:
+  - all normal runtime SQLite mutations go through the single writer queue;
+  - routers, request dependencies, ordinary services, read repositories, and arbitrary background tasks do not open write sessions or call mutating repositories directly;
+  - direct write access exists only for startup migrations, maintenance scripts, test setup, or explicitly documented emergency/admin paths;
+  - the writer loop is the only normal runtime owner of the write session factory, batch transaction boundary, queue drain behavior, shutdown behavior, and failure policy;
+  - the deployment assumption is compatible with a process-local writer queue, and multi-worker deployment is redesigned or explicitly accepted;
+  - `asyncio.Event`, stop/restart behavior, queued-write semantics, acknowledgement behavior, backpressure, batch flushing, and failure handling follow the queue policy.
 - Verify that external HTTP calls, slow computations, sleeps, cache calls, or network operations do not happen inside DB write transactions.
 - Verify that `PRAGMA foreign_keys=ON` is configured on every connection.
 - Verify that WAL, busy timeout, and other PRAGMA settings are centralized and tested when used.
