@@ -39,7 +39,7 @@ Before changing CSS:
 
 ## Vue usage when active
 
-- Use CSS in Vue only when the `vue-frontend` profile and CSS profile are both active, or when an existing Vue SFC already uses local CSS.
+- Use CSS in Vue only when the `vue3-typescript-vite` profile and CSS profile are both active, or when an existing Vue SFC already uses local CSS.
 - Put local component-only styles in `.vue` style blocks.
 - Use `scoped` only when component-local scoping is intended.
 - Use CSS Modules only when the project convention already uses them or the task explicitly asks for module-scoped class names.
