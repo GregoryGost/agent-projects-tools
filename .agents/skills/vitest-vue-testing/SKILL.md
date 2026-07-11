@@ -7,7 +7,7 @@ description: "Use for Vue 3 unit and component integration tests with Vitest: co
 
 Use this skill for Vue 3 frontend projects by default. Do not treat unit and component testing as optional for `vue3-typescript-vite` unless `CODEX_PROJECT.md` explicitly documents another testing stack or an approved no-tests policy.
 
-Apply `.codex/rules/vitest_vue_testing.md`, `typescript-core`, and `vue-expert` together with this skill.
+Apply `.codex/rules/vitest_vue_testing.md`, `typescript-core`, and `vue3-typescript-vite-expert` together with this skill.
 
 ## Workflow
 
