@@ -216,14 +216,14 @@ Keep only when the project has persistence-specific runtime write constraints.
 
 ## HTTP Client Profile
 
-Keep only when the project makes outgoing HTTP calls.
+Keep only when outgoing Python HTTP calls use `HTTPX` together with the `httpx-retries` retry layer. This profile and `python-httpx-client` do not apply when another HTTP client library or retry layer is active; use a separate project-specific profile and skill for those combinations.
 
 - HTTP client enabled: `<yes/no>`
-- HTTP client library: `<HTTPX / requests / fetch / Axios / none / other>`
-- Retry layer: `<httpx-retries / urllib3 retries / custom / none / other>`
+- HTTP client library: `HTTPX`
+- Retry layer: `httpx-retries`
 - Timeout policy source: `<settings / CODEX_PROJECT.md / project-specific / none>`
 - External dependency stub policy: `<MockTransport / RESPX / pytest-httpserver / provider sandbox / contract fake / none / project-specific>`
-- Active HTTP client skill: `<python-httpx-client / none / other>`
+- Active HTTP client skill: `<python-httpx-client / none>`
 - Dependency versions source: `<pyproject.toml / package.json / project-specific / none>`
 
 ## Security Profile
