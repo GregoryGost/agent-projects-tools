@@ -266,4 +266,4 @@ Problem: the full utility class names are not present as static source text.
 - Are responsive variants mobile-first unless project policy says otherwise?
 - Are hover, focus, active, disabled, motion, contrast, and dark-mode states preserved when relevant?
 - Is Vue class binding using complete utility strings when Vue is active?
-- Was class ordering left to the project formatting rules?
+- Was class ordering left to project formatting rules?
