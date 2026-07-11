@@ -2,13 +2,13 @@
 
 Apply this rule only when `CODEX_PROJECT.md` declares Vue Router active for a Vue frontend project or when the task directly changes routing behavior.
 
-This rule is a Vue Router overlay. General Vue component, Vite, and TypeScript rules remain in `vue-expert` and `typescript-core`.
+This rule is a Vue Router overlay. General Vue component, Vite, and TypeScript rules remain in `vue3-typescript-vite-expert` and `typescript-core`.
 
 ## Required skills
 
 Use together with:
 
-- `vue-expert`;
+- `vue3-typescript-vite-expert`;
 - `vue-router-expert`.
 
 ## Source of truth
