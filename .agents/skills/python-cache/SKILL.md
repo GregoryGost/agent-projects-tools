@@ -1,13 +1,13 @@
 ---
 name: python-cache
-description: "Use for Python cache design and review: cache decision, TTL, key scope, invalidation, backend setup, test isolation, cashews usage, and FastAPI integration when FastAPI is active."
+description: "Use for Python cache design and review with cashews: cache decision, TTL, key scope, invalidation, backend setup, test isolation, cashews usage, and FastAPI integration when FastAPI is active."
 ---
 
 # Python Cache
 
-Use this skill when `CODEX_PROJECT.md` declares Python caching active, or when a task changes cache setup, cached read paths, TTL, invalidation, cache backend configuration, or `cashews` usage.
+Use this skill when `CODEX_PROJECT.md` declares `Cache library: cashews`, or when a task directly changes `cashews` setup, cached read paths, TTL, invalidation, or cache backend configuration.
 
-This skill is standalone. It can be combined with FastAPI, database, HTTP client, or testing skills when those profiles are active.
+This skill is the `cashews` cache profile. Do not apply it to `functools`, `cachetools`, direct Redis clients, or another cache library unless the project has a separate skill for that library. It can be combined with FastAPI, database, HTTP client, or testing skills when those profiles are active.
 
 Apply `.codex/rules/python_cache.md`, `python-core`, and this skill together.
 
@@ -16,13 +16,13 @@ When FastAPI is active, also apply `python-fastapi-expert` for app lifespan, mid
 Load references when needed:
 
 - `references/patterns-and-review.md` for cache decision, key scope, invalidation, FastAPI wiring, and tests.
-- `references/official-sources.md` for cache library and framework documentation links.
+- `references/official-sources.md` for `cashews` and framework documentation links.
 
 ## Workflow
 
-1. Read `CODEX_PROJECT.md`.
-2. Confirm cache library, backend, settings, dependency policy, validation commands, and active Python overlays.
-3. Confirm the dependency source of truth and existing cache dependency versions from repository metadata before changing cache behavior.
+1. Read `CODEX_PROJECT.md` and confirm `Cache library: cashews`.
+2. Confirm the `cashews` version, backend, settings, dependency policy, validation commands, and active Python overlays.
+3. Confirm the dependency source of truth and existing `cashews` dependency version from repository metadata before changing cache behavior.
 4. Inspect cached functions, callers, write paths, settings, tests, and deployment assumptions.
 5. Decide whether the read path is deterministic and whether bounded staleness is acceptable.
 6. Define TTL, key scope, invalidation triggers, backend, and test coverage before adding cache behavior.
@@ -44,8 +44,8 @@ Load references when needed:
 
 ## Review Checklist
 
-- [ ] Cache behavior is active in `CODEX_PROJECT.md` or directly touched by the task.
-- [ ] Cache library, backend, lifecycle owner, and dependency source of truth were checked.
+- [ ] `Cache library: cashews` is active in `CODEX_PROJECT.md` or `cashews` is directly touched by the task.
+- [ ] The `cashews` version, backend, lifecycle owner, and dependency source of truth were checked.
 - [ ] Cached operation is deterministic and read-oriented.
 - [ ] TTL and cache naming are explicit.
 - [ ] Visibility scope is included in cache naming when needed.
