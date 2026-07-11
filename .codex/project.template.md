@@ -53,7 +53,7 @@ Selection examples:
 - `python-fastapi`
 - `python-cache`
 - `typescript-core`
-- `typescript-testing`
+- `typescript-jest-testing`
 - `eslint-typescript`
 - `prettier-formatting`
 - `nodejs-service-e2e-testing`
@@ -86,7 +86,7 @@ List only rule files active in this project.
 - Core rules: `<.codex/rules/request_routing.md / source_code_hygiene.md / none>`
 - Python/backend rules: `<python_fastapi.md / python_cache.md / none>`
 - Formatting/linting rules: `<prettier_formatting.md / eslint_typescript.md / none>`
-- Language rules: `<typescript_core.md / typescript_testing.md / none / other>`
+- Language rules: `<typescript_core.md / typescript_jest_testing.md / none / other>`
 - Framework rules: `<vue3_typescript_vite.md / vue_router.md / pinia.md / vueuse.md / none / other>`
 - Styling rules: `<css.md / css_animation.md / tailwind_css.md / scss_styling.md / none>`
 - UI/browser validation rules: `<ui_ux_validation.md / playwright_ui_validation.md / none>`
@@ -99,7 +99,7 @@ List only reusable skills active in this project.
 
 - Code prose / language-policy skills: `<comment-language-audit / none>`
 - Python skills: `<python-core / python-testing / python-fastapi-expert / python-cache / none / other>`
-- Language skills: `<typescript-core / typescript-testing / none / other>`
+- Language skills: `<typescript-core / typescript-jest-testing / none / other>`
 - Formatting/linting skills: `<prettier-formatting / eslint-typescript / none>`
 - Framework skills: `<vue3-typescript-vite-expert / vue-router-expert / pinia-expert / vueuse-expert / none>`
 - Styling skills: `<css-expert / css-animation-expert / tailwind-expert / scss-expert / none>`
@@ -354,13 +354,18 @@ Keep only testing subsections used by the project.
 - Parallel E2E policy: `<serial / xdist-safe / project-specific>`
 - Active Python service E2E rule/skill: `<python_service_e2e_testing.md + python-service-e2e-testing / none>`
 
-### TypeScript Unit / Integration Testing
+### Framework-neutral TypeScript Jest Testing
 
-- TypeScript testing enabled: `<yes/no>`
-- Test runner: `<Jest / Vitest / project-specific / none>`
+Keep only when framework-neutral TypeScript unit or integration testing through Jest is active. Frontend framework tests use their stack-specific testing profiles.
+
+- TypeScript Jest testing enabled: `<yes/no>`
+- Test runner: `Jest`
+- Jest configuration source: `<jest.config.* / package.json / project-specific / none>`
+- TypeScript transformer: `<ts-jest / Babel / SWC / project-specific / none>`
+- Test environment: `<node / jsdom / project-specific / none>`
 - Unit test command: `<command / none>`
 - Integration test command: `<command / none>`
-- Active test rules/skills: `<typescript_testing.md + typescript-testing / none>`
+- Active test rule/skill: `<typescript_jest_testing.md + typescript-jest-testing / none>`
 
 ### Vue Unit / Component Testing
 
