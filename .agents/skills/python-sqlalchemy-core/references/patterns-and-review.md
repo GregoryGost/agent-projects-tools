@@ -15,12 +15,12 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 
 
 async def get_session() -> AsyncSession:
-  """Создать engine и session factory для одного запроса."""
-  # Плохо: engine и session factory создаются на каждый вызов.
-  engine = create_async_engine(settings.db_connection)
-  session_factory = async_sessionmaker(engine)
-  async with session_factory() as session:
-    yield session
+    """Создать engine и session factory для одного запроса."""
+    # Плохо: engine и session factory создаются на каждый вызов.
+    engine = create_async_engine(settings.db_connection)
+    session_factory = async_sessionmaker(engine)
+    async with session_factory() as session:
+        yield session
 ```
 
 Good:
@@ -34,9 +34,9 @@ session_factory = async_sessionmaker(engine, expire_on_commit=False)
 
 
 async def get_session() -> AsyncSession:
-  """Выдать короткоживущую сессию из общей фабрики."""
-  async with session_factory() as session:
-    yield session
+    """Выдать короткоживущую сессию из общей фабрики."""
+    async with session_factory() as session:
+        yield session
 ```
 
 ### SQL In Service Layer
@@ -49,15 +49,15 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class UserService:
-  async def find_user(self, session: AsyncSession, email: str) -> UserRead | None:
-    """Найти пользователя напрямую из service layer."""
-    # Плохо: service накапливает SQL вместо обращения к repository.
-    result = await session.execute(
-      text("SELECT id, email FROM users WHERE email = :email"),
-      {"email": email},
-    )
-    row = result.mappings().one_or_none()
-    return UserRead(**row) if row else None
+    async def find_user(self, session: AsyncSession, email: str) -> UserRead | None:
+        """Найти пользователя напрямую из service layer."""
+        # Плохо: service накапливает SQL вместо обращения к repository.
+        result = await session.execute(
+            text("SELECT id, email FROM users WHERE email = :email"),
+            {"email": email},
+        )
+        row = result.mappings().one_or_none()
+        return UserRead(**row) if row else None
 ```
 
 Good:
@@ -67,18 +67,18 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class UserRepository:
-  async def find_by_email(self, session: AsyncSession, email: str) -> UserRead | None:
-    """Найти пользователя по email через repository."""
-    ...
+    async def find_by_email(self, session: AsyncSession, email: str) -> UserRead | None:
+        """Найти пользователя по email через repository."""
+        ...
 
 
 class UserService:
-  def __init__(self, repository: UserRepository) -> None:
-    self.repository = repository
+    def __init__(self, repository: UserRepository) -> None:
+        self.repository = repository
 
-  async def find_user(self, session: AsyncSession, email: str) -> UserRead | None:
-    """Найти пользователя через repository."""
-    return await self.repository.find_by_email(session, email)
+    async def find_user(self, session: AsyncSession, email: str) -> UserRead | None:
+        """Найти пользователя через repository."""
+        return await self.repository.find_by_email(session, email)
 ```
 
 ### F-String SQL With User Input
@@ -91,10 +91,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 
 async def find_user(session: AsyncSession, email: str) -> UserDbo | None:
-  """Найти пользователя по email."""
-  # Плохо: пользовательский ввод попадает прямо в SQL.
-  result = await session.execute(text(f"SELECT * FROM users WHERE email = '{email}'"))
-  return result.scalar_one_or_none()
+    """Найти пользователя по email."""
+    # Плохо: пользовательский ввод попадает прямо в SQL.
+    result = await session.execute(text(f"SELECT * FROM users WHERE email = '{email}'"))
+    return result.scalar_one_or_none()
 ```
 
 Good:
@@ -105,12 +105,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 
 async def find_user(session: AsyncSession, email: str) -> UserDbo | None:
-  """Найти пользователя по email безопасным параметризованным запросом."""
-  result = await session.execute(
-    text("SELECT * FROM users WHERE email = :email"),
-    {"email": email},
-  )
-  return result.scalar_one_or_none()
+    """Найти пользователя по email безопасным параметризованным запросом."""
+    result = await session.execute(
+        text("SELECT * FROM users WHERE email = :email"),
+        {"email": email},
+    )
+    return result.scalar_one_or_none()
 ```
 
 ### Repository Commits Unexpectedly
@@ -122,13 +122,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class UserRepository:
-  async def create_user(self, session: AsyncSession, payload: UserCreate) -> UserDbo:
-    """Создать пользователя и неожиданно завершить transaction."""
-    user = UserDbo(email=payload.email)
-    session.add(user)
-    # Плохо: repository забирает transaction ownership у caller.
-    await session.commit()
-    return user
+    async def create_user(self, session: AsyncSession, payload: UserCreate) -> UserDbo:
+        """Создать пользователя и неожиданно завершить transaction."""
+        user = UserDbo(email=payload.email)
+        session.add(user)
+        # Плохо: repository забирает transaction ownership у caller.
+        await session.commit()
+        return user
 ```
 
 Good:
@@ -138,12 +138,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class UserRepository:
-  async def create_user(self, session: AsyncSession, payload: UserCreate) -> UserDbo:
-    """Создать пользователя внутри transaction, которой владеет caller."""
-    user = UserDbo(email=payload.email)
-    session.add(user)
-    await session.flush()
-    return user
+    async def create_user(self, session: AsyncSession, payload: UserCreate) -> UserDbo:
+        """Создать пользователя внутри transaction, которой владеет caller."""
+        user = UserDbo(email=payload.email)
+        session.add(user)
+        await session.flush()
+        return user
 ```
 
 ### External Work Inside Transaction
@@ -155,11 +155,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 
 async def sync_issue(session: AsyncSession, issue_id: int) -> None:
-  """Обновить задачу по данным внешней системы."""
-  async with session.begin():
-    # Плохо: transaction удерживается во время сетевого вызова.
-    payload = await jira_client.get_issue(issue_id)
-    await issue_repository.update_issue(session, issue_id=issue_id, payload=payload)
+    """Обновить задачу по данным внешней системы."""
+    async with session.begin():
+        # Плохо: transaction удерживается во время сетевого вызова.
+        payload = await jira_client.get_issue(issue_id)
+        await issue_repository.update_issue(session, issue_id=issue_id, payload=payload)
 ```
 
 Good:
@@ -169,11 +169,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 
 async def sync_issue(session: AsyncSession, issue_id: int) -> None:
-  """Получить внешние данные до короткой transaction."""
-  payload = await jira_client.get_issue(issue_id)
+    """Получить внешние данные до короткой transaction."""
+    payload = await jira_client.get_issue(issue_id)
 
-  async with session.begin():
-    await issue_repository.update_issue(session, issue_id=issue_id, payload=payload)
+    async with session.begin():
+        await issue_repository.update_issue(session, issue_id=issue_id, payload=payload)
 ```
 
 ### Mocked Repository Test Mistaken For DB Coverage
@@ -182,24 +182,24 @@ Bad:
 
 ```python
 async def test_user_service_creates_user(mock_user_repository) -> None:
-  """Проверить создание пользователя через mock repository."""
-  await service.create_user(email="user@example.test")
+    """Проверить создание пользователя через mock repository."""
+    await service.create_user(email="user@example.test")
 
-  # Плохо: этот тест не проверяет SQLAlchemy, constraints или transaction behavior.
-  mock_user_repository.create_user.assert_awaited_once()
+    # Плохо: этот тест не проверяет SQLAlchemy, constraints или transaction behavior.
+    mock_user_repository.create_user.assert_awaited_once()
 ```
 
 Good:
 
 ```python
 async def test_user_repository_rejects_duplicate_email(db_session: AsyncSession) -> None:
-  """Проверить constraint уникальности на реальной БД теста."""
-  async with db_session.begin():
-    await repository.create_user(db_session, UserCreate(email="user@example.test"))
-
-  with pytest.raises(EmailAlreadyExistsError):
+    """Проверить constraint уникальности на реальной БД теста."""
     async with db_session.begin():
-      await repository.create_user(db_session, UserCreate(email="user@example.test"))
+        await repository.create_user(db_session, UserCreate(email="user@example.test"))
+
+    with pytest.raises(EmailAlreadyExistsError):
+        async with db_session.begin():
+            await repository.create_user(db_session, UserCreate(email="user@example.test"))
 ```
 
 ## Review Checklist
