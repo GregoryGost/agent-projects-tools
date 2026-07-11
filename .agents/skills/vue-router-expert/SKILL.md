@@ -7,7 +7,7 @@ description: "Use for Vue Router changes and review: route records, named routes
 
 Use this skill only when Vue Router is active in `CODEX_PROJECT.md` or the task directly touches routing behavior.
 
-Apply `.codex/rules/vue_router.md`, `vue-expert`, and `typescript-core` together with this skill.
+Apply `.codex/rules/vue_router.md`, `vue3-typescript-vite-expert`, and `typescript-core` together with this skill.
 
 Load references when needed:
 
