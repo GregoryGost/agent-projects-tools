@@ -38,7 +38,7 @@ Before changing SCSS:
 
 ## Vue usage when active
 
-- Use SCSS in Vue only when the `vue-frontend` profile and the SCSS profile are both active, or when an existing Vue SFC already uses SCSS.
+- Use SCSS in Vue only when the `vue3-typescript-vite` profile and the SCSS profile are both active, or when an existing Vue SFC already uses SCSS.
 - Put local component-only styles in `.vue` style blocks.
 - Use `scoped` only when component-local scoping is intended.
 - Keep reusable tokens, mixins, functions, maps, and reset/base styles in project-declared shared SCSS modules.
