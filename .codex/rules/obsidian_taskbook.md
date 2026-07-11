@@ -58,7 +58,7 @@ Use the task language declared in `CODEX_PROJECT.md`; preserve identifiers, path
 7. Move completed tasks to the declared task archive and update overview pages when required.
 8. Do not edit wiki pages during taskbook-only work.
 
-The existing taskbook conventions from `.codex/rules/obsidian_tasks.md` remain the detailed reference until projects migrate to this profile.
+Use `.agents/skills/obsidian-taskbook/references/taskbook-workflow.md` for detailed task identity, structure, lifecycle, overview, checks, context-link, template, and archive conventions.
 
 ## Review Checklist
 
