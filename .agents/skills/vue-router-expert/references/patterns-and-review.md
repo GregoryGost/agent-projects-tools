@@ -2,7 +2,7 @@
 
 Use this reference when designing or reviewing Vue Router behavior in Vue + TypeScript projects.
 
-This reference complements `vue-expert` and `typescript-core`: Vue component and TypeScript rules stay in those base skills, while this file focuses on route contracts, navigation, route params, query, meta, guards, redirects, and RouterLink behavior.
+This reference complements `vue3-typescript-vite-expert` and `typescript-core`: Vue component and TypeScript rules stay in those base skills, while this file focuses on route contracts, navigation, route params, query, meta, guards, redirects, and RouterLink behavior.
 
 ## Core Principles
 
