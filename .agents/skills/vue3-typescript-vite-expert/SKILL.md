@@ -1,6 +1,6 @@
 ---
 name: vue3-typescript-vite-expert
-description: "Use for Vue 3 frontend work with TypeScript and Vite: SFCs, Composition API, script setup, props/emits/slots, composables, Vite-aware changes, and Vue review."
+description: "Use for Vue 3 frontend work with TypeScript and Vite, including SFCs, Composition API, composables, and review."
 ---
 
 # Vue 3 + TypeScript + Vite Expert
