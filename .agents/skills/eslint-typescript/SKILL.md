@@ -1,6 +1,6 @@
 ---
 name: eslint-typescript
-description: "Use for ESLint setup and review in TypeScript projects: flat config, typescript-eslint, runtime globals by active project profile, typed-linting policy, Prettier conflict handling, and lint scripts."
+description: "Use for ESLint configuration in TypeScript projects, including typed linting, runtime globals, scripts, and Prettier compatibility."
 ---
 
 # ESLint TypeScript
