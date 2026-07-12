@@ -1,0 +1,4 @@
+interface:
+  display_name: "Jira Data Center"
+  short_description: "Jira DC 8.22.x REST API integrations"
+  default_prompt: "Use $jira-data-center for Jira Data Center 8.22.x REST API clients, JQL, issue workflows, changelog/status history, project-root .env PAT authentication, and safe write operations."
