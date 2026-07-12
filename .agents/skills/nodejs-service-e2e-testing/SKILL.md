@@ -1,6 +1,6 @@
 ---
 name: nodejs-service-e2e-testing
-description: "Use for E2E testing of non-browser TypeScript Node.js services: HTTP APIs, CLIs, workers, queues, real dependencies, Testcontainers/Docker services, Supertest/fetch, process boundaries, setup/teardown, and E2E review."
+description: "Use for E2E testing of non-browser TypeScript Node.js APIs, CLIs, workers, queues, and real dependencies."
 ---
 
 # Node.js Service E2E Testing
