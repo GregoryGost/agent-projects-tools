@@ -41,6 +41,31 @@ Task notes contain exactly six required structure elements: one frontmatter bloc
 
 The frontmatter block is a structural element, not a Markdown section. Use project-approved frontmatter and status values. Do not add unrelated top-level sections.
 
+`Checks` is not a separate required structure element or top-level section. Store it as a nested subsection inside `Notes on working on the task`. When task sections use `##`, use this shape:
+
+```markdown
+## Notes on working on the task
+
+Implementation progress and final work notes.
+
+### Checks
+
+- 2026-07-12 18:30 — `pytest` passed.
+- 2026-07-12 18:35 — `ruff check` passed.
+```
+
+Do not use this shape:
+
+```markdown
+## Notes on working on the task
+
+Implementation progress and final work notes.
+
+## Checks
+
+- Validation result.
+```
+
 ## Planning And Creation
 
 When authorized implementation work requires task tracking:
@@ -58,13 +83,15 @@ If MCP is unavailable, use only the configured fallback outbox and synchronize l
 
 - Set a started task to the project-approved in-progress status.
 - Record implementation progress and final results in `Notes on working on the task` rather than creating a separate final context note.
+- Keep the nested `Checks` subsection inside `Notes on working on the task`.
 - Close tasks only after Definition Of Done and required checks are satisfied.
 - Move completed tasks to the configured archive through MCP.
 - Keep overview pages consistent with task state and location.
 
-## Checks
+## Checks Convention
 
-- Record checks related to the task in the project-approved checks convention.
+- Record checks only under the nested `Checks` subsection inside `Notes on working on the task`.
+- Do not create a top-level `Checks` section.
 - Each check should include date/time and a concise result.
 - Record only checks relevant to the task scope.
 - Mark the final successful check according to the project convention when it supports closing the task.
@@ -89,7 +116,7 @@ If MCP is unavailable, use only the configured fallback outbox and synchronize l
 - Discover and read templates through MCP only.
 - Do not assume MCP creation executes Templater expressions.
 - Write resolved Markdown unless a tool explicitly applies a template.
-- Preserve frontmatter, status, checks, history, links, and intentional template expressions.
+- Preserve frontmatter, status, the nested checks subsection, history, links, and intentional template expressions.
 - Do not add executable template logic without explicit approval.
 
 ## Boundaries
@@ -104,6 +131,7 @@ If MCP is unavailable, use only the configured fallback outbox and synchronize l
 - [ ] Existing tasks and overview pages were checked before creation.
 - [ ] Task key, path, language, title, and structure follow the profile.
 - [ ] Status, work notes, checks, overview, and archive remain consistent.
+- [ ] Checks are nested inside `Notes on working on the task`, not stored as a top-level section.
 - [ ] Raw/context links point to MCP-managed notes.
 - [ ] Every write was re-read and verified through MCP.
 - [ ] No wiki side effects were introduced.
