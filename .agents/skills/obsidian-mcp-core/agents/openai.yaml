@@ -1,0 +1,4 @@
+interface:
+  display_name: "Obsidian MCP Core"
+  short_description: "Safe MCP-only Obsidian vault access"
+  default_prompt: "Use $obsidian-mcp-core for MCP-only Obsidian access, safe note edits, verification, fallback synchronization, and template/diagram preservation."

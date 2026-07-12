@@ -1,0 +1,4 @@
+interface:
+  display_name: "Obsidian Taskbook"
+  short_description: "Project task tracking through Obsidian MCP"
+  default_prompt: "Use $obsidian-taskbook with $obsidian-mcp-core for authorized project task planning, task status, checks, work notes, overview pages, and archive workflows."
