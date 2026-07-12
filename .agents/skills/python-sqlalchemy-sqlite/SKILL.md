@@ -1,6 +1,6 @@
 ---
 name: python-sqlalchemy-sqlite
-description: "Use for SQLAlchemy + SQLite work in Python 3.14+ backend projects: models, engines, sessions, repositories, single-writer queue writes, transactions, raw SQL migrations, SQLite PRAGMA settings, locking behavior, integration tests, and performance/correctness review."
+description: "Use for SQLAlchemy with SQLite, including repositories, transactions, PRAGMAs, locking, writer queues, migrations, and tests."
 ---
 
 # Python SQLAlchemy SQLite
