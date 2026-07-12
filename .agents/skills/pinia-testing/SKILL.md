@@ -1,6 +1,6 @@
 ---
 name: pinia-testing
-description: "Use for testing Pinia stores and component-store integration with Vitest, Vue Test Utils, and @pinia/testing: fresh Pinia state, createTestingPinia, action stubbing, plugins, persistence, getters, actions, and store contract review."
+description: "Use for testing Pinia stores and component integration with Vitest, Vue Test Utils, and @pinia/testing."
 ---
 
 # Pinia Testing
