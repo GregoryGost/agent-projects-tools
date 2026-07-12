@@ -19,7 +19,7 @@ This skill owns:
 
 - taskbook side-effect gating;
 - implementation task planning and creation;
-- task keys, titles, required sections, status, checks, and work notes;
+- task keys, titles, required sections, status, checks nested inside work notes, and work notes;
 - project and workspace task overview pages;
 - links from task notes to related raw/context notes;
 - task completion and archive;
@@ -43,8 +43,9 @@ It does not own:
 2. Resolve the allowed request mode and surfaces.
 3. Apply `obsidian-mcp-core` for all vault access and safe edits.
 4. Apply `.codex/rules/obsidian_taskbook.md` and `references/taskbook-workflow.md` for task structure, lifecycle, overview pages, checks, and archive.
-5. Do not edit wiki pages during taskbook-only work.
-6. Re-read and verify every taskbook mutation through MCP.
+5. Store checks only under the nested `Checks` subsection inside `Notes on working on the task`; do not add a top-level `Checks` section.
+6. Do not edit wiki pages during taskbook-only work.
+7. Re-read and verify every taskbook mutation through MCP.
 
 ## Review Checklist
 
@@ -52,5 +53,6 @@ It does not own:
 - [ ] Request mode explicitly allowed taskbook side effects.
 - [ ] `obsidian-mcp-core` governed all access and edits.
 - [ ] Task structure, key, language, status, checks, and archive policy followed the task rule.
+- [ ] Checks are nested inside `Notes on working on the task`.
 - [ ] Overview pages were updated only when required.
 - [ ] No wiki Query/Ingest or wiki edits were introduced.
