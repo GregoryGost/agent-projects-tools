@@ -20,6 +20,10 @@ For concrete bad/good examples and a compact review checklist, read `references/
 ## 2. Repository-First Database Access
 
 - Keep SQLAlchemy expressions, raw SQL, relationship loading, joins, filters, ordering, pagination SQL, and persistence details inside repositories.
+- Treat repository public methods as complete persistence boundaries. SQLAlchemy, SQLite driver, and DBAPI exceptions must not escape repository APIs.
+- Repository write methods must call `flush()` when generated identifiers, database defaults, constraint outcomes, or typed error mapping depend on database execution.
+- Catch expected SQLite/SQLAlchemy exceptions inside repository methods and translate them to stable repository/domain errors with exception chaining.
+- Services, writer loops, routers, and API layers must not import or catch `IntegrityError`, `DBAPIError`, `SQLAlchemyError`, or SQLite driver exceptions.
 - Keep services free of accumulated ad-hoc SQL; services may choose repositories, transaction scope, and domain decisions.
 - Do not return live ORM entities directly to API responses. Convert to DTO/Pydantic/read models before crossing the API boundary.
 - Avoid hidden lazy loading after session closure. Eagerly load required relationships or build response DTOs while the session is still valid.
@@ -104,7 +108,7 @@ When `CODEX_PROJECT.md` declares the SQLite single-writer queue pattern, one bac
 - Use SQLAlchemy expressions or parameterized `text()` queries. Never interpolate user input with f-strings, `.format()`, `%`, or string concatenation.
 - Use explicit indexes for lookup, join, filtering, ordering, and uniqueness paths that matter to behavior or latency.
 - Use uniqueness constraints and check constraints for invariants; do not rely only on application pre-checks.
-- Let repositories expose persistence outcomes clearly. Handle `IntegrityError` and map it to domain/API errors outside the repository layer.
+- Let repositories expose persistence outcomes through stable typed repository/domain errors. Repository methods must flush and map expected `IntegrityError` and other SQLite/SQLAlchemy exceptions before returning.
 - Avoid N+1 queries. Use explicit eager loading, aggregate queries, or repository methods that return pre-shaped read models.
 - Use pagination for list endpoints and repository list methods. Define stable ordering before applying `limit`/`offset` or cursor logic.
 - Use `EXPLAIN QUERY PLAN` for suspicious slow SQLite queries and verify that expected indexes are used.
@@ -114,8 +118,9 @@ When `CODEX_PROJECT.md` declares the SQLite single-writer queue pattern, one bac
 
 - Put read-modify-write operations inside one transaction. Do not split the read and write across independent sessions or commits. When the writer queue is used, any correctness-critical read required for a mutation must run inside the writer loop transaction or be protected by database constraints.
 - Use database constraints to protect invariants under concurrency. Pre-checks are useful for clearer errors, but they are not correctness boundaries.
-- Do not rely only on a pre-check before insert/update; be prepared for a constraint violation at flush/commit.
+- Do not rely only on a pre-check before insert/update; repository write methods must flush and translate any expected constraint violation before returning.
 - Keep transaction ownership clear: service/unit-of-work code should own multi-repository commits; repositories should not surprise callers with commits.
+- Caller-owned transactions control commit and rollback, while repositories remain responsible for persistence exception translation.
 - Perform cache invalidation only after a successful commit. If the transaction rolls back, cache state must remain unchanged.
 - Reference the active cache policy declared by `CODEX_PROJECT.md`; use the active cache and FastAPI skills for cache keys, TTLs, tags, and invalidation. Do not duplicate or fork those rules here.
 
@@ -127,6 +132,8 @@ When `CODEX_PROJECT.md` declares the SQLite single-writer queue pattern, one bac
 - Verify `PRAGMA foreign_keys`, constraints, rollback behavior, repository queries, pagination/order behavior, writer queue flush behavior where used, and fresh-database migration application.
 - When the writer uses pause/resume events, test pause, resume, shutdown drain, and restart behavior without real sleeps.
 - Do not mock SQLAlchemy for repository integration tests. Use the real engine/session/connection path with temporary database files.
+- Test expected SQLite constraint failures through repository methods and assert typed repository/domain errors.
+- Verify that raw SQLAlchemy, DBAPI, or SQLite driver exceptions do not escape repository public methods.
 - Test migrations through the migration runner or the same connection contract the application uses, not by importing only helper functions.
 
 ## 11. Review Workflow
@@ -137,6 +144,8 @@ When reviewing SQLAlchemy + SQLite code:
 - Apply `python-core`, `python-testing`, and `python-sqlalchemy-core` together with this skill.
 - Inspect models, repositories, session/engine setup, raw SQL migrations, settings, tests, existing DB conventions, and the runtime write policy declared in `CODEX_PROJECT.md`. Inspect writer queue code only when that policy enables the single-writer queue pattern or the task directly touches it.
 - Verify that SQL/ORM details stay inside repositories and do not leak into routers or unrelated services.
+- Verify that repositories flush and translate expected SQLAlchemy/SQLite exceptions to typed repository/domain errors.
+- Verify that services, writer loops, routers, and API layers do not catch SQLAlchemy or SQLite driver exceptions.
 - Verify that sessions are scoped to one unit of work, request, task, or writer batch and are not shared across concurrent tasks.
 - Verify that transaction boundaries are explicit and write transactions are short.
 - Verify that the implementation follows the runtime write policy declared in `CODEX_PROJECT.md`. Direct sessions, unit-of-work writes, and single-writer queues are separate supported policies; do not require queue architecture when another policy is active.

@@ -146,6 +146,62 @@ class UserRepository:
         return user
 ```
 
+### SQLAlchemy Error Escapes Repository
+
+Bad:
+
+```python
+from sqlalchemy.exc import IntegrityError
+
+
+class UserService:
+    async def create_user(self, session: AsyncSession, payload: UserCreate) -> UserRead:
+        """Создать пользователя и преобразовать DB error в service layer."""
+        try:
+            user = await self.repository.create_user(session, payload)
+            await session.flush()
+        except IntegrityError as exc:
+            # Плохо: service знает о SQLAlchemy и persistence constraints.
+            raise EmailAlreadyExistsError from exc
+
+        return UserRead.model_validate(user)
+```
+
+Good:
+
+```python
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.ext.asyncio import AsyncSession
+
+
+class UserRepository:
+    async def create_user(self, session: AsyncSession, payload: UserCreate) -> UserDbo:
+        """Создать пользователя и скрыть SQLAlchemy за repository boundary."""
+        user = UserDbo(email=payload.email)
+        session.add(user)
+
+        try:
+            await session.flush()
+        except IntegrityError as exc:
+            raise EmailAlreadyExistsError from exc
+
+        return user
+
+
+class UserService:
+    async def create_user(self, session: AsyncSession, payload: UserCreate) -> UserRead:
+        """Создать пользователя без зависимости от SQLAlchemy exceptions."""
+        user = await self.repository.create_user(session, payload)
+        return UserRead.model_validate(user)
+```
+
+Why this is good:
+
+- Repository is the complete persistence boundary.
+- The expected constraint is forced by `flush()` before the repository returns.
+- Callers depend on a stable typed error instead of SQLAlchemy or driver exceptions.
+- The caller-owned transaction still controls commit and rollback.
+
 ### External Work Inside Transaction
 
 Bad:
@@ -211,16 +267,20 @@ async def test_user_repository_rejects_duplicate_email(db_session: AsyncSession)
 - [ ] Routers do not contain SQLAlchemy code.
 - [ ] Services do not accumulate ad-hoc SQL.
 - [ ] Repository methods are explicit about read/write/flush/transaction expectations.
+- [ ] Repository public methods form a complete persistence boundary; SQLAlchemy and driver exceptions do not escape them.
+- [ ] Repository write methods flush when generated values, constraints, or error mapping require database execution.
+- [ ] Expected DB failures are translated inside repositories to stable repository/domain errors with exception chaining.
+- [ ] Services and routers do not import or catch SQLAlchemy or driver exceptions.
 - [ ] Low-level repositories do not commit unexpectedly.
 - [ ] Read-modify-write operations run inside one transaction.
 - [ ] External HTTP calls, sleeps, filesystem scans, cache invalidation, and slow computation do not happen inside write transactions.
 - [ ] User-controlled values use SQLAlchemy expressions or bound parameters.
 - [ ] Dynamic sort/filter/column/table inputs use allowlists.
 - [ ] Database constraints protect invariants that matter under concurrency.
-- [ ] `IntegrityError` and DB exceptions are mapped without leaking SQL, schema, connection strings, or stack traces.
 - [ ] ORM entities are not returned directly as public API responses.
 - [ ] Hidden lazy loading after session closure is avoided.
 - [ ] Repository integration tests use a real engine/session/connection path for the active database backend.
+- [ ] Repository integration tests assert typed errors and verify that raw SQLAlchemy exceptions do not escape.
 - [ ] Unit tests with mocked repositories are not counted as repository SQL coverage.
 - [ ] Migration behavior follows the policy declared in `CODEX_PROJECT.md`.
 - [ ] Backend-specific mechanics are handled by the active database-specific skill.

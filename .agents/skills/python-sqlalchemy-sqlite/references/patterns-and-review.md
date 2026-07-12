@@ -133,14 +133,28 @@ class UserRepository:
 Good:
 
 ```python
+from sqlalchemy.exc import IntegrityError
+
+
 class UserRepository:
     async def create_user(self, payload: UserCreate) -> UserDbo:
         """Создать пользователя внутри transaction вызывающего слоя."""
         user = UserDbo(email=payload.email)
         self.session.add(user)
-        await self.session.flush()
+
+        try:
+            await self.session.flush()
+        except IntegrityError as exc:
+            raise EmailAlreadyExistsError from exc
+
         return user
 ```
+
+Why this is good:
+
+- Repository does not take commit ownership from the caller.
+- `flush()` forces the expected constraint outcome before the method returns.
+- SQLAlchemy remains hidden behind a stable repository/domain error.
 
 ### In-Memory DB Misuse For WAL Or Multi-Connection Behavior
 
@@ -298,18 +312,44 @@ async def enqueue_user_creation(
 Good:
 
 ```python
+from sqlalchemy.exc import IntegrityError
+
+
+class UserWriteRepository:
+    async def create_user(
+        self,
+        write_session: AsyncSession,
+        *,
+        email: str,
+        idempotency_key: str,
+    ) -> UserDbo:
+        """Создать пользователя и преобразовать constraint error внутри repository."""
+        user = UserDbo(email=email, idempotency_key=idempotency_key)
+        write_session.add(user)
+
+        try:
+            await write_session.flush()
+        except IntegrityError as exc:
+            raise EmailAlreadyExistsError from exc
+
+        return user
+
+
 async def writer_create_user(write_session: AsyncSession, command: CreateUserCommand) -> None:
     """Создать пользователя внутри writer transaction."""
     async with write_session.begin():
-        try:
-            await user_write_repository.create_user(
-                write_session,
-                email=command.email,
-                idempotency_key=command.idempotency_key,
-            )
-        except IntegrityError as exc:
-            raise EmailAlreadyExistsError from exc
+        await user_write_repository.create_user(
+            write_session,
+            email=command.email,
+            idempotency_key=command.idempotency_key,
+        )
 ```
+
+Why this is good:
+
+- The writer owns orchestration and the transaction, not SQLAlchemy error classification.
+- The repository forces the constraint with `flush()` and exposes only a typed error.
+- The service/writer layer does not import or catch SQLAlchemy exceptions.
 
 ### Enqueued Write Reported As Committed
 
@@ -339,6 +379,10 @@ Apply the general checklist to every SQLAlchemy + SQLite project. Apply the sing
 ### General SQLite Checklist
 
 - [ ] SQL/ORM details stay in repositories; services own orchestration and transactions.
+- [ ] Repository public methods form a complete persistence boundary; SQLAlchemy, DBAPI, and SQLite driver exceptions do not escape.
+- [ ] Repository write methods flush when generated values, constraints, or error mapping require database execution.
+- [ ] Expected persistence failures are translated inside repositories to stable repository/domain errors with exception chaining.
+- [ ] Services, writer loops, routers, and API layers do not import or catch SQLAlchemy or SQLite driver exceptions.
 - [ ] Engines are configured once; sessions are short-lived and not shared across concurrent tasks.
 - [ ] Repositories do not commit unexpectedly.
 - [ ] `PRAGMA foreign_keys=ON`, WAL choice, and `busy_timeout` are centralized and tested.
@@ -347,9 +391,9 @@ Apply the general checklist to every SQLAlchemy + SQLite project. Apply the sing
 - [ ] User input reaches SQL only through SQLAlchemy expressions or bound parameters.
 - [ ] Constraints and indexes protect invariants and expected query paths.
 - [ ] Lists are paginated with stable ordering; suspicious queries have `EXPLAIN QUERY PLAN` evidence.
-- [ ] `IntegrityError` is mapped to domain/API errors outside repositories.
 - [ ] Cache invalidation happens only after successful commit and follows existing cashews rules.
 - [ ] Integration tests use temporary file SQLite when PRAGMA, WAL, locking, or multiple connections matter.
+- [ ] Repository integration tests assert typed repository/domain errors and verify that raw persistence exceptions do not escape.
 - [ ] The implementation matches the runtime write policy declared in `CODEX_PROJECT.md`; direct sessions and unit-of-work writes are not rejected merely because they do not use a queue.
 
 ### Single-Writer Queue Checklist
