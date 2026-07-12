@@ -27,9 +27,10 @@ It does not govern task creation, task status, task checks, task overview pages,
 ## Authorization
 
 - Query is read-oriented and must use the MCP-only access rules from `obsidian-mcp-core`.
+- Query does not authorize Ingest, crystallization, page creation, page updates, index changes, source-register changes, or wiki-log changes.
 - Ingest and wiki writes require explicit user authorization or an allowed request mode/surface.
 - Never infer Ingest from ordinary analysis, implementation, taskbook, review, or status work.
-- Do not modify taskbook notes during wiki-only work.
+- Do not read or modify taskbook notes as part of the wiki workflow unless the user separately authorizes taskbook work and the `obsidian-taskbook` profile is active.
 
 ## Workflow
 
@@ -37,16 +38,19 @@ It does not govern task creation, task status, task checks, task overview pages,
 2. Apply `obsidian-mcp-core` for all reads, searches, edits, moves, and verification.
 3. For Query, inspect `wiki/index.md` and relevant wiki pages first; consult `raw/` only when verification or missing knowledge requires it.
 4. For explicitly authorized Ingest, synthesize sources into atomic wiki pages, add wikilinks and source references, update the source register and index when needed, and append the wiki log.
-5. Do not modify `raw/` entries except to create new sources or when the user explicitly requests a source change.
+5. Do not modify existing `raw/` entries except when the user explicitly requests a source change.
 6. Re-read and verify every changed note through MCP.
 
-For detailed ingest conventions, follow `.codex/rules/obsidian_wiki/LLM Wiki Workflow.md`.
+For detailed Query/Ingest conventions, follow `.agents/skills/obsidian-llm-wiki/references/wiki-workflow.md`.
+
+When the task explicitly concerns confidence, freshness, supersession, archival, or typed wiki relationships, also follow `.agents/skills/obsidian-llm-wiki/references/wiki-lifecycle.md`.
 
 ## Review Checklist
 
 - [ ] `obsidian-llm-wiki` was active or wiki work was directly requested.
 - [ ] `obsidian-mcp-core` governed all vault access and edits.
+- [ ] Query remained read-only unless a separate write operation was explicitly authorized.
 - [ ] Ingest was explicitly authorized.
 - [ ] Raw sources remained immutable unless explicitly requested.
-- [ ] Wiki index, source register, and log were updated only when required.
+- [ ] Wiki index, source register, and log were updated only when required by an authorized write.
 - [ ] No taskbook side effects were introduced.
