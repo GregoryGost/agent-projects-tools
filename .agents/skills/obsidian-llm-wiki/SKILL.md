@@ -1,6 +1,6 @@
 ---
 name: obsidian-llm-wiki
-description: "Use for the Obsidian LLM Wiki workflow: querying project knowledge, explicit ingest from raw sources, wiki synthesis, wikilinks, source register, index maintenance, wiki log, and immutable raw-source policy."
+description: "Use for Obsidian LLM Wiki queries, explicit ingest, synthesis, wikilinks, indexes, source register, and logs."
 ---
 
 # Obsidian LLM Wiki
