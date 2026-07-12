@@ -1,6 +1,6 @@
 ---
 name: css-animation-expert
-description: "Use for CSS animation and motion work: transitions, keyframes, starting styles, registered animatable custom properties, scroll-driven animations, view transitions, reduced-motion behavior, performance-safe properties, Vue transition CSS, and motion review."
+description: "Use for CSS transitions, keyframes, modern motion features, reduced-motion support, performance, and Vue transitions."
 ---
 
 # CSS Animation Expert
