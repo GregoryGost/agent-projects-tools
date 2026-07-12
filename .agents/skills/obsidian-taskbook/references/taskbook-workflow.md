@@ -30,16 +30,16 @@ These are logical MCP paths, not filesystem paths.
 
 ## Required Task Structure
 
-Task notes contain only:
+Task notes contain exactly six required structure elements: one frontmatter block followed by five top-level Markdown sections.
 
-1. `frontmatter`;
+1. `frontmatter` block;
 2. `Problem`;
 3. `Description`;
 4. `Additional information`;
 5. `Definition Of Done`;
 6. `Notes on working on the task`.
 
-Use project-approved frontmatter and status values. Do not add unrelated top-level sections.
+The frontmatter block is a structural element, not a Markdown section. Use project-approved frontmatter and status values. Do not add unrelated top-level sections.
 
 ## Planning And Creation
 
