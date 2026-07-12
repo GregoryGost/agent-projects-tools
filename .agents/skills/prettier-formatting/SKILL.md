@@ -1,6 +1,6 @@
 ---
 name: prettier-formatting
-description: "Use for Prettier formatting workflows: config, ignore files, check/write commands, ESLint conflict handling, formatter scope control, plugin policy, Tailwind class sorting policy, and multi-file format review."
+description: "Use for Prettier configuration, formatting commands, ignore rules, plugin policy, and ESLint integration."
 ---
 
 # Prettier Formatting
