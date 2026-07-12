@@ -1,5 +1,7 @@
 # Git work rules
 
+Apply this rule only when `CODEX_PROJECT.md` lists `.codex/rules/git.md` as active. For direct commit-text requests, also apply `.codex/rules/request_routing.md` and use `commit-text-only` mode.
+
 When requested to provide a Git commit, it must be:
 
 - the commit must be in markdown format
