@@ -36,14 +36,16 @@ It does not govern LLM Wiki Query/Ingest, wiki index, source register, or wiki l
 
 ## Task Structure
 
-Task notes must contain only the project-approved structure:
+Task notes must contain exactly six required structure elements: one frontmatter block followed by five top-level Markdown sections.
 
-1. `frontmatter`;
+1. `frontmatter` block;
 2. `Problem`;
 3. `Description`;
 4. `Additional information`;
 5. `Definition Of Done`;
 6. `Notes on working on the task`.
+
+The frontmatter block is a structural element, not a Markdown section. Do not add unrelated top-level sections.
 
 Use the task language declared in `CODEX_PROJECT.md`; preserve identifiers, paths, library names, protocols, and proper names in their original form.
 
