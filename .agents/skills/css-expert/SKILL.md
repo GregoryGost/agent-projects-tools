@@ -1,6 +1,6 @@
 ---
 name: css-expert
-description: "Use for standalone CSS work and review: stylesheet architecture, cascade layers, custom properties, cross-browser behavior, progressive enhancement, responsive layouts, accessibility states, Vue SFC style usage, and CSS build-pipeline awareness."
+description: "Use for CSS architecture, browser compatibility, responsive styling, accessibility states, and Vue SFC styles."
 ---
 
 # CSS Expert
