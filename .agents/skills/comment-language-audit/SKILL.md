@@ -1,6 +1,6 @@
 ---
 name: comment-language-audit
-description: Use when creating, editing, reviewing, translating, or auditing code comments, docstrings, doc comments, JSDoc/TSDoc blocks, XML documentation comments, or other code-adjacent prose in any programming language where CODEX_PROJECT.md declares a target natural language or the task asks for language-policy review. Covers portable target-language policy, mixed-language prose, partial translations, grammar, inflection, literal source-language calques, source-language noun stacks, and audit reporting. Does not define language-specific docstring syntax or API documentation format.
+description: "Use for auditing or editing code comments and docstrings against the natural-language policy in CODEX_PROJECT.md."
 ---
 # Comment Language Audit
 

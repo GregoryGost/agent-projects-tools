@@ -1,6 +1,6 @@
 ---
 name: vueuse-expert
-description: "Use for VueUse work and review: composable utility selection, version-aware API checks, lifecycle cleanup, reactive arguments, event filters, storage helpers, browser/SSR guards, and project-specific exclusions."
+description: "Use for VueUse composables, browser utilities, lifecycle cleanup, storage, and SSR-safe integration."
 ---
 
 # VueUse Expert

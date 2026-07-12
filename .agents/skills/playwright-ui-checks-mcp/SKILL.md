@@ -1,6 +1,6 @@
 ---
 name: playwright-ui-checks-mcp
-description: "Use for local browser-based UI validation through Playwright MCP: route navigation, wait targets, accessibility snapshots, screenshots, console/network summaries, artifact evidence, and validation reporting."
+description: "Use for local UI validation through Playwright MCP with navigation, accessibility, screenshots, console/network evidence, and reports."
 ---
 
 # Playwright UI Checks MCP

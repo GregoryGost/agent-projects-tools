@@ -1,6 +1,6 @@
 ---
 name: scss-expert
-description: "Use for standalone Sass/SCSS styling work: module system, variables, maps, mixins, design tokens, CSS custom properties, component-scoped styles, responsive behavior, theme behavior, Vue SFC style usage, and style review."
+description: "Use for Sass/SCSS modules, design tokens, mixins, component styles, responsive themes, and Vue SFC integration."
 ---
 
 # SCSS Expert

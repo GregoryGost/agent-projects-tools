@@ -1,6 +1,6 @@
 ---
 name: pinia-expert
-description: "Use for Pinia store work and review: store boundaries, state shape, getters, actions, setup stores, outside-component usage, persistence assumptions, call-site impact, and Vue integration."
+description: "Use for Pinia store design, state, getters, actions, persistence assumptions, and Vue integration."
 ---
 
 # Pinia Expert

@@ -1,6 +1,6 @@
 ---
 name: tailwind-expert
-description: "Use for Tailwind CSS work: utility classes, responsive variants, state variants, theme variables, source detection, Vue class binding, stylesheet integration, version awareness, and Tailwind review."
+description: "Use for Tailwind CSS utilities, variants, themes, source detection, Vue bindings, and stylesheet integration."
 ---
 
 # Tailwind Expert

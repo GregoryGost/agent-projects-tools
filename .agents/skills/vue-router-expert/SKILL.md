@@ -1,6 +1,6 @@
 ---
 name: vue-router-expert
-description: "Use for Vue Router changes and review: route records, named routes, lazy route components, route props, route meta, guards, redirects, params, query handling, navigation failures, and call-site validation."
+description: "Use for Vue Router route design, params, query, guards, redirects, navigation, and review."
 ---
 
 # Vue Router Expert

@@ -1,6 +1,6 @@
 ---
 name: python-service-e2e-testing
-description: "Use for E2E testing of non-browser Python applications: HTTP APIs, CLIs, workers, queues, scheduled jobs, filesystem flows, database-backed flows, real dependencies, Testcontainers/Docker Compose when declared, process boundaries, setup/teardown, and E2E review."
+description: "Use for E2E testing of non-browser Python APIs, CLIs, workers, queues, scheduled jobs, databases, and filesystem flows."
 ---
 
 # Python Service E2E Testing

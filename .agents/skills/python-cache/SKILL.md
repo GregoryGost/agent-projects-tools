@@ -1,6 +1,6 @@
 ---
 name: python-cache
-description: "Use for Python cache design and review with cashews: cache decision, TTL, key scope, invalidation, backend setup, test isolation, cashews usage, and FastAPI integration when FastAPI is active."
+description: "Use for cashews cache design, keys, TTL, invalidation, backend lifecycle, testing, and FastAPI integration."
 ---
 
 # Python Cache

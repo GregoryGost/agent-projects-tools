@@ -1,6 +1,6 @@
 ---
 name: typescript-jest-testing
-description: "Use for Jest-based, framework-neutral TypeScript unit and integration testing: functions, modules, classes, object model invariants, typed Jest mocks/fakes, deterministic tests, coverage policy, and review."
+description: "Use for framework-neutral TypeScript unit and integration testing with Jest, typed test doubles, and coverage."
 ---
 
 # TypeScript Jest Testing

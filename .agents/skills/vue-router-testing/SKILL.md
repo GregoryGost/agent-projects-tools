@@ -1,6 +1,6 @@
 ---
 name: vue-router-testing
-description: "Use for testing Vue Router behavior with Vitest and Vue Test Utils: mocked route/router, real router integration, route records, navigation readiness, params, query, guards, redirects, meta, route props, navigation failures, and route rendering."
+description: "Use for testing Vue Router behavior with Vitest and Vue Test Utils, from mocked navigation to real router integration."
 ---
 
 # Vue Router Testing

@@ -1,6 +1,6 @@
 ---
 name: python-backend-security
-description: "Use for security-sensitive Python 3.14+ backend work: authentication, authorization, input validation, secrets, CORS, SQL injection, SSRF, safe logging, file/path handling, rate limiting, dependency safety, and security regression tests for FastAPI, SQLAlchemy-backed persistence, and HTTPX projects."
+description: "Use for security-sensitive Python backend work across auth, validation, secrets, SSRF, SQL, files, logging, and tests."
 ---
 
 # Python Backend Security

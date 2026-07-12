@@ -1,6 +1,6 @@
 ---
 name: vue-playwright-e2e-testing
-description: "Use for Vue frontend browser E2E testing with Playwright: user flows, routing, auth, forms, API-backed behavior, fixtures, webServer, locators, traces, styling-visible behavior, CI policy, and E2E review."
+description: "Use for Vue browser E2E testing with Playwright, including user flows, routing, auth, fixtures, artifacts, and CI."
 ---
 
 # Vue Playwright E2E Testing

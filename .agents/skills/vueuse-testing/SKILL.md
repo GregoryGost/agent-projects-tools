@@ -1,6 +1,6 @@
 ---
 name: vueuse-testing
-description: "Use for testing VueUse-based composables and integrations: lifecycle cleanup, browser/storage mocks, fake timers, event filters, reactive return values, reactive arguments, and project-specific exclusions."
+description: "Use for testing VueUse composables with lifecycle checks, browser/storage mocks, timers, and reactive inputs."
 ---
 
 # VueUse Testing

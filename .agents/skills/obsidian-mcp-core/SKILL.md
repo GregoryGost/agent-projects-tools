@@ -1,6 +1,6 @@
 ---
 name: obsidian-mcp-core
-description: "Use for core Obsidian access through Semantic Notes Vault MCP: MCP-only vault operations, safe partial edits, read-before-write, verification, fallback synchronization, graph/query routing, and Templater/PlantUML preservation."
+description: "Use for MCP-only Obsidian vault access, safe partial edits, verification, fallback sync, and protected note syntax."
 ---
 
 # Obsidian MCP Core

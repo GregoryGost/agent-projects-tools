@@ -1,6 +1,6 @@
 ---
 name: python-sqlalchemy-core
-description: "Use for common SQLAlchemy work in Python 3.14+ backend projects: models, engines, sessions, repositories, transactions, query behavior, constraints, error mapping, migrations policy coordination, integration tests, and database code review independent of a specific database backend."
+description: "Use for backend-agnostic SQLAlchemy models, sessions, repositories, transactions, queries, error mapping, and tests."
 ---
 
 # Python SQLAlchemy Core

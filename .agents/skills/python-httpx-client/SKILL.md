@@ -1,6 +1,6 @@
 ---
 name: python-httpx-client
-description: "Use for outgoing HTTP integrations in Python 3.14+ backend projects using HTTPX and httpx-retries: AsyncClient lifecycle, timeouts, connection limits, retry policy, 429/Retry-After handling, rate-limit-aware integration behavior, error mapping, streaming responses, SSRF protection, tests with MockTransport/ASGITransport, and integration-client review."
+description: "Use for Python HTTPX clients with httpx-retries: lifecycle, timeouts, retries, rate limits, streaming, SSRF, and tests."
 ---
 
 # Python HTTPX Client
