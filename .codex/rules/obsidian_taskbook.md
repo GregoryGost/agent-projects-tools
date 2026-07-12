@@ -47,6 +47,8 @@ Task notes must contain exactly six required structure elements: one frontmatter
 
 The frontmatter block is a structural element, not a Markdown section. Do not add unrelated top-level sections.
 
+`Checks` is not an additional top-level section. Store checks inside `Notes on working on the task` under a nested `Checks` heading one level below the section heading. When top-level task sections use `##`, use `### Checks`.
+
 Use the task language declared in `CODEX_PROJECT.md`; preserve identifiers, paths, library names, protocols, and proper names in their original form.
 
 ## Workflow
@@ -56,7 +58,7 @@ Use the task language declared in `CODEX_PROJECT.md`; preserve identifiers, path
 3. Apply `obsidian-mcp-core` for every taskbook read and mutation.
 4. Read existing task and overview notes before editing.
 5. Create or update tasks with bounded MCP operations and verify them after writing.
-6. Record implementation checks in the task `Checks` convention required by the project workflow.
+6. Record implementation checks only in the nested `Checks` subsection inside `Notes on working on the task`; do not create a top-level `Checks` section.
 7. Move completed tasks to the declared task archive and update overview pages when required.
 8. Do not edit wiki pages during taskbook-only work.
 
@@ -68,5 +70,6 @@ Use `.agents/skills/obsidian-taskbook/references/taskbook-workflow.md` for detai
 - [ ] Request mode explicitly allowed every taskbook side effect.
 - [ ] `obsidian-mcp-core` governed all vault access and edits.
 - [ ] Task key, language, structure, status, checks, overview, and archive policy were followed.
+- [ ] Checks are nested inside `Notes on working on the task`, not stored as a top-level section.
 - [ ] Every write was verified through MCP.
 - [ ] No wiki Query/Ingest or wiki edits were introduced.
