@@ -1,6 +1,6 @@
 ---
 name: python-fastapi-expert
-description: "Use for FastAPI backend work: routers, dependency injection, request and response models, OpenAPI contracts, async boundaries, background tasks, service/repository coordination, and FastAPI review."
+description: "Use for FastAPI routers, dependencies, schemas, OpenAPI contracts, lifespan, background tasks, and framework review."
 ---
 
 # Python FastAPI Expert
