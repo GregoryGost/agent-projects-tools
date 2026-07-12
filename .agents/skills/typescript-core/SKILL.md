@@ -1,6 +1,6 @@
 ---
 name: typescript-core
-description: "Use for TypeScript code changes and review: code style, class/object modeling, structure patterns, type boundaries, narrowing, public contracts, tsconfig awareness, safe refactoring, and framework-neutral TypeScript best practices."
+description: "Use for framework-neutral TypeScript implementation, typing, public contracts, safe refactoring, and code review."
 ---
 
 # TypeScript Core
