@@ -1,6 +1,6 @@
 ---
 name: python-testing
-description: Python 3.14+ testing workflow with pytest, pytest-asyncio, pytest-xdist when declared by the project, and coverage.py. Use when Codex writes, changes, reviews, organizes, or verifies Python tests; designs pytest configuration; handles async tests, fixtures, parametrization, mocks, test doubles, unit/integration boundaries, parallel test execution, or coverage requirements.
+description: "Use for Python 3.14+ tests with pytest, pytest-asyncio, optional pytest-xdist, test doubles, and coverage."
 ---
 
 # Python Testing
