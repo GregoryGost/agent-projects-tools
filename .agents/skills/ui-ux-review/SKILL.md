@@ -1,6 +1,6 @@
 ---
 name: ui-ux-review
-description: "Use for framework-agnostic UI/UX validation: responsive behavior, interaction states, accessibility-sensitive markup, layout stability, active styling overlays, browser evidence, and validation reporting."
+description: "Use for UI/UX review of responsive layout, interaction states, accessibility, visual stability, and browser evidence."
 ---
 
 # UI/UX Review
