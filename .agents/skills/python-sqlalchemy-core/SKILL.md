@@ -41,6 +41,10 @@ Do not use this skill alone for backend-specific decisions. Always pair it with 
 ## Repository-First Database Access
 
 - Keep SQLAlchemy expressions, raw SQL, relationship loading, joins, filters, ordering, pagination SQL, and persistence details inside repositories.
+- Treat repository public methods as complete persistence boundaries. SQLAlchemy and driver exceptions must not escape repository APIs.
+- Translate expected persistence failures to stable repository/domain errors inside repository methods. Do not translate database exceptions directly to HTTP/API errors.
+- Repository write methods must call `flush()` before returning whenever generated identifiers, database defaults, constraint outcomes, or error mapping depend on database execution.
+- Services and routers must not import or catch `IntegrityError`, `DBAPIError`, `SQLAlchemyError`, or driver-specific exceptions.
 - Keep routers free of SQLAlchemy code.
 - Keep services free of accumulated ad-hoc SQL; services may choose repositories, transaction scope, and domain decisions.
 - Repository methods must be explicit about whether they read, write, flush, or require a caller-owned transaction.
@@ -65,9 +69,10 @@ Do not use this skill alone for backend-specific decisions. Always pair it with 
 - Put read-modify-write operations inside one transaction.
 - Keep transaction ownership explicit. Service/unit-of-work code should own multi-repository commits.
 - Low-level repositories must not commit unless they explicitly own the whole unit of work.
-- Prefer `flush()` when generated ids, constraint checks, or database defaults are needed before returning to the caller.
+- Repository write methods must use `flush()` when generated ids, constraint checks, database defaults, or typed error mapping are needed before returning to the caller.
 - Use database constraints for correctness under concurrency. Pre-checks improve error messages but are not correctness boundaries.
-- Be prepared for constraint violations at flush/commit and map them outside low-level repositories.
+- Repository methods must catch expected SQLAlchemy/database exceptions raised by their own execute/flush operations and translate them to stable repository/domain errors with exception chaining.
+- A caller-owned transaction still controls commit and rollback; repository error mapping must not hide or commit the transaction.
 - Do not perform external HTTP calls, slow computations, sleeps, cache calls, filesystem scans, or network operations while holding a write transaction.
 - Perform cache invalidation or external side effects only after a successful commit.
 - If the transaction rolls back, cache state and external side effects must remain unchanged unless a project-specific compensation flow exists.
@@ -86,10 +91,13 @@ Do not use this skill alone for backend-specific decisions. Always pair it with 
 
 ## Error Mapping
 
-- Map `IntegrityError` and other database exceptions to domain/API errors at a boundary that can preserve context safely.
+- The repository layer is the persistence error-mapping boundary.
+- Catch expected `IntegrityError`, `DBAPIError`, and other known SQLAlchemy/database exceptions inside repository methods around the execute/flush operation that can raise them.
+- Translate them to stable repository/domain errors that callers can handle without importing SQLAlchemy. Preserve the original exception as the cause with `raise ... from exc`.
+- Do not map persistence exceptions directly to HTTP status codes or API response models inside repositories. Service/API layers translate typed repository/domain errors to their public contracts.
 - Do not expose raw SQL, constraint names, schema names, internal file paths, connection strings, or stack traces to API clients.
 - Preserve enough safe context for logs: operation name, repository method, sanitized entity identifiers, and stable domain error code where applicable.
-- Do not catch broad database exceptions only to return generic success or silently skip failed writes.
+- Do not catch broad database exceptions only to return generic success, silently skip failed writes, or erase actionable failure categories.
 
 ## Models And Schemas
 
@@ -112,7 +120,8 @@ Do not use this skill alone for backend-specific decisions. Always pair it with 
 - Repository integration tests must use the real engine/session/connection path for the active database backend.
 - Do not mock SQLAlchemy in repository integration tests.
 - Test transaction commit and rollback behavior for multi-step units of work.
-- Test constraint violations and domain error mapping.
+- Test constraint violations through repository methods and assert the typed repository/domain errors they expose.
+- Verify that raw SQLAlchemy or driver exceptions do not escape repository public methods.
 - Test pagination, ordering, filtering, and permission/tenant predicates when they affect behavior.
 - Use the active database-specific skill for backend-specific test database setup and isolation rules.
 
@@ -127,8 +136,9 @@ When reviewing common SQLAlchemy code:
 - Verify that sessions are scoped to one unit of work, request, task, or explicit batch and are not shared across concurrent tasks.
 - Verify that transaction boundaries are explicit and write transactions are short.
 - Verify that read-modify-write operations are protected by one transaction and database constraints.
+- Verify that repository write methods flush when database execution is required for generated values, constraints, or error mapping.
+- Verify that repositories translate expected SQLAlchemy/database exceptions to typed repository/domain errors and that services/routers do not catch SQLAlchemy exceptions.
 - Verify that query code is parameterized and does not use f-strings or string concatenation with user-controlled input.
 - Verify that dynamic sorting/filtering inputs are allowlisted.
-- Verify that `IntegrityError` and database exceptions are mapped without leaking internals.
 - Verify that repository integration tests use real SQLAlchemy behavior instead of mocking SQLAlchemy.
 - Verify that backend-specific mechanics are delegated to the active database-specific skill.
