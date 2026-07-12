@@ -1,6 +1,6 @@
 ---
 name: obsidian-taskbook
-description: "Use for the Obsidian project taskbook workflow: request-mode gating, task creation and planning, task status, Jira-style keys, overview pages, checks, work notes, raw-context links, completion, and archive."
+description: "Use for Obsidian taskbook planning, task lifecycle, status, checks, overview pages, and archive."
 ---
 
 # Obsidian Taskbook
