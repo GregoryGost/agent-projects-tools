@@ -13,7 +13,11 @@ Use this checklist before finishing a security-sensitive backend change or revie
 - [ ] Input bounds cover lengths, counts, pagination, numeric ranges, date ranges, enum values, file size, and response-size-affecting inputs.
 - [ ] User-controlled SQL values use SQLAlchemy expressions or bound parameters.
 - [ ] Dynamic `ORDER BY`, column, table, and direction inputs use allowlists.
-- [ ] `IntegrityError`, raw SQL, stack traces, schema details, internal URLs, and file paths are not exposed to clients.
+- [ ] Repository methods execute or `flush()` where required to detect expected constraint and persistence failures.
+- [ ] Repository methods translate expected `IntegrityError`, `DBAPIError`, and driver exceptions to stable repository/domain errors with exception chaining.
+- [ ] Services, routers, and API layers do not import or catch raw SQLAlchemy or driver exceptions.
+- [ ] Public API errors are produced from typed repository/domain errors rather than directly from persistence exceptions.
+- [ ] Raw DB errors, SQL, constraint names, schema details, connection details, stack traces, internal URLs, and file paths are not exposed to clients.
 - [ ] Database-specific safety checks from the active database skill are applied.
 - [ ] SQLite `PRAGMA foreign_keys=ON` is centralized and tested when the active project database is SQLite.
 - [ ] User-controlled file and DB paths are normalized, constrained to an allowed base directory, and reject traversal.
@@ -27,5 +31,5 @@ Use this checklist before finishing a security-sensitive backend change or revie
 - [ ] Authenticated or permission-filtered responses are not cached unless scope, TTL, and invalidation are explicit.
 - [ ] Rate limiting uses a supported project mechanism or was explicitly requested.
 - [ ] New dependencies are justified, maintained, and constrained according to project policy.
-- [ ] Security regression tests cover unauthorized, forbidden, tenant/object isolation, invalid input boundaries, SQL injection attempts, SSRF rejection, CORS config changes, secret redaction, path traversal, and cache scope gaps where relevant.
+- [ ] Security regression tests cover unauthorized, forbidden, tenant/object isolation, invalid input boundaries, SQL injection attempts, repository error translation, absence of raw persistence exceptions outside repositories, client-safe API mapping, SSRF rejection, CORS config changes, secret redaction, path traversal, and cache scope gaps where relevant.
 - [ ] Code review applied `python-core`, `python-testing`, and every relevant specialist skill for the touched backend area.

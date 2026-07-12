@@ -69,10 +69,12 @@ Load `references/security-negative-examples.md` when implementing or reviewing o
 - Never use f-strings, `.format()`, `%`, or concatenation for user-controlled SQL values.
 - Treat `ORDER BY`, column names, table names, and sort direction as unsafe unless they are mapped through allowlists.
 - Use database constraints for invariants. Application pre-checks improve messages but are not concurrency boundaries.
-- Map `IntegrityError` to safe domain/API errors without leaking SQL, schema names, internal constraints, or stack traces.
-- Do not expose raw DB errors, stack traces, internal file paths, or SQL fragments to clients.
+- Treat repository public methods as the persistence error boundary. Repository write methods must execute or `flush()` when database execution is required to detect expected constraint and persistence failures.
+- Translate expected `IntegrityError`, `DBAPIError`, and driver exceptions inside repository methods to stable repository/domain errors with exception chaining.
+- Services, routers, and API layers must not import or catch raw SQLAlchemy or driver exceptions. They translate only typed repository/domain errors to client-safe API contracts.
+- Do not expose raw DB errors, SQL, constraint names, schema names, stack traces, connection details, internal file paths, or SQL fragments to clients.
 
-For common SQLAlchemy mechanics, apply `python-sqlalchemy-core`. For migration and backend-specific mechanics, apply the active database-specific skill declared by `CODEX_PROJECT.md`.
+For common SQLAlchemy mechanics and the canonical persistence error-mapping policy, apply `python-sqlalchemy-core`. For migration and backend-specific mechanics, apply the active database-specific skill declared by `CODEX_PROJECT.md`.
 
 ## SQLite-Specific Safety
 
@@ -151,4 +153,4 @@ For lifecycle, retry, streaming, timeout, and HTTPX test details, apply `python-
 
 ## Security Tests
 
-Apply `python-testing` and add focused regression tests for the boundary changed. Cover unauthorized requests, forbidden requests, tenant/object isolation, invalid input boundaries, SQL injection attempts, SSRF rejection, CORS config changes, secret redaction, file path traversal rejection, and cache scope separation when relevant.
+Apply `python-testing` and add focused regression tests for the boundary changed. Cover unauthorized requests, forbidden requests, tenant/object isolation, invalid input boundaries, SQL injection attempts, persistence error translation at the repository boundary, absence of raw SQLAlchemy/driver exceptions outside repositories, client-safe API error mapping from typed repository/domain errors, SSRF rejection, CORS config changes, secret redaction, file path traversal rejection, and cache scope separation when relevant.
