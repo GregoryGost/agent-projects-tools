@@ -1,6 +1,6 @@
 ---
 name: python-core
-description: Use when writing, reviewing, or refactoring Python code in projects where CODEX_PROJECT.md declares Python as an active programming language, or when the user explicitly asks about Python source. Covers portable Python 3.14+ language guidance, PEP-oriented style, environment discovery, validation workflow, typing, idiomatic implementation, comments/docstrings, and Python-code review. Does not cover framework/database/HTTP/security specifics except routing to active specialist skills.
+description: "Use for Python 3.14+ implementation, refactoring, typing, PEP-oriented style, validation workflow, and code review."
 ---
 # Python Core
 
