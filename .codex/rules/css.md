@@ -30,7 +30,8 @@ Before changing CSS:
 - Avoid IDs for styling, deep descendant chains, and broad element selectors outside reset/base layers.
 - Keep nesting shallow and avoid nesting that hides compiled selector specificity.
 - Use `@supports` for progressive enhancement when a modern feature needs a fallback.
-- Do not rely on CSS transforms unless the project build pipeline explicitly handles them.
+- Use the CSS `transform` property and transform functions such as `translate()`, `rotate()`, `scale()`, and `skew()` normally when they fit the styling requirement and browser support policy.
+- Do not assume build-time CSS transformations, transpilation, polyfills, or automatic vendor prefixing unless the project build pipeline explicitly provides them.
 - Do not hand-write vendor prefixes unless project policy or browser support requirements demand it.
 - Treat form controls, scrollbars, viewport units, font rendering, and mobile browser behavior as cross-browser risk areas.
 - Check `@layer`, `@scope`, `@property`, container queries, anchor positioning, `:has()`, `:is()`, and native nesting against browser support policy before relying on them.
