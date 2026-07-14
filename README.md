@@ -39,7 +39,7 @@
 
 Назначение элементов:
 
-- `AGENTS.md` — короткий bootstrap-файл. В целевом проекте он использует `CODEX_PROJECT.md`, а в исходном `agent-projects-tools` включает отдельный template repository mode без создания проектного профиля.
+- `AGENTS.md` — короткий bootstrap-файл. В обоих режимах он безусловно применяет `.codex/rules/request_routing.md`; в целевом проекте затем использует `CODEX_PROJECT.md`, а в исходном `agent-projects-tools` включает отдельный template repository mode без создания проектного профиля.
 - `.codex/project.template.md` — шаблон для создания `CODEX_PROJECT.md` в корне целевого проекта. Это не активное правило.
 - `.codex/rules/` — переносимые правила Codex. Шаблон проектного профиля в эту директорию не входит.
 - `.agents/skills/` — переиспользуемые skill-пакеты.
@@ -54,10 +54,11 @@
 
 1. Скопируйте или подключите `AGENTS.md` в целевой проект.
 2. Скопируйте `.codex/project.template.md` в корень целевого проекта под именем `CODEX_PROJECT.md`.
-3. Удалите из созданного профиля неиспользуемые разделы и оставьте только активные stack profiles, rules, skills, команды проверки, integrations и project-specific policies.
-4. Перенесите только нужные файлы из `.codex/rules/` и целиком соответствующие пакеты из `.agents/skills/`.
-5. Не подключайте `.codex/project.template.md` как rule после создания проектного `CODEX_PROJECT.md`.
-6. Не активируйте language-, framework-, database-, cache-, HTTP-client-, styling-, testing- или external-system-материалы без соответствующего профиля либо прямой необходимости по задаче.
+3. Всегда перенесите `.codex/rules/request_routing.md`. Это обязательное bootstrap-правило, которое нельзя удалить, отключить, заменить или установить в `none`.
+4. Удалите из созданного профиля неиспользуемые опциональные разделы и оставьте только активные stack profiles, rules, skills, команды проверки, integrations и project-specific policies. Обязательную запись `.codex/rules/request_routing.md` сохраните без изменений.
+5. Перенесите только остальные нужные файлы из `.codex/rules/` и целиком соответствующие пакеты из `.agents/skills/`.
+6. Не подключайте `.codex/project.template.md` как rule после создания проектного `CODEX_PROJECT.md`.
+7. Не активируйте language-, framework-, database-, cache-, HTTP-client-, styling-, testing- или external-system-материалы без соответствующего профиля либо прямой необходимости по задаче.
 
 ## Фактическое покрытие
 
