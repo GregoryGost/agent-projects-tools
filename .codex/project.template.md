@@ -8,16 +8,21 @@ This template is not a rule. Keep it outside `.codex/rules/`.
 
 The template may list many possible profiles, rules, skills, commands, and policy blocks.
 
-The final `CODEX_PROJECT.md` must contain only what applies to the concrete project:
+`.codex/rules/request_routing.md` is a mandatory bootstrap rule. It is always active, does not depend on any stack profile, and must be applied before task-specific tool calls, edits, MCP operations, external-system calls, or final answers.
 
+The final `CODEX_PROJECT.md` must contain:
+
+- the required routing rule `.codex/rules/request_routing.md`;
 - active stack profiles;
-- active rule files;
+- active additional rule files;
 - active skills;
 - active commands;
 - active integrations;
 - project-specific policies.
 
-Omitted entries and entries set to `none` are inactive. Remove unused optional sections from the final `CODEX_PROJECT.md`.
+Omitted entries and entries set to `none` are inactive only for optional profiles, rules, skills, commands, integrations, and policy blocks. Remove unused optional sections from the final `CODEX_PROJECT.md`.
+
+The required routing rule must not be removed, omitted, disabled, replaced, or set to `none`. Conflicting optional activation entries cannot deactivate it.
 
 ## Project Discovery Rule
 
@@ -83,9 +88,13 @@ Active profiles for this project:
 
 ## Active Rules
 
-List only rule files active in this project.
+The routing rule is mandatory and is not part of the optional rule selection.
 
-- Core rules: `<.codex/rules/request_routing.md / source_code_hygiene.md / none>`
+- Required routing rule: `.codex/rules/request_routing.md`
+
+List only additional rule files active in this project.
+
+- Optional core rules: `<source_code_hygiene.md / none / other>`
 - Git rules: `<git.md / none>`
 - Python/backend rules: `<python_fastapi.md / python_cache.md / none>`
 - Formatting/linting rules: `<prettier_formatting.md / eslint_typescript.md / none>`
