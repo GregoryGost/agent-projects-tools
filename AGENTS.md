@@ -33,6 +33,8 @@ Use this mode in a project that consumes rules, skills, and the project profile 
    - treat exact artifacts named under `Required skills`, `Required Dependencies`, `Use together with`, or an explicit `requires` / `Apply ... together` statement as hard dependencies;
    - require every hard dependency to exist and be active through the same project-profile signals;
    - validate dependencies transitively until every required rule and skill is satisfied;
+   - track already visited artifacts so a valid mutual `rule ↔ skill` dependency does not recurse indefinitely;
+   - accept a dependency cycle only when every member exists, is active, and has no missing or disabled dependency outside the cycle;
    - do not treat optional coordination such as `combine with ... when active` as a hard dependency.
 7. If a hard dependency is missing, inactive, explicitly set to `none`, or disabled, report the exact dependency chain and treat the dependent artifact as invalid. Do not apply it and do not silently activate the missing dependency. Update `CODEX_PROJECT.md` only when the current request and routing mode authorize that profile change, then re-run dependency validation.
 8. Read and apply only the additional rules and skills that match the task, are active through at least one activation signal, and have a valid dependency closure. A task may explicitly require reviewing an inactive area without making it generally active for unrelated work.
@@ -61,6 +63,7 @@ Keep `AGENTS.md` small. Detailed workflows belong in `.codex/rules/`, `.agents/s
 - In a target project, a programming-language, framework, database, cache, HTTP client, styling, testing, UI validation, E2E, security, or external-system material is active when `CODEX_PROJECT.md` declares its exact rule in `Active Rules`, its exact skill in `Active Skills`, its matching active stack profile, or an enabled specialized profile section that names it. The task may also explicitly require reviewing an otherwise inactive area.
 - Omission from `Active Stack Profiles` does not deactivate an exact entry in `Active Skills` or `Active Rules`.
 - Activation of a dependent rule or skill is valid only when every explicitly declared hard dependency is also active and valid. Validate the dependency graph transitively.
+- A mutual dependency cycle is valid only when all members of the cycle are present and active. Use cycle detection; do not treat the cycle itself as a missing dependency.
 - An active skill does not automatically activate every related rule, and an active rule does not automatically activate every related skill. Only explicitly declared hard dependencies are required; unrelated overlays remain inactive.
 - Do not silently activate missing dependencies. Report the dependent artifact, the missing rule or skill, and the full dependency chain.
 - Do not silently resolve contradictory activation entries. Report the mismatch and avoid changing behavior governed by the conflicting material until the source of truth is clarified.
