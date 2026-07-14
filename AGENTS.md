@@ -24,10 +24,11 @@ Use this mode in a project that consumes rules, skills, and the project profile 
 3. If `CODEX_PROJECT.md` is missing or incomplete, inspect repository evidence first: manifests, package manager files, lockfiles, framework configs, source tree, test configs, build configs, and documentation.
 4. If the project type and active profiles can be determined with confidence, create or update `CODEX_PROJECT.md` from `.codex/project.template.md`. If material choices remain ambiguous, ask the user before creating or changing the profile.
 5. Resolve activation for additional rules and skills from exact entries in `Active Rules`, exact entries in `Active Skills`, active stack profiles, and enabled specialized profile sections.
-6. Before applying an active rule or skill, read its entrypoint. When it declares hard dependencies, apply `.codex/rules/material_dependencies.md` and validate the complete dependency chain.
-7. Do not apply a dependent artifact when a required rule or skill is missing, inactive, disabled, or set to `none`. Report the dependency chain instead of activating the dependency silently.
-8. Apply only materials that match the task, are active through an allowed signal, and have valid required dependencies.
-9. Report conflicting activation signals instead of guessing. Optional activation entries cannot disable `request_routing.md`.
+6. Before applying an active rule or skill, read its entrypoint.
+7. When the entrypoint declares hard dependencies, require `.codex/rules/material_dependencies.md` to exist and apply it as a conditional bootstrap support rule, even when it is not listed in `Active Rules`.
+8. If the validator file is missing or a required dependency is invalid, report the profile error and do not apply the dependent artifact.
+9. Apply only materials that match the task, are active through an allowed signal, and have valid required dependencies.
+10. Report conflicting activation signals instead of guessing. Optional activation entries cannot disable `request_routing.md`.
 
 ## Template Repository Mode
 
@@ -36,8 +37,9 @@ Use this mode when working in the `agent-projects-tools` source repository itsel
 1. Apply the mandatory request-routing gate above.
 2. Do not create `CODEX_PROJECT.md`; its absence is intentional in this template repository.
 3. Read `README.md`, `.codex/project.template.md`, and the rules, skills, metadata, and references directly relevant to the requested repository change.
-4. Treat `.codex/project.template.md`, `.codex/rules/`, and `.agents/skills/` as source artifacts being maintained, not as an active application stack.
-5. Check affected cross-references, profile identifiers, rule names, skill names, hard dependencies, metadata, and README coverage before completing a change.
+4. Apply `.codex/rules/material_dependencies.md` when adding, changing, or reviewing dependency declarations.
+5. Treat `.codex/project.template.md`, `.codex/rules/`, and `.agents/skills/` as source artifacts being maintained, not as an active application stack.
+6. Check affected cross-references, profile identifiers, rule names, skill names, hard dependencies, metadata, and README coverage before completing a change.
 
 Keep `AGENTS.md` small. Detailed workflows belong in `.codex/rules/`, `.agents/skills/`, or skill `references/`.
 
@@ -45,8 +47,8 @@ Keep `AGENTS.md` small. Detailed workflows belong in `.codex/rules/`, `.agents/s
 
 - `.codex/rules/request_routing.md` must exist and be applied for every new user message in both repository modes.
 - Never omit, disable, replace, or set the mandatory request-routing rule to `none` in a target project's `CODEX_PROJECT.md`.
-- Use `.codex/rules/material_dependencies.md` whenever an active artifact declares hard dependencies.
-- Do not apply a dependent artifact until every required rule and skill is present, active, and valid.
+- `.codex/rules/material_dependencies.md` is conditionally mandatory whenever an active artifact declares hard dependencies; it does not require a separate `Active Rules` entry.
+- Do not apply a dependent artifact when the validator file or any required rule or skill is missing, inactive, disabled, ambiguous, or set to `none`.
 - Do not silently activate missing dependencies or unrelated overlays.
 - `.codex/project.template.md` is a template, not an active rule. Do not load it as a rule after a target project's `CODEX_PROJECT.md` is complete.
 - Never create `CODEX_PROJECT.md` inside the `agent-projects-tools` template repository.
