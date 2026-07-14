@@ -56,10 +56,11 @@
 2. Скопируйте `.codex/project.template.md` в корень целевого проекта под именем `CODEX_PROJECT.md`.
 3. Всегда перенесите `.codex/rules/request_routing.md`. Это обязательное bootstrap-правило, которое нельзя удалить, отключить, заменить или установить в `none`.
 4. Удалите из созданного профиля неиспользуемые опциональные разделы и оставьте только активные stack profiles, rules, skills, команды проверки, integrations и project-specific policies.
-5. Если выбранный rule или skill объявляет hard dependencies, перенесите `.codex/rules/material_dependencies.md`, сами обязательные материалы и явно активируйте их в проектном профиле.
-6. Перенесите только остальные нужные файлы из `.codex/rules/` и целиком соответствующие пакеты из `.agents/skills/`.
-7. Не подключайте `.codex/project.template.md` как rule после создания проектного `CODEX_PROJECT.md`.
-8. Не активируйте language-, framework-, database-, cache-, HTTP-client-, styling-, testing- или external-system-материалы без соответствующего профиля либо прямой необходимости по задаче.
+5. Если выбранный rule или skill объявляет hard dependencies, перенесите `.codex/rules/material_dependencies.md` и сами обязательные материалы. Validator применяется bootstrap-файлом независимо от `Active Rules`; отдельная запись активации для него не требуется.
+6. Явно активируйте каждую обязательную зависимость через `Active Rules`, `Active Skills`, stack profile или специализированный profile section. Отсутствие validator rule или обязательного материала считается ошибкой профиля.
+7. Перенесите только остальные нужные файлы из `.codex/rules/` и целиком соответствующие пакеты из `.agents/skills/`.
+8. Не подключайте `.codex/project.template.md` как rule после создания проектного `CODEX_PROJECT.md`.
+9. Не активируйте language-, framework-, database-, cache-, HTTP-client-, styling-, testing- или external-system-материалы без соответствующего профиля либо прямой необходимости по задаче.
 
 ## Фактическое покрытие
 
@@ -99,10 +100,11 @@ Obsidian-related rules и skills требуют MCP-only подхода:
 2. **Ясная область применения** — должно быть понятно, для какого агента, языка, framework, external system и сценария предназначен материал.
 3. **Явные внешние зависимости** — требования к приложениям, плагинам, MCP-серверам, языкам, frameworks и библиотекам описываются рядом с rule или skill.
 4. **Явные зависимости между материалами** — зависимый entrypoint содержит точные имена обязательных skills и пути обязательных rules; подробная методика проверки хранится в `material_dependencies.md`.
-5. **Минимум неявных предположений** — источник истины для конкретного проекта — его `CODEX_PROJECT.md` и repository metadata.
-6. **Актуальность** — устаревшие rules, skills и references следует обновлять или удалять.
-7. **Краткий routing description** — поле `description` в frontmatter кратко формулирует условия активации и отличительные ключевые слова. Полный перечень возможностей, workflow и ограничений остаётся в теле `SKILL.md`.
-8. **Синхронизация README** — изменения структуры, путей, dependency graph и фактического покрытия должны отражаться в README в том же PR.
+5. **Разделение dependency types** — hard dependencies и optional coordination должны быть разнесены по отдельным разделам и не использовать одинаковую безусловную формулировку.
+6. **Минимум неявных предположений** — источник истины для конкретного проекта — его `CODEX_PROJECT.md` и repository metadata.
+7. **Актуальность** — устаревшие rules, skills и references следует обновлять или удалять.
+8. **Краткий routing description** — поле `description` в frontmatter кратко формулирует условия активации и отличительные ключевые слова. Полный перечень возможностей, workflow и ограничений остаётся в теле `SKILL.md`.
+9. **Синхронизация README** — изменения структуры, путей, dependency graph и фактического покрытия должны отражаться в README в том же PR.
 
 ## Участие в разработке
 
