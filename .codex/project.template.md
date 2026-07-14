@@ -10,6 +10,8 @@ The template may list many possible profiles, rules, skills, commands, and polic
 
 `.codex/rules/request_routing.md` is a mandatory bootstrap rule. It is always active, does not depend on any stack profile, and must be applied before task-specific tool calls, edits, MCP operations, external-system calls, or final answers.
 
+`.codex/rules/material_dependencies.md` is a conditional bootstrap support rule. It must be present whenever any active rule or skill declares hard dependencies. `AGENTS.md` applies it directly; it does not require an `Active Rules` entry and must not be set to `none` when dependency validation is required.
+
 The final `CODEX_PROJECT.md` must contain:
 
 - the required routing rule `.codex/rules/request_routing.md`;
@@ -23,6 +25,8 @@ The final `CODEX_PROJECT.md` must contain:
 Omitted entries and entries set to `none` are inactive only for optional profiles, rules, skills, commands, integrations, and policy blocks. Remove unused optional sections from the final `CODEX_PROJECT.md`.
 
 The required routing rule must not be removed, omitted, disabled, replaced, or set to `none`. Conflicting optional activation entries cannot deactivate it.
+
+When selected materials declare hard dependencies, copy `.codex/rules/material_dependencies.md` together with them. Missing dependency-validation support makes the selected dependent material invalid even though the validator itself is not listed in `Active Rules`.
 
 ## Project Discovery Rule
 
@@ -91,6 +95,8 @@ Active profiles for this project:
 The routing rule is mandatory and is not part of the optional rule selection.
 
 - Required routing rule: `.codex/rules/request_routing.md`
+
+The conditional dependency validator is a bootstrap support file, not an optional active rule. Copy `.codex/rules/material_dependencies.md` whenever any selected artifact declares hard dependencies.
 
 List only additional rule files active in this project.
 
@@ -465,4 +471,4 @@ Keep only when `obsidian-taskbook` is active. Requires `obsidian-mcp-core`; does
 
 - Primary project documentation: `<README.md / docs path / none>`
 - Architecture documentation: `<docs path / Obsidian logical path / none>`
-- Important project notes: `<freeform / none>`
+- Important project notes: `<freeform / none>`}
