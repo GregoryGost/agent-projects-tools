@@ -7,9 +7,22 @@ description: "Use for Python HTTPX clients with httpx-retries: lifecycle, timeou
 
 Apply this skill when creating, changing, reviewing, or testing outgoing HTTP clients based on `httpx` and the already selected `httpx-retries` retry layer.
 
+## Required Dependencies
+
+- `python-core`
+
+## Optional Coordination
+
+Apply additional active skills only when the task touches their area:
+
+- `python-testing` for pytest policy, fixtures, mocks/fakes, coverage, retry tests, and integration-client regression tests.
+- `python-fastapi-expert` when FastAPI lifespan, dependency injection, routing, services, or application shutdown own the client lifecycle.
+- The active database skill from `CODEX_PROJECT.md` when outbound HTTP behavior interacts with transactions, repositories, or persistence.
+- `python-backend-security` when user-influenced URLs, redirects, callbacks, webhooks, proxy-like fetches, credentials, logging, or SSRF risk are in scope.
+
 Read `CODEX_PROJECT.md` and repository metadata before changing HTTP client behavior. Confirm the active HTTP client library, retry layer, dependency versions, dependency source of truth, timeout policy, and project-declared validation commands.
 
-Use it for FastAPI features only when the feature calls an external HTTP API. Do not use it for inbound FastAPI routing unless outbound HTTP behavior is part of the work. Apply `python-testing` for general pytest policy, `python-fastapi-expert` for routing/service/DI rules, and the active database skill from `CODEX_PROJECT.md` when outbound HTTP behavior interacts with transactions, repositories, or persistence.
+Use this skill for FastAPI features only when the feature calls an external HTTP API. Do not use it for inbound FastAPI routing unless outbound HTTP behavior is part of the work.
 
 For concrete bad/good examples and a compact review checklist, read `references/patterns-and-review.md` when implementing or reviewing an integration client.
 
@@ -17,7 +30,7 @@ For concrete bad/good examples and a compact review checklist, read `references/
 
 When reviewing an HTTPX integration client:
 
-- Apply `python-core`, `python-testing`, and this skill together.
+- Confirm the required `python-core` dependency and apply `python-testing` when tests or test policy are in scope.
 - Inspect the client implementation, settings, dependency wiring, lifecycle/shutdown code, and nearby tests before proposing changes.
 - Verify that the client has a single clear owner for `base_url`, timeout, limits, transport, SSL, proxy, auth, `httpx-retries` retry, rate-limit, and `trust_env` policy.
 - Check that hot-path code does not instantiate `AsyncClient` per request or per operation.
@@ -179,7 +192,7 @@ The integration client still owns:
 
 ## Testing
 
-- Follow `python-testing` for pytest structure, assertions, async tests, and coverage.
+- Follow `python-testing` for pytest structure, assertions, async tests, and coverage when tests are in scope.
 - Use `httpx.MockTransport` for unit tests of outbound clients.
 - Use `httpx.ASGITransport` for in-process tests against ASGI apps when appropriate.
 - Do not call real external APIs in unit tests.
@@ -189,8 +202,6 @@ The integration client still owns:
 - Test `trust_env` behavior when proxy or SSL environment variables could affect the client.
 - Test `httpx-retries` configuration when it is used: retryable methods, retryable status codes, `Retry-After`, max attempts, max backoff, jitter, total timeout, and final failure mapping.
 - Test `429` handling with delay-seconds `Retry-After`, HTTP-date `Retry-After`, missing `Retry-After`, malformed `Retry-After`, and final `429` after retries are exhausted.
-- Test that existing project rate-limiters or semaphores are applied before outbound requests when the integration profile requires them.
-- Test retry budget, max attempts, max delay cap, jitter boundaries, final failure mapping, and non-retryable methods.
 - Test redirect rejection or redirect target re-validation for user-influenced URLs.
 - Test that shared clients are closed during application shutdown/lifespan cleanup.
 
