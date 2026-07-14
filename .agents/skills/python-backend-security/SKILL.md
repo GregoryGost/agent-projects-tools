@@ -7,22 +7,26 @@ description: "Use for security-sensitive Python backend work across auth, valida
 
 Use this skill to keep security-sensitive backend changes fail-closed, evidence-based, and covered by regression tests.
 
-## Scope And Coordination
+## Required Dependencies
+
+- `python-core`
+
+## Scope And Optional Coordination
 
 Apply this skill for any task touching authentication, authorization, user identity, tenant isolation, permissions, secrets, tokens, sessions, CORS, external URL fetching, file paths/uploads, SQL construction, logging, dependency updates, or security review.
 
-Use it together with:
+Apply additional active skills only when the task touches their area:
 
 - `python-fastapi-expert` for FastAPI endpoints, dependencies, middleware, routers, lifespan, OpenAPI, and API contract changes.
-- `python-cache` for `cashews` setup, cache key construction, TTL, tags, invalidation, backend/lifecycle configuration, test isolation, and FastAPI cache integration when the `cashews` cache profile is active.
+- `python-cache` for `cashews` setup, cache key construction, TTL, tags, invalidation, backend/lifecycle configuration, test isolation, and FastAPI cache integration.
 - `python-sqlalchemy-core` for common SQLAlchemy models, repositories, raw SQL, sessions, transactions, and DB integration tests.
 - The active database-specific skill from `CODEX_PROJECT.md` for database-specific behavior, migrations, locking, connection configuration, and backend-specific tests.
 - `python-httpx-client` for outbound HTTP clients, callbacks, webhooks, previews, proxy-like fetches, redirects, and SSRF risk.
-- `python-testing` for pytest structure, async tests, fixtures, mocks/fakes, coverage, and security regression tests.
+- `python-testing` when tests, fixtures, mocks/fakes, coverage, or security regression tests are in scope.
 
 Read `CODEX_PROJECT.md` and repository metadata before changing security behavior. Confirm security-sensitive libraries, password hashing or key-derivation choices, dependency source of truth, and dependency approval policy before adding, removing, or replacing security dependencies.
 
-Do not replace those skills. Use this skill to identify and preserve security boundaries, then defer framework-specific mechanics to the matching specialist skill.
+Do not replace specialist skills. Use this skill to identify and preserve security boundaries, then defer framework-specific mechanics to the matching active specialist skill.
 
 ## Security Workflow
 
