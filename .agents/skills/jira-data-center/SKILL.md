@@ -7,7 +7,7 @@ description: "Use for Jira Data Center 8.22.x REST API clients, JQL, issue workf
 
 ## Activation
 
-Применяй этот skill, когда `CODEX_PROJECT.md` активирует `jira-data-center`, явно перечисляет `jira-data-center` в `Active Skills`, включает специализированный Jira Data Center profile section или задача напрямую касается существующей интеграции с Jira Data Center / Jira Software 8.22.x.
+Применяй этот skill, когда `CODEX_PROJECT.md` активирует `jira-data-center`, явно перечисляет `jira-data-center` в `Active Skills`, включает специализированный Jira Data Center profile section или задача напрямую касается live-данных либо существующей интеграции с Jira Data Center / Jira Software 8.22.x.
 
 Подходящие задачи:
 
@@ -28,6 +28,16 @@ Load references when needed:
 
 - `references/rest-api-8.22-patterns.md` — конкретные REST paths, payloads, pagination, metadata, changelog, custom fields и idempotency;
 - `references/dotenv-auth-patterns.md` — `.env`, macOS/Linux shell, Windows PowerShell, `cmd.exe` и локальная диагностика.
+
+## Request Mode Boundary
+
+- Используй `external-system-only` для прямого чтения или изменения live-данных Jira через approved connector, MCP server или Jira REST API.
+- Используй `implementation` для создания или изменения Jira client code, ETL code, tests, settings, configuration и других repository files.
+- Используй `documentation-only`, когда изменяются только Jira rules, profiles, references или documentation.
+- Read-only Jira request не разрешает mutation независимо от того, сформулирован ли запрос как question, status check, analysis или review.
+- Запрос на изменение integration code не разрешает live Jira mutation.
+- Запрос на чтение или изменение live Jira data не разрешает repository edits.
+- Когда пользователь явно просит и repository work, и live Jira operation, разрешай эти поверхности отдельными gates и выполняй только явно названные side effects.
 
 ## Version Boundary
 
@@ -281,18 +291,22 @@ project = ABC AND updated >= "2026-01-01 00:00" ORDER BY updated ASC, key ASC
 
 Перед любой mutation:
 
-1. Подтверди, что запрос разрешает write side effect.
-2. Определи environment: prod/stage/dev/test.
-3. Ограничь project/issue scope.
-4. Проверь permissions и metadata.
-5. Для bulk write подготовь dry-run/preview.
-6. Используй малые batches.
-7. Логируй только безопасные identifiers и sanitized errors.
-8. Определи idempotency marker или target-state check.
+1. Разреши `external-system-only` write gate для точного Jira instance/environment, target resource, requested state change и bounded scope.
+2. Подтверди, что пользователь явно запросил именно этот write side effect; read-only Jira request не разрешает mutation.
+3. Определи environment: prod/stage/dev/test.
+4. Ограничь project/issue scope.
+5. Проверь permissions и metadata.
+6. Для bulk, destructive или administrative write подготовь dry-run, preview или target-state check, когда Jira boundary это поддерживает.
+7. Используй малые batches.
+8. Логируй только безопасные identifiers и sanitized errors.
+9. Определи idempotency marker или target-state check.
+10. После mutation перечитай затронутый Jira resource через тот же approved boundary и проверь ожидаемое состояние, когда это технически возможно.
 
 Особенно осторожно обрабатывай delete/archive, bulk edit, Done/Closed transitions, assignee/reporter/security level, attachments, comments, worklogs и admin endpoints.
 
 Не подавляй `403`/`404`: они могут отражать permission или issue-security behavior.
+
+Если post-write read-back невозможен, явно сообщи, что remote state не проверен. Для partial success перечисли успешные, отклонённые и непроверенные targets без раскрытия чувствительных данных.
 
 ## Testing
 
@@ -323,6 +337,8 @@ Integration tests:
 ## Review Checklist
 
 - [ ] Активирован Jira Data Center, а не Jira Cloud.
+- [ ] Request mode отделяет live Jira operations от repository implementation и documentation work.
+- [ ] Read-only Jira request не использован как разрешение mutation.
 - [ ] Runtime version и context path проверены.
 - [ ] Используется `/rest/api/2`; Agile API подключён только при необходимости.
 - [ ] `.env`/settings contract и PAT handling безопасны.
@@ -334,5 +350,6 @@ Integration tests:
 - [ ] Status history использует author и timestamp containing history record.
 - [ ] Attachments используют правильный XSRF header и multipart field.
 - [ ] Write scope, dry-run, permissions и idempotency проверены.
+- [ ] Post-write remote state проверен или результат явно помечен как unverified.
 - [ ] Unit tests не вызывают реальную Jira.
 - [ ] Integration tests opt-in и sandbox-only.
