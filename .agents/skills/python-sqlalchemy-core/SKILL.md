@@ -7,7 +7,22 @@ description: "Use for backend-agnostic SQLAlchemy models, sessions, repositories
 
 Apply this skill for SQLAlchemy code that is not specific to one database backend.
 
-Use the active database-specific skill declared by `CODEX_PROJECT.md` for backend-specific behavior, drivers, pooling details, migrations, locking, isolation, SQL syntax, and integration-test requirements.
+## Required Dependencies
+
+- `python-core`
+
+## Optional Coordination
+
+Apply additional active skills only when the task touches their area:
+
+- `python-testing` for pytest, pytest-asyncio, fixtures, mocks/fakes, coverage, and integration-test review.
+- `python-fastapi-expert` when SQLAlchemy code is used by FastAPI routes, dependencies, services, or OpenAPI-facing models.
+- `python-backend-security` when SQL construction, authorization predicates, tenant isolation, secrets, logging, or user-controlled input are involved.
+- The active database-specific skill from `CODEX_PROJECT.md` for drivers, pooling, migrations, locking, isolation, backend-specific SQL, and integration-test setup.
+
+Read the database profile declared in `CODEX_PROJECT.md` for active database, driver, pooling layer, migration tool, runtime write policy, dependency versions, and source of truth before changing persistence behavior.
+
+Follow the migration policy declared in `CODEX_PROJECT.md`. Do not introduce or replace migration tooling without explicit user approval.
 
 For concrete bad/good examples and a compact review checklist, load `references/patterns-and-review.md` when implementing or reviewing SQLAlchemy models, repositories, session lifecycle, transaction boundaries, query behavior, or DB tests.
 
@@ -26,17 +41,7 @@ Use this skill when creating, changing, or reviewing:
 - DB integration tests;
 - migration-policy coordination.
 
-Do not use this skill alone for backend-specific decisions. Always pair it with the active database-specific skill when the task depends on driver behavior, pooling behavior, isolation behavior, migration syntax, lock behavior, or database-specific SQL.
-
-## Coordination
-
-- Apply `python-core` together with this skill.
-- Apply `python-testing` for pytest, pytest-asyncio, fixtures, mocks/fakes, coverage, and integration-test review.
-- Apply `python-fastapi-expert` when SQLAlchemy code is used by FastAPI routes, dependencies, services, or OpenAPI-facing models.
-- Apply `python-backend-security` when SQL construction, authorization predicates, tenant isolation, secrets, logging, or user-controlled input are involved.
-- Apply the active database-specific skill from `CODEX_PROJECT.md` for backend-specific behavior.
-- Read the database profile declared in `CODEX_PROJECT.md` for active database, driver, pooling layer, migration tool, runtime write policy, dependency versions, and source of truth before changing persistence behavior.
-- Follow the migration policy declared in `CODEX_PROJECT.md`. Do not introduce or replace migration tooling without explicit user approval.
+Do not use this skill alone for backend-specific decisions. Apply the active database-specific skill when the task depends on driver behavior, pooling behavior, isolation behavior, migration syntax, lock behavior, or database-specific SQL.
 
 ## Repository-First Database Access
 
@@ -115,7 +120,7 @@ Do not use this skill alone for backend-specific decisions. Always pair it with 
 
 ## Testing Requirements
 
-- Apply `python-testing` for general pytest, pytest-asyncio, fixtures, coverage, mocks/fakes, and assertion rules.
+- Apply `python-testing` for general pytest, pytest-asyncio, fixtures, coverage, mocks/fakes, and assertion rules when tests are in scope.
 - Unit tests may mock repositories when testing services or business logic, but such tests do not cover repository SQL behavior.
 - Repository integration tests must use the real engine/session/connection path for the active database backend.
 - Do not mock SQLAlchemy in repository integration tests.
@@ -130,7 +135,7 @@ Do not use this skill alone for backend-specific decisions. Always pair it with 
 When reviewing common SQLAlchemy code:
 
 - Load `references/patterns-and-review.md` for concrete anti-patterns and the final review checklist.
-- Apply `python-core`, `python-testing`, and the active database-specific skill from `CODEX_PROJECT.md` together with this skill.
+- Confirm the required `python-core` dependency; apply `python-testing` and the active database-specific skill when tests or backend-specific behavior are in scope.
 - Inspect models, repositories, engine/session setup, transaction owners, settings, tests, and existing DB conventions.
 - Verify that SQL/ORM details stay inside repositories and do not leak into routers or unrelated services.
 - Verify that sessions are scoped to one unit of work, request, task, or explicit batch and are not shared across concurrent tasks.

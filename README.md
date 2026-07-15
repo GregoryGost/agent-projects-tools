@@ -39,11 +39,11 @@
 
 Назначение элементов:
 
-- `AGENTS.md` — короткий bootstrap-файл. В обоих режимах он безусловно применяет `.codex/rules/request_routing.md`; в целевом проекте затем использует `CODEX_PROJECT.md`, а в исходном `agent-projects-tools` включает отдельный template repository mode без создания проектного профиля.
+- `AGENTS.md` — короткий bootstrap-файл. Он безусловно применяет `.codex/rules/request_routing.md`, использует `CODEX_PROJECT.md` в целевых проектах и передаёт подробную проверку зависимостей правилу `.codex/rules/material_dependencies.md`.
 - `.codex/project.template.md` — шаблон для создания `CODEX_PROJECT.md` в корне целевого проекта. Это не активное правило.
 - `.codex/rules/` — переносимые правила Codex. Шаблон проектного профиля в эту директорию не входит.
 - `.agents/skills/` — переиспользуемые skill-пакеты.
-- `SKILL.md` — обязательная точка входа skill-пакета с routing description, областью применения и workflow.
+- `SKILL.md` — обязательная точка входа skill-пакета с routing description, областью применения, workflow и явными hard dependencies, когда они существуют.
 - `agents/openai.yaml` — необязательная metadata для интерфейса и default prompt.
 - `references/` — необязательные подробные примеры, checklists, официальные источники и специализированные workflow.
 - `LICENSE` — лицензия MIT.
@@ -55,10 +55,12 @@
 1. Скопируйте или подключите `AGENTS.md` в целевой проект.
 2. Скопируйте `.codex/project.template.md` в корень целевого проекта под именем `CODEX_PROJECT.md`.
 3. Всегда перенесите `.codex/rules/request_routing.md`. Это обязательное bootstrap-правило, которое нельзя удалить, отключить, заменить или установить в `none`.
-4. Удалите из созданного профиля неиспользуемые опциональные разделы и оставьте только активные stack profiles, rules, skills, команды проверки, integrations и project-specific policies. Обязательную запись `.codex/rules/request_routing.md` сохраните без изменений.
-5. Перенесите только остальные нужные файлы из `.codex/rules/` и целиком соответствующие пакеты из `.agents/skills/`.
-6. Не подключайте `.codex/project.template.md` как rule после создания проектного `CODEX_PROJECT.md`.
-7. Не активируйте language-, framework-, database-, cache-, HTTP-client-, styling-, testing- или external-system-материалы без соответствующего профиля либо прямой необходимости по задаче.
+4. Удалите из созданного профиля неиспользуемые опциональные разделы и оставьте только активные stack profiles, rules, skills, команды проверки, integrations и project-specific policies.
+5. Если выбранный rule или skill объявляет hard dependencies, перенесите `.codex/rules/material_dependencies.md` и сами обязательные материалы. Validator применяется bootstrap-файлом независимо от `Active Rules`; отдельная запись активации для него не требуется.
+6. Явно активируйте каждую обязательную зависимость через `Active Rules`, `Active Skills`, stack profile или специализированный profile section. Отсутствие validator rule или обязательного материала считается ошибкой профиля.
+7. Перенесите только остальные нужные файлы из `.codex/rules/` и целиком соответствующие пакеты из `.agents/skills/`.
+8. Не подключайте `.codex/project.template.md` как rule после создания проектного `CODEX_PROJECT.md`.
+9. Не активируйте language-, framework-, database-, cache-, HTTP-client-, styling-, testing- или external-system-материалы без соответствующего профиля либо прямой необходимости по задаче.
 
 ## Фактическое покрытие
 
@@ -66,7 +68,7 @@
 
 | Область | Фактическое покрытие |
 | --- | --- |
-| Маршрутизация и общие правила | `request_routing.md`, `source_code_hygiene.md`, `git.md` |
+| Маршрутизация и общие правила | `request_routing.md`, `material_dependencies.md`, `source_code_hygiene.md`, `git.md` |
 | Язык code-adjacent prose | `comment-language-audit` |
 | Python core и тестирование | `python-core`, `python-testing`, `python-service-e2e-testing` |
 | Python backend | `python-fastapi-expert`, `python-cache`, `python-sqlalchemy-core`, `python-sqlalchemy-sqlite`, `python-httpx-client`, `python-backend-security` |
@@ -97,10 +99,12 @@ Obsidian-related rules и skills требуют MCP-only подхода:
 1. **Переносимость** — материал не должен зависеть от внутренней структуры одного конкретного проекта, если это не указано явно.
 2. **Ясная область применения** — должно быть понятно, для какого агента, языка, framework, external system и сценария предназначен материал.
 3. **Явные внешние зависимости** — требования к приложениям, плагинам, MCP-серверам, языкам, frameworks и библиотекам описываются рядом с rule или skill.
-4. **Минимум неявных предположений** — источник истины для конкретного проекта — его `CODEX_PROJECT.md` и repository metadata.
-5. **Актуальность** — устаревшие rules, skills и references следует обновлять или удалять.
-6. **Краткий routing description** — поле `description` в frontmatter кратко формулирует условия активации и отличительные ключевые слова. Полный перечень возможностей, workflow и ограничений остаётся в теле `SKILL.md`.
-7. **Синхронизация README** — изменения структуры, путей и фактического покрытия должны отражаться в README в том же PR.
+4. **Явные зависимости между материалами** — зависимый entrypoint содержит точные имена обязательных skills и пути обязательных rules; подробная методика проверки хранится в `material_dependencies.md`.
+5. **Разделение dependency types** — hard dependencies и optional coordination должны быть разнесены по отдельным разделам и не использовать одинаковую безусловную формулировку.
+6. **Минимум неявных предположений** — источник истины для конкретного проекта — его `CODEX_PROJECT.md` и repository metadata.
+7. **Актуальность** — устаревшие rules, skills и references следует обновлять или удалять.
+8. **Краткий routing description** — поле `description` в frontmatter кратко формулирует условия активации и отличительные ключевые слова. Полный перечень возможностей, workflow и ограничений остаётся в теле `SKILL.md`.
+9. **Синхронизация README** — изменения структуры, путей, dependency graph и фактического покрытия должны отражаться в README в том же PR.
 
 ## Участие в разработке
 
@@ -108,7 +112,7 @@ Obsidian-related rules и skills требуют MCP-only подхода:
 
 1. создайте ветку от актуальной `master`;
 2. добавьте или обновите rules, skills либо documentation;
-3. проверьте согласованность README, `AGENTS.md`, project template, rules и skills;
+3. проверьте согласованность README, `AGENTS.md`, project template, rules, skills и их явных зависимостей;
 4. явно опишите изменения внешних зависимостей;
 5. откройте pull request с кратким описанием назначения изменений.
 
