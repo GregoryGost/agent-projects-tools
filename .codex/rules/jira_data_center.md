@@ -16,7 +16,8 @@ Apply active language, HTTP-client, security, and testing skills separately when
 
 - Use `external-system-only` for direct reads or mutations against live Jira data through an approved connector, MCP server, or Jira REST API.
 - Use `implementation` when creating or changing Jira client code, tests, settings, configuration, ETL code, or other repository files.
-- Use `documentation-only` when only Jira-related rules, profiles, or documentation are changed.
+- Use `documentation-only` when only Jira-related rules, profiles, references, or documentation are changed.
+- A read-only Jira request does not authorize a live Jira mutation, including when the user-facing intent is a question, status check, analysis, or review.
 - A request to inspect or change integration code does not authorize a live Jira mutation.
 - A request to read or change Jira data does not authorize repository edits.
 - When one request explicitly includes both repository work and a live Jira operation, apply separate surface and side-effect gates for each part.
@@ -88,6 +89,29 @@ JIRA_VERIFY_TLS=true
 - Perform an ordinary scoped write only when the user explicitly requested that state change.
 - For bulk, destructive, administrative, or broadly scoped writes, require explicit scope and use a preview, dry-run, or target-state check when supported.
 - Do not write when the Jira instance, environment, target, action, or scope is ambiguous.
-- Use dry-run or preview for bulk writes when technically possible.
+- Keep write retries disabled unless the operation has an explicit idempotency marker or verified target state.
 - Do not suppress `403` or `404`; either may indicate permission or issue-security behavior.
 - After a mutation, re-read the affected Jira resource when possible and report unverified or partial outcomes explicitly.
+
+## References
+
+Use:
+
+- `.agents/skills/jira-data-center/references/rest-api-8.22-patterns.md` for endpoint payloads, pagination, changelog extraction, custom fields, and idempotency patterns;
+- `.agents/skills/jira-data-center/references/dotenv-auth-patterns.md` for project-root `.env`, macOS/Linux, PowerShell, `cmd.exe`, and local diagnostic examples.
+
+## Review checklist
+
+- [ ] Jira Data Center, not Jira Cloud, was confirmed.
+- [ ] Request mode separates live Jira operations from repository implementation and documentation work.
+- [ ] A read-only Jira request was not treated as mutation authorization.
+- [ ] Runtime version and context path were checked.
+- [ ] `/rest/api/2` and optional `/rest/agile/1.0` are used deliberately.
+- [ ] Authentication comes from the approved configuration source and no secret is exposed.
+- [ ] Timeouts, TLS verification, errors, and pagination are explicit.
+- [ ] JQL and issue reads request only needed fields.
+- [ ] Create/edit/transition payloads follow metadata and workflow constraints.
+- [ ] Status-history entries preserve the containing history author and timestamp.
+- [ ] Write scope, permissions, idempotency, and dry-run policy were reviewed.
+- [ ] Post-write remote state was verified or the outcome was explicitly marked unverified.
+- [ ] Unit tests avoid real Jira; integration tests are opt-in and sandbox-only.
