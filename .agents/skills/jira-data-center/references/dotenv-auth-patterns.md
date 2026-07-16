@@ -1,12 +1,12 @@
-# Jira Data Center 8.22.x: `.env` auth and CLI patterns
+# Jira Data Center 8.22.x: `.env` authentication and CLI patterns
 
-Этот reference открывать, когда нужно написать или проверить вызовы Jira REST API из macOS/Linux shell, Windows PowerShell, Windows `cmd.exe` или из локального диагностического скрипта.
+Load this reference when implementing or reviewing Jira REST API calls from macOS/Linux shell, Windows PowerShell, Windows `cmd.exe`, or a local diagnostic script.
 
-## 1. Project root `.env`
+## 1. Project-Root `.env`
 
-Credentials лежат в `.env` в корне целевого проекта. Не создавай дополнительные файлы с реальными секретами.
+Credentials live in `.env` at the target project root. Do not create additional files containing real secrets.
 
-Минимальный состав:
+Minimum contract:
 
 ```dotenv
 JIRA_BASE_URL=https://jira.example.com
@@ -15,18 +15,18 @@ JIRA_TIMEOUT_SECONDS=30
 JIRA_VERIFY_TLS=true
 ```
 
-Правила формата:
+Format rules:
 
-- используй `KEY=value`;
-- не ставь пробелы вокруг `=`;
-- не добавляй реальные секреты в `.env.example`;
-- не добавляй inline-комментарии после secret value;
-- для cross-platform CLI examples предпочитай простые значения без shell-спецсимволов;
-- если значение содержит спецсимволы, используй штатный dotenv/config loader проекта, а не ручной shell parsing.
+- use `KEY=value`;
+- do not add spaces around `=`;
+- never put real secrets in `.env.example`;
+- do not add inline comments after secret values;
+- prefer simple values without shell-special characters in cross-platform CLI examples;
+- when a value contains special characters, use the project's normal dotenv/config loader rather than manual shell parsing.
 
 ## 2. `.gitignore` And Docker Context
 
-В проекте должен быть запрет на commit реального `.env`:
+Exclude the real `.env` from version control:
 
 ```gitignore
 .env
@@ -34,32 +34,28 @@ JIRA_VERIFY_TLS=true
 !.env.example
 ```
 
-Если проект использует Docker, проверь `.dockerignore`, чтобы `.env` не попадал в build context или image.
+When Docker is used, verify `.dockerignore` so `.env` cannot enter the build context or image.
 
 ## 3. Header Construction
 
-После загрузки `.env` в process environment формируй headers:
+After loading settings into the process environment, build headers through the client or diagnostic command:
 
 ```http
 Authorization: Bearer <JIRA_PAT>
 Accept: application/json
 ```
 
-Для JSON-body:
+For JSON bodies:
 
 ```http
 Content-Type: application/json
 ```
 
-Запрещено передавать PAT в URL:
-
-```text
-/rest/api/2/issue/ABC-1?token=...
-```
+Never pass the PAT in a URL or query parameter.
 
 ## 4. macOS/Linux Shell
 
-Используй этот вариант только если `.env` совместим с POSIX shell syntax.
+Use this approach only when `.env` is compatible with POSIX shell syntax:
 
 ```bash
 set -a
@@ -72,7 +68,7 @@ curl --fail-with-body \
   "${JIRA_BASE_URL%/}/rest/api/2/myself"
 ```
 
-Получение задачи с changelog:
+Read an issue with changelog:
 
 ```bash
 ISSUE_KEY='ABC-1'
@@ -116,7 +112,7 @@ curl --fail-with-body \
 
 ## 5. Windows PowerShell: `Invoke-RestMethod`
 
-Загрузи `.env` в переменные текущего процесса:
+Load `.env` into the current process environment only for simple dotenv files:
 
 ```powershell
 foreach ($rawLine in Get-Content -Path ".env") {
@@ -138,7 +134,7 @@ foreach ($rawLine in Get-Content -Path ".env") {
 }
 ```
 
-Базовый GET:
+Basic GET:
 
 ```powershell
 $baseUrl = $env:JIRA_BASE_URL.TrimEnd("/")
@@ -153,7 +149,7 @@ Invoke-RestMethod `
   -Headers $headers
 ```
 
-Получение задачи с changelog:
+Read an issue with changelog:
 
 ```powershell
 $issueKey = "ABC-1"
@@ -182,7 +178,7 @@ Invoke-RestMethod `
   -Body $body
 ```
 
-Attachment upload через `curl.exe` предпочтительнее, потому что multipart проще и ближе к Jira examples:
+For attachment multipart uploads, prefer `curl.exe` because its behavior is clearer and closer to Jira examples:
 
 ```powershell
 $issueKey = "ABC-1"
@@ -197,7 +193,7 @@ curl.exe --fail-with-body `
 
 ## 6. Windows PowerShell: `curl.exe`
 
-После загрузки `.env` используй именно `curl.exe`, а не `curl`, чтобы избежать конфликтов с alias/function в старых PowerShell environments.
+After loading `.env`, invoke `curl.exe` explicitly rather than `curl` to avoid alias/function conflicts in older PowerShell environments:
 
 ```powershell
 $baseUrl = $env:JIRA_BASE_URL.TrimEnd("/")
@@ -210,9 +206,9 @@ curl.exe --fail-with-body `
 
 ## 7. Windows `cmd.exe`
 
-`cmd.exe` плохо подходит для безопасного parsing `.env`. Предпочитай PowerShell. Если требуется именно `cmd.exe`, допустим только простой `.env` формата `KEY=value` без кавычек, пробелов, inline-комментариев и спецсимволов.
+`cmd.exe` is poorly suited to safe `.env` parsing. Prefer PowerShell. When `cmd.exe` is mandatory, allow only a simple `KEY=value` file without quotes, spaces, inline comments, or special characters.
 
-Одноразовая команда:
+One-time command:
 
 ```cmd
 for /f "usebackq eol=# tokens=1,* delims==" %A in (".env") do @set "%A=%B"
@@ -223,7 +219,7 @@ curl.exe --fail-with-body ^
   "%JIRA_BASE_URL%/rest/api/2/myself"
 ```
 
-В `.bat` используй `%%A` и `%%B`:
+In a `.bat` file, use `%%A` and `%%B`:
 
 ```cmd
 for /f "usebackq eol=# tokens=1,* delims==" %%A in (".env") do @set "%%A=%%B"
@@ -231,7 +227,7 @@ for /f "usebackq eol=# tokens=1,* delims==" %%A in (".env") do @set "%%A=%%B"
 
 ## 8. Python Project Code
 
-Правильный принцип: `.env` читает config layer, Jira client получает готовые settings.
+The configuration layer reads `.env`; the Jira client receives validated settings:
 
 ```python
 settings = load_project_settings_from_root_dotenv()
@@ -244,7 +240,7 @@ jira_client = JiraClient(
 )
 ```
 
-Jira client формирует headers сам:
+The client owns header construction:
 
 ```python
 headers = {
@@ -253,28 +249,18 @@ headers = {
 }
 ```
 
-Нельзя читать `.env` перед каждым вызовом:
-
-```python
-load_dotenv()
-requests.get(
-    url,
-    headers={"Authorization": f"Bearer {os.environ['JIRA_PAT']}"},
-)
-```
-
-Не копируй этот pseudocode как требование использовать `requests`: применяй HTTP stack, уже выбранный проектом.
+Do not reload `.env` before every request. The pseudocode does not require the `requests` library; use the HTTP stack already selected by the project.
 
 ## 9. Diagnostics
 
-Разрешено выводить:
+Safe output:
 
 ```text
 JIRA_BASE_URL is configured
 JIRA_PAT is configured: yes
 ```
 
-Запрещено выводить:
+Forbidden output:
 
 ```text
 JIRA_PAT=...
@@ -282,20 +268,16 @@ Authorization: Bearer ...
 cat .env
 ```
 
-Для проверки authentication используй:
+Use `GET /rest/api/2/myself` to verify authentication.
 
-```text
-GET /rest/api/2/myself
-```
+For `401`, diagnose without exposing the token:
 
-Если ответ `401`, диагностируй без раскрытия token:
+- the approved configuration source exists;
+- `JIRA_PAT` is non-empty;
+- the Bearer authentication scheme is used;
+- the URL targets the correct Jira Data Center instance and context path;
+- the PAT is not expired or revoked;
+- HTTPS is used unless this is an approved local test environment;
+- the reverse proxy preserves the authentication header.
 
-- `.env` или другой approved config source найден;
-- `JIRA_PAT` не пустой;
-- используется `Authorization: Bearer ...`;
-- URL указывает на правильный Jira Data Center instance и context path;
-- PAT не истёк и не отозван;
-- запрос идёт по HTTPS, если это не локальное test environment;
-- reverse proxy не удаляет `Authorization` header.
-
-Если ответ HTML вместо JSON, проверь base URL, context path, reverse proxy, SSO redirect и authentication endpoint behavior; не выводи HTML login page целиком.
+When the response is HTML rather than JSON, inspect base URL, context path, reverse proxy, SSO redirects, and authentication endpoint behavior. Do not print the complete HTML login page.
