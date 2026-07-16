@@ -297,14 +297,7 @@ Use Jira timestamp format, prefer `timeSpentSeconds` for calculated values, do n
 
 ## 11. Attachments
 
-Attachment shape:
-
-```text
-curl -H "Authorization: Bearer <redacted>" \
-     -H "X-Atlassian-Token: no-check" \
-     -F "file=@/path/to/file.txt" \
-     "{baseUrl}/rest/api/2/issue/ABC-1/attachments"
-```
+Attachment upload requires the configured authentication header, `X-Atlassian-Token: no-check`, multipart form data, and a field named `file`.
 
 Common failures:
 
