@@ -28,7 +28,7 @@ The specialized Jira Data Center profile is valid only when all of these conditi
 - the Jira instance/environment, base URL source, authentication source, timeout source, and TLS verification source are declared;
 - `/rest/api/2/serverInfo` is the runtime-version verification source.
 
-Do not infer missing profile values from `.env`, source code, prior conversations, or a reachable Jira instance. Repository evidence may be used to propose a profile update, but the rule remains inactive until the profile is valid.
+Do not silently fill missing profile values from `.env`, source code, prior conversations, or a reachable Jira instance. A read-only `serverInfo` diagnostic may provide evidence for an authorized profile update, but it does not activate this rule by itself. The rule remains inactive until the profile is complete and valid.
 
 ## Request mode boundary
 
