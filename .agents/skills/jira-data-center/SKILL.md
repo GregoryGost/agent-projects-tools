@@ -34,6 +34,7 @@ Do not use this skill for Jira Cloud, Jira Service Management Cloud, an arbitrar
 
 Load references when needed:
 
+- `references/official-sources.md` as the source-of-truth index and precedence policy for version, endpoint, authentication, security, and compatibility claims;
 - `references/rest-api-8.22-patterns.md` for concrete REST paths, payloads, pagination, metadata, changelog, custom fields, and idempotency;
 - `references/dotenv-auth-patterns.md` for `.env`, macOS/Linux shell, Windows PowerShell, `cmd.exe`, and local diagnostics.
 
@@ -366,6 +367,7 @@ Do not add a heavy Jira SDK without need. When an SDK is already used, verify it
 - [ ] The specialized Jira profile is enabled, complete, and not set to `none`.
 - [ ] The declared and runtime versions are both inside `8.22.x`.
 - [ ] A version mismatch stopped package application beyond version diagnostics.
+- [ ] Endpoint, authentication, version, security, and compatibility claims were checked against `official-sources.md` and the matching official Atlassian source.
 - [ ] Request mode separates live Jira operations from repository implementation and documentation work.
 - [ ] A read-only Jira request was not used as mutation authorization.
 - [ ] Runtime version and context path were checked.

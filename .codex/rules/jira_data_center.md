@@ -121,6 +121,7 @@ JIRA_VERIFY_TLS=true
 
 Use:
 
+- `.agents/skills/jira-data-center/references/official-sources.md` as the source-of-truth index and precedence policy for version, endpoint, authentication, security, and compatibility claims;
 - `.agents/skills/jira-data-center/references/rest-api-8.22-patterns.md` for endpoint payloads, pagination, changelog extraction, custom fields, and idempotency patterns;
 - `.agents/skills/jira-data-center/references/dotenv-auth-patterns.md` for project-root `.env`, macOS/Linux, PowerShell, `cmd.exe`, and local diagnostic examples.
 
@@ -131,6 +132,7 @@ Use:
 - [ ] The specialized Jira profile is enabled, complete, and not set to `none`.
 - [ ] The declared and runtime versions are both inside `8.22.x`.
 - [ ] A version mismatch stopped package application beyond version diagnostics.
+- [ ] Endpoint, authentication, version, security, and compatibility claims were checked against `official-sources.md` and the matching official Atlassian source.
 - [ ] Request mode separates live Jira operations from repository implementation and documentation work.
 - [ ] A read-only Jira request was not treated as mutation authorization.
 - [ ] Runtime version and context path were checked.
