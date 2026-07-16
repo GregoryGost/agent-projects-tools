@@ -11,14 +11,16 @@ Use together with:
 - `obsidian-mcp-core`;
 - `obsidian-taskbook`.
 
-Apply `.codex/rules/request_routing.md` before every taskbook write, status change, fallback write, or synchronization.
+Apply `.codex/rules/request_routing.md` before every taskbook read, write, status change, fallback write, or synchronization.
 
 ## Side-Effect Gate
 
 - This rule cannot expand the side effects allowed by `request_routing.md`.
+- Use `taskbook-only` for every taskbook read or write. When implementation and taskbook tracking are both requested, use a combined gate that includes the `taskbook-only` surface.
+- Generic `external-system-only` does not authorize taskbook reads or writes and must not substitute for `taskbook-only`.
 - Do not mutate the taskbook in review-only, analysis-only, question-only, status-only, commit-text-only, wiki-only, documentation-only, or another mode that does not authorize taskbook writes.
 - Analysis, research, review, or explanation does not automatically authorize task creation.
-- Use taskbook writes only when explicitly requested or when implementation tracking is enabled by the project profile and selected request mode.
+- Use taskbook writes only when explicitly requested or when implementation tracking is enabled by the project profile and the combined request gate authorizes the taskbook surface.
 
 ## Scope
 
@@ -54,7 +56,7 @@ Use the task language declared in `CODEX_PROJECT.md`; preserve identifiers, path
 ## Workflow
 
 1. Read `CODEX_PROJECT.md` and confirm the project key, task language, logical root, task paths, overview paths, archive path, and fallback outboxes.
-2. Resolve request mode and allowed surfaces through `request_routing.md`.
+2. Resolve `taskbook-only` or a combined request gate that explicitly includes the taskbook surface.
 3. Apply `obsidian-mcp-core` for every taskbook read and mutation.
 4. Read existing task and overview notes before editing.
 5. Create or update tasks with bounded MCP operations and verify them after writing.
@@ -67,7 +69,8 @@ Use `.agents/skills/obsidian-taskbook/references/taskbook-workflow.md` for detai
 ## Review Checklist
 
 - [ ] `obsidian-taskbook` was active or taskbook work was directly requested.
-- [ ] Request mode explicitly allowed every taskbook side effect.
+- [ ] `taskbook-only` or an explicitly combined gate allowed every taskbook read and side effect.
+- [ ] Generic `external-system-only` was not used as a substitute for `taskbook-only`.
 - [ ] `obsidian-mcp-core` governed all vault access and edits.
 - [ ] Task key, language, structure, status, checks, overview, and archive policy were followed.
 - [ ] Checks are nested inside `Notes on working on the task`, not stored as a top-level section.
