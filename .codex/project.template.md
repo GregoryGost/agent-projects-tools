@@ -28,6 +28,8 @@ The required routing rule must not be removed, omitted, disabled, replaced, or s
 
 When selected materials declare hard dependencies, copy `.codex/rules/material_dependencies.md` together with them. Missing dependency-validation support makes the selected dependent material invalid even though the validator itself is not listed in `Active Rules`.
 
+Version-specific profiles are valid only when their specialized section declares a supported version and the exact active rule/skill pair. A task mention does not bypass profile activation or version boundaries.
+
 ## Project Discovery Rule
 
 When `CODEX_PROJECT.md` is missing, infer the project profile from repository files first: manifests, package manager files, lockfiles, framework configs, source tree, test configs, build configs, and documentation.
@@ -110,7 +112,7 @@ List only additional rule files active in this project.
 - UI/browser validation rules: `<ui_ux_validation.md / playwright_ui_validation.md / none>`
 - E2E rules: `<python_service_e2e_testing.md / vue_playwright_e2e_testing.md / nodejs_service_e2e_testing.md / none>`
 - Obsidian rules: `<obsidian_llm_wiki.md / obsidian_taskbook.md / none>`
-- External-system rules: `<active list or none>`
+- External-system rules: `<jira_data_center.md / none / other>`
 
 ## Active Skills
 
@@ -419,6 +421,27 @@ Keep only when framework-neutral TypeScript unit or integration testing through 
 
 Keep only external-system subsections used by the project.
 
+### Jira Data Center 8.22.x
+
+Keep only when `jira-data-center` is active. This profile and the `jira_data_center.md + jira-data-center` pair support Jira Data Center / Jira Software `8.22.x` only. Another Jira major/minor version requires separate verified profile materials; do not change the version field to claim compatibility.
+
+The specialized section activates the Jira rule/skill pair only when it is enabled, declares a supported version, and names the exact pair. Missing values, `none`, a disabled section, or any version outside `8.22.x` make the Jira profile invalid.
+
+- Jira Data Center enabled: `<yes/no>`
+- Jira product: `<Jira Data Center / Jira Software / both / project-specific / none>`
+- Declared Jira version: `<8.22.x / exact 8.22.z / none>`
+- Runtime version verification: `GET /rest/api/2/serverInfo`
+- Jira instance/environment: `<instance name + prod/stage/dev/test / none>`
+- Jira base URL source: `<JIRA_BASE_URL in project-root .env / settings provider / secret manager / none>`
+- Authentication method: `<PAT bearer / OAuth 1.0a / Basic Auth over HTTPS / cookie / none>`
+- Credential source: `<JIRA_PAT in project-root .env / settings provider / secret manager / none>`
+- Timeout source: `<JIRA_TIMEOUT_SECONDS in project-root .env / settings provider / project-specific / none>`
+- TLS verification source: `<JIRA_VERIFY_TLS in project-root .env / settings provider / project-specific / none>`
+- Platform API root: `/rest/api/2`
+- Jira Software Agile API: `</rest/agile/1.0 enabled / disabled / not applicable>`
+- Active Jira rule/skill: `<jira_data_center.md + jira-data-center / none>`
+- External-system request gate required: `yes`
+
 ### Obsidian MCP Core
 
 Keep whenever any Obsidian profile is active. The wiki and taskbook profiles require this core profile but do not activate each other.
@@ -471,4 +494,4 @@ Keep only when `obsidian-taskbook` is active. Requires `obsidian-mcp-core`; does
 
 - Primary project documentation: `<README.md / docs path / none>`
 - Architecture documentation: `<docs path / Obsidian logical path / none>`
-- Important project notes: `<freeform / none>`}
+- Important project notes: `<freeform / none>`
