@@ -216,6 +216,8 @@ Keep only when Python caching through `cashews` is active. This profile and the 
 
 Keep only when the project has a database.
 
+This generic profile does not require a rule/skill pair. Select only existing materials for the active toolkit and database backend. Current repository SQLAlchemy coverage is skills-only: `python-sqlalchemy-core` for backend-neutral SQLAlchemy behavior and `python-sqlalchemy-sqlite` for SQLite-specific behavior. When `python-sqlalchemy-sqlite` is active, `python-sqlalchemy-core` is its required base skill.
+
 - Database enabled: `<yes/no>`
 - Database toolkit/ORM: `<SQLAlchemy / Prisma / Django ORM / raw SQL / none / other>`
 - Active database: `<SQLite / PostgreSQL / MySQL / none / other>`
@@ -223,7 +225,8 @@ Keep only when the project has a database.
 - Database pool library: `<aiosqlitepool / SQLAlchemy pool / none / other>`
 - Migration tool: `<Alembic / raw SQL / Prisma migrations / project-specific / none>`
 - Migration policy: `<policy / none>`
-- Active database rule/skill: `<rule + skill / none>`
+- Active database toolkit skill: `<python-sqlalchemy-core / none / other>`
+- Active database-specific skill: `<python-sqlalchemy-sqlite / none / other>`
 - Dependency versions source: `<pyproject.toml / package.json / go.mod / project-specific / none>`
 
 ## Persistence / Runtime Write Policy
