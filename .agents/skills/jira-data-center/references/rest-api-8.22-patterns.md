@@ -11,14 +11,21 @@ Use normalized paths:
 {JIRA_BASE_URL}/rest/agile/1.0/{resource}
 ```
 
-`JIRA_BASE_URL` must include the context path when Jira is deployed below `/`, for example `https://jira.example.com/jira`. Do not concatenate URL strings without normalizing `/`.
+`JIRA_BASE_URL` must include the context path when Jira is deployed below `/`:
+
+```text
+https://jira.example.com
+https://jira.example.com/jira
+```
+
+Do not concatenate URL strings without normalizing `/`; instances with a context path will break.
 
 ## 2. Minimal Client Contract
 
 The client must:
 
 - expose one `request(method, path, params=None, json=None, files=None)`-like boundary;
-- apply the base URL, authentication, headers, timeout, TLS, proxy, and `trust_env` policy centrally;
+- apply the base URL, authentication headers, timeout, TLS, proxy, and `trust_env` policy centrally;
 - parse JSON and handle `204 No Content`;
 - map failures to a typed integration error containing safe `status_code`, `errorMessages`, `errors`, and bounded sanitized body context;
 - mask secrets;
@@ -31,16 +38,33 @@ Typical Jira error shape:
 ```json
 {
   "errorMessages": ["Field 'priority' is required"],
-  "errors": {"summary": "You must specify a summary of the issue."},
+  "errors": {
+    "summary": "You must specify a summary of the issue."
+  },
   "status": 400
 }
 ```
 
-Diagnostics may include HTTP status, sanitized endpoint, Jira error collections, issue/project key, and a safe operation name. Never expose authentication headers, cookies, PAT values, attachment contents, sensitive request bodies, or complete HTML login pages.
+Diagnostics may include:
 
-## 4. Search And Pagination
+- HTTP status;
+- endpoint without secret query values;
+- Jira `errorMessages`;
+- Jira `errors`;
+- issue key/project key when available;
+- a safe integration operation name.
 
-Use GET only for short JQL. Prefer POST for long JQL:
+Never expose authentication headers, cookies, PAT values, attachment contents, sensitive request bodies, or complete HTML login pages.
+
+## 4. Search Examples
+
+### GET Search For Short JQL
+
+```text
+GET /rest/api/2/search?jql=project%20%3D%20ABC&fields=key,summary,status&startAt=0&maxResults=50
+```
+
+### POST Search For Long JQL
 
 ```json
 {
@@ -51,17 +75,17 @@ Use GET only for short JQL. Prefer POST for long JQL:
 }
 ```
 
-Pagination:
+### Search Pagination Pseudocode
 
 ```text
 startAt = 0
 while true:
     page = POST /rest/api/2/search with startAt and maxResults
-    items = page.issues or []
-    if items is empty: break
-    yield items
-    if len(items) < maxResults: break
-    startAt += len(items)
+    issues = page.issues or []
+    if issues is empty: break
+    yield issues
+    if len(issues) < maxResults: break
+    startAt += len(issues)
 ```
 
 Increment by the actual number of returned items, not by `maxResults`. Do not assume `total` is stable between pages.
@@ -87,7 +111,20 @@ Increment by the actual number of returned items, not by `maxResults`. Do not as
 }
 ```
 
-A sub-task also requires `parent`. Avoid broad create-metadata queries when a narrower project/issue-type flow is available.
+A sub-task also requires `parent`:
+
+```json
+{
+  "fields": {
+    "project": {"key": "ABC"},
+    "parent": {"key": "ABC-1"},
+    "issuetype": {"id": "10002"},
+    "summary": "Sub-task summary"
+  }
+}
+```
+
+Avoid broad create-metadata queries when a narrower project/issue-type flow is available.
 
 ## 6. Edit Issue Flow
 
@@ -96,7 +133,11 @@ A sub-task also requires `parent`. Avoid broad create-metadata queries when a na
 3. Send `PUT /rest/api/2/issue/{key}` with either `fields` or `update`.
 
 ```json
-{"fields": {"summary": "New summary"}}
+{
+  "fields": {
+    "summary": "New summary"
+  }
+}
 ```
 
 ```json
@@ -122,8 +163,14 @@ Do not specify the same field id in both `fields` and `update`.
 ```json
 {
   "transition": {"id": "5"},
-  "fields": {"resolution": {"name": "Fixed"}},
-  "update": {"comment": [{"add": {"body": "Moved by integration."}}]}
+  "fields": {
+    "resolution": {"name": "Fixed"}
+  },
+  "update": {
+    "comment": [
+      {"add": {"body": "Moved by integration."}}
+    ]
+  }
 }
 ```
 
@@ -137,38 +184,100 @@ Scoped read:
 GET /rest/api/2/issue/ABC-1?fields=key,created,updated,status&expand=changelog
 ```
 
+Expected history shape:
+
+```json
+{
+  "id": "12345",
+  "author": {
+    "name": "jdoe",
+    "key": "JIRAUSER10000",
+    "displayName": "John Doe",
+    "active": true
+  },
+  "created": "2026-01-10T09:15:00.000+0000",
+  "items": [
+    {
+      "field": "status",
+      "fieldtype": "jira",
+      "from": "1",
+      "fromString": "Open",
+      "to": "3",
+      "toString": "In Progress"
+    }
+  ]
+}
+```
+
 The history record owns `author`, `created`, and `items`. The status item owns `from`, `fromString`, `to`, and `toString`.
 
 ```text
 for history in changelog.histories:
+    author = history.author
+    changed_at = history.created
     for item in history.items:
         if item.field == "status":
-            emit changed_at=history.created,
-                 author=history.author,
-                 from_id=item.from,
-                 from_name=item.fromString,
-                 to_id=item.to,
-                 to_name=item.toString
+            emit transition(
+                changed_at=changed_at,
+                author_name=author.name,
+                author_key=author.key,
+                author_display_name=author.displayName,
+                from_id=item.from,
+                from_name=item.fromString,
+                to_id=item.to,
+                to_name=item.toString,
+            )
 ```
 
 Rules:
 
 - never infer the author from assignee, reporter, current user, comments, or worklogs;
 - preserve stable `name`/`key` when available and `displayName` as display data;
-- handle deleted/inactive users without fabricating identity;
+- handle missing/deleted/inactive users without fabricating identity;
 - preserve timezone-aware Jira timestamps;
+- sort by `created` and history id only when API order is insufficient or pages are merged;
+- do not collapse consecutive equal display names when identifiers differ;
 - do not treat current status as complete history;
+- do not emit large description/comment diffs without need;
 - do not use changelog expansion in unbounded JQL.
 
-Expanded changelog may be bounded. Verify actual page metadata and the instance-supported pagination mechanism before claiming complete long history. Cover that mechanism with a sandbox integration test.
+Bounded search example:
+
+```json
+{
+  "jql": "project = ABC AND updated >= \"2026-01-01 00:00\" ORDER BY updated ASC, key ASC",
+  "fields": ["key", "created", "updated", "status"],
+  "expand": ["changelog"],
+  "startAt": 0,
+  "maxResults": 50
+}
+```
+
+Expanded changelog may be bounded. Verify actual page metadata and the instance-supported pagination mechanism before claiming complete long history. Cover that mechanism with a sandbox integration test. UI History, REST changelog, and database `changegroup/changeitem` are different representations; this skill uses REST rather than direct SQL.
 
 ## 9. Comments
 
+Add comment:
+
 ```json
-{"body": "Comment text"}
+{
+  "body": "Comment text"
+}
 ```
 
-A restricted comment may include `visibility` with a role or group. Do not use Cloud ADF without evidence. Add markers to machine comments, require explicit authorization for update/delete operations, and avoid logging sensitive comment bodies.
+Restricted comment:
+
+```json
+{
+  "body": "Visible to Administrators role",
+  "visibility": {
+    "type": "role",
+    "value": "Administrators"
+  }
+}
+```
+
+Do not use Cloud ADF without evidence. Add markers to machine comments, require explicit authorization for update/delete operations, and avoid logging sensitive comment bodies.
 
 ## 10. Worklogs
 
@@ -184,11 +293,18 @@ POST /rest/api/2/issue/ABC-1/worklog?adjustEstimate=auto
 }
 ```
 
-Use Jira timestamp format, prefer `timeSpentSeconds` for calculated values, select the `adjustEstimate` policy explicitly, and require a marker or state check for retries.
+Use Jira timestamp format, prefer `timeSpentSeconds` for calculated values, do not change remaining estimate without a business requirement, select the `adjustEstimate` policy explicitly, and require a marker or state check for retries.
 
 ## 11. Attachments
 
-Attachments require `X-Atlassian-Token: no-check`, multipart form data, and a field named `file`.
+Attachment shape:
+
+```text
+curl -H "Authorization: Bearer <redacted>" \
+     -H "X-Atlassian-Token: no-check" \
+     -F "file=@/path/to/file.txt" \
+     "{baseUrl}/rest/api/2/issue/ABC-1/attachments"
+```
 
 Common failures:
 
@@ -201,24 +317,40 @@ Validate local path ownership, file size, and allowed source before upload. Neve
 
 ## 12. Custom Field Value Shapes
 
-Use shapes only after checking metadata:
+Use shapes only after checking metadata.
+
+Text:
 
 ```json
 {"customfield_10010": "plain text"}
 ```
 
+Single select:
+
 ```json
 {"customfield_10011": {"id": "10100"}}
 ```
+
+Multi select:
 
 ```json
 {"customfield_10012": [{"id": "10100"}, {"id": "10101"}]}
 ```
 
-Jira Server/Data Center user picker example:
+Jira Server/Data Center user picker:
 
 ```json
 {"customfield_10013": {"name": "jdoe"}}
+```
+
+Versions and components:
+
+```json
+{"fixVersions": [{"id": "10000"}]}
+```
+
+```json
+{"components": [{"id": "10001"}]}
 ```
 
 Use ids when `allowedValues` provides them. Do not transfer Cloud `accountId` shapes automatically.
@@ -235,7 +367,7 @@ project = ABC AND labels = integration-marker-123
 
 ### Comments
 
-Add a machine-readable marker and search a bounded comment window before creation.
+Add a machine-readable marker, search a bounded comment window before creation, and define pagination limits deliberately.
 
 ### Transitions
 
@@ -251,6 +383,7 @@ Use only when Jira Software is installed and boards, sprints, backlog, epics, or
 
 ```text
 GET /rest/agile/1.0/board
+GET /rest/agile/1.0/board/{boardId}
 GET /rest/agile/1.0/board/{boardId}/issue
 GET /rest/agile/1.0/board/{boardId}/backlog
 GET /rest/agile/1.0/board/{boardId}/sprint
@@ -258,7 +391,7 @@ GET /rest/agile/1.0/sprint/{sprintId}
 GET /rest/agile/1.0/sprint/{sprintId}/issue
 ```
 
-Resolve boards by `projectKeyOrId` and `type`, paginate collections, and require an explicit request plus sandbox verification for rank changes.
+Resolve boards by `projectKeyOrId` and `type`, paginate collections, do not retrieve sprint data through the platform API when it is a Jira Software board resource, and require an explicit request plus sandbox verification for rank changes.
 
 ## 15. Review Red Flags
 
