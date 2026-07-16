@@ -60,7 +60,8 @@
 6. Явно активируйте каждую обязательную зависимость через `Active Rules`, `Active Skills`, stack profile или специализированный profile section. Отсутствие validator rule или обязательного материала считается ошибкой профиля.
 7. Перенесите только остальные нужные файлы из `.codex/rules/` и целиком соответствующие пакеты из `.agents/skills/`.
 8. Не подключайте `.codex/project.template.md` как rule после создания проектного `CODEX_PROJECT.md`.
-9. Не активируйте language-, framework-, database-, cache-, HTTP-client-, styling-, testing- или external-system-материалы без соответствующего профиля либо прямой необходимости по задаче.
+9. Не активируйте language-, framework-, database-, cache-, HTTP-client-, styling-, testing- или external-system-материалы без activation signal, разрешённого их entrypoint и `AGENTS.md`. Прямое упоминание технологии не является активацией, если entrypoint требует project profile.
+10. Для `jira-data-center` сохраните специализированный Jira Data Center profile: exact rule/skill pair, declared `8.22.x` или точную `8.22.z`, instance/environment и источники configuration. Runtime version проверяется через `/rest/api/2/serverInfo`; другая major/minor версия требует отдельных проверенных материалов.
 
 ## Фактическое покрытие
 
@@ -76,10 +77,21 @@
 | Vue 3 + TypeScript + Vite | `vue3-typescript-vite-expert`, `vue-router-expert`, `pinia-expert`, `vueuse-expert` |
 | Vue testing и browser E2E | `vitest-vue-testing`, `vue-router-testing`, `pinia-testing`, `vueuse-testing`, `vue-playwright-e2e-testing` |
 | Styling и UI validation | `css-expert`, `css-animation-expert`, `scss-expert`, `tailwind-expert`, `ui-ux-review`, `playwright-ui-checks-mcp` |
-| Jira Data Center | `jira_data_center.md`, `jira-data-center` |
+| Jira Data Center 8.22.x | `jira_data_center.md`, `jira-data-center` |
 | Obsidian | `obsidian-mcp-core`, `obsidian-llm-wiki`, `obsidian-taskbook` |
 
 Наличие технологии в `.codex/project.template.md` само по себе не означает наличие отдельного rule или skill-пакета. Фактическим источником перечня материалов служат `.codex/rules/` и `.agents/skills/`.
+
+## Профиль Jira Data Center
+
+Пакет `jira_data_center.md + jira-data-center` version-locked к Jira Data Center / Jira Software `8.22.x`.
+
+- отдельный rule или skill выбирается через точный `Active Rules` или `Active Skills`, а весь пакет также может быть выбран через `jira-data-center` stack profile или включённый специализированный Jira section;
+- применение пакета дополнительно требует включённый и полный специализированный Jira section с exact rule/skill pair и `8.22.x` либо точной `8.22.z` версией;
+- runtime version проверяется через `/rest/api/2/serverInfo`;
+- упоминание Jira в задаче само по себе не активирует пакет;
+- runtime вне `8.22.x` останавливает применение пакета после version diagnostic;
+- другая major/minor версия требует отдельного проверенного profile/rule/skill package либо явного обновления version boundary этого пакета.
 
 ## Правила работы с Obsidian-материалами
 

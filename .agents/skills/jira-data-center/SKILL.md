@@ -7,9 +7,15 @@ description: "Use for Jira Data Center 8.22.x REST API clients, JQL, issue workf
 
 ## Activation
 
-Use this skill when `CODEX_PROJECT.md` activates `jira-data-center`, lists `jira-data-center` in `Active Skills`, enables the specialized Jira Data Center profile section, or when the task directly concerns live data or an existing Jira Data Center / Jira Software 8.22.x integration.
+Use this skill only when at least one allowed project-profile signal selects it:
 
-Applicable tasks include:
+- `jira-data-center` is listed exactly in `Active Skills`;
+- `jira-data-center` is listed in `Active Stack Profiles`;
+- the enabled Jira Data Center specialized profile names the exact `jira_data_center.md + jira-data-center` rule/skill pair.
+
+A target-project task that merely mentions Jira, requests a live Jira operation, or reviews Jira integration code does not activate this skill by itself. When the Jira profile is missing, incomplete, disabled, set to `none`, or version-incompatible, report a profile error instead of applying this skill. Template-repository maintenance may review or edit this source package directly under Template Repository Mode.
+
+Applicable tasks after valid activation include:
 
 - reading, searching, creating, and editing issues;
 - JQL and incremental synchronization;
@@ -20,14 +26,28 @@ Applicable tasks include:
 - REST clients, ETL, automation, and diagnostics;
 - unit/integration tests and Jira integration review.
 
-Do not use this skill for Jira Cloud, Jira Service Management Cloud, or an arbitrary Help Desk API. A Jira-compatible Help Desk must use a separate profile with its own version boundary and environment variables.
+Do not use this skill for Jira Cloud, Jira Service Management Cloud, an arbitrary Help Desk API, or a Jira Data Center major/minor version outside `8.22.x`. A Jira-compatible Help Desk must use a separate profile with its own version boundary and environment variables.
 
-Apply `.codex/rules/jira_data_center.md` together with this skill.
+## Required Dependencies
+
+- `.codex/rules/jira_data_center.md`
 
 Load references when needed:
 
 - `references/rest-api-8.22-patterns.md` for concrete REST paths, payloads, pagination, metadata, changelog, custom fields, and idempotency;
 - `references/dotenv-auth-patterns.md` for `.env`, macOS/Linux shell, Windows PowerShell, `cmd.exe`, and local diagnostics.
+
+## Profile Validity
+
+The specialized Jira Data Center profile is valid only when all of these conditions hold:
+
+- `Jira Data Center enabled` is `yes`;
+- `Declared Jira version` is `8.22.x` or an exact `8.22.z` runtime version;
+- `Active Jira rule/skill` names `jira_data_center.md + jira-data-center`;
+- the Jira instance/environment, base URL source, authentication source, timeout source, and TLS verification source are declared;
+- `/rest/api/2/serverInfo` is the runtime-version verification source.
+
+Do not infer missing profile values from `.env`, source code, prior conversations, or a reachable Jira instance. Repository evidence may be used to propose a profile update, but this skill remains inactive until the profile is valid.
 
 ## Request Mode Boundary
 
@@ -41,19 +61,20 @@ Load references when needed:
 
 ## Version Boundary
 
-Target platform: Jira Data Center / Jira Software `8.22.x`.
+This skill package supports Jira Data Center / Jira Software `8.22.x` only.
 
 Mandatory constraints:
 
-1. Use Jira Server/Data Center REST APIs, not Jira Cloud REST APIs.
-2. Use `/rest/api/2` for the platform API, not `/rest/api/3`.
-3. Use `/rest/agile/1.0` for the Jira Software Agile API.
-4. Do not use Cloud-only `accountId`, Atlassian Document Format, Forge, or OAuth 2.0 Cloud scopes without explicit evidence that the target API supports them.
-5. Do not use `/rest/api/latest` in production code when `/rest/api/2` can be fixed explicitly.
-6. Never write directly to the Jira database.
-7. Do not automatically transfer Jira 9/10/11 or another minor-version behavior to this profile.
+1. `CODEX_PROJECT.md` must declare `8.22.x` or the exact deployed `8.22.z` version before this skill is applied.
+2. Use Jira Server/Data Center REST APIs, not Jira Cloud REST APIs.
+3. Use `/rest/api/2` for the platform API, not `/rest/api/3`.
+4. Use `/rest/agile/1.0` only when the profile declares Jira Software available.
+5. Do not use Cloud-only `accountId`, Atlassian Document Format, Forge, or OAuth 2.0 Cloud scopes without explicit evidence that the target API supports them.
+6. Do not use `/rest/api/latest` in production code when `/rest/api/2` can be fixed explicitly.
+7. Never write directly to the Jira database.
+8. Do not transfer Jira 8.20, another Jira 8 minor, Jira 9/10/11, or future-version behavior to this package without a version-specific update.
 
-Before implementation or diagnostics, check:
+Before version-specific implementation, diagnostics beyond version discovery, or live mutations, check:
 
 ```text
 GET /rest/api/2/serverInfo
@@ -61,19 +82,23 @@ GET /rest/api/2/myself
 GET /rest/api/2/field
 ```
 
-If the runtime version differs from the version declared in `CODEX_PROJECT.md`, report a profile mismatch and verify the required endpoint compatibility before changing behavior.
+A first read-only `serverInfo` call may be used to discover the runtime version when completing or validating the project profile.
+
+If `serverInfo` reports a version outside `8.22.x`, stop applying this skill after the version diagnostic and report the profile mismatch. If the profile declares an exact `8.22.z` version and the runtime patch differs, report the mismatch before version-sensitive work and update the profile only when the request authorizes it. Supporting another major/minor version requires separate version-specific materials or an explicit repository update that verifies and changes this package boundary.
 
 ## Project Discovery And Coordination
 
 Before adding or changing a Jira integration:
 
 1. Read `CODEX_PROJECT.md`, manifests, settings, existing client code, tests, and validation commands.
-2. Check whether a shared HTTP client/factory already exists; do not create a parallel transport layer without need.
-3. Determine whether the platform API, Agile API, or both are required.
-4. Classify the operation as read-only, scoped write, bulk write, or admin-level.
-5. Check required permissions: Browse Projects, Create Issues, Edit Issues, Transition Issues, Add Comments, Work On Issues, Create Attachments, Link Issues, and Administer Jira as applicable.
-6. Check create/edit/transition screens and metadata for the affected fields.
-7. Determine the supported user identifier (`name`, `key`, or a project-specific representation); do not assume Cloud `accountId`.
+2. Validate the Jira specialized profile and the exact active rule/skill pair before applying Jira-specific guidance.
+3. Confirm the declared version through `serverInfo`; stop on a version mismatch as defined above.
+4. Check whether a shared HTTP client/factory already exists; do not create a parallel transport layer without need.
+5. Determine whether the platform API, Agile API, or both are required.
+6. Classify the operation as read-only, scoped write, bulk write, or admin-level.
+7. Check required permissions: Browse Projects, Create Issues, Edit Issues, Transition Issues, Add Comments, Work On Issues, Create Attachments, Link Issues, and Administer Jira as applicable.
+8. Check create/edit/transition screens and metadata for the affected fields.
+9. Determine the supported user identifier (`name`, `key`, or a project-specific representation); do not assume Cloud `accountId`.
 
 Coordinate this skill with the active:
 
@@ -337,6 +362,10 @@ Do not add a heavy Jira SDK without need. When an SDK is already used, verify it
 ## Review Checklist
 
 - [ ] Jira Data Center, not Jira Cloud, is active.
+- [ ] An allowed project-profile signal activated the exact Jira rule/skill pair.
+- [ ] The specialized Jira profile is enabled, complete, and not set to `none`.
+- [ ] The declared and runtime versions are both inside `8.22.x`.
+- [ ] A version mismatch stopped package application beyond version diagnostics.
 - [ ] Request mode separates live Jira operations from repository implementation and documentation work.
 - [ ] A read-only Jira request was not used as mutation authorization.
 - [ ] Runtime version and context path were checked.

@@ -1,8 +1,14 @@
 # Jira Data Center REST API rules
 
-Apply this rule only when `CODEX_PROJECT.md` activates the `jira-data-center` profile, lists `.codex/rules/jira_data_center.md` in `Active Rules`, enables the Jira Data Center specialized profile section, or when the task directly reviews existing Jira Data Center integration behavior.
+Apply this rule only when at least one allowed project-profile signal selects it:
 
-Do not apply this rule to Jira Cloud, Jira Service Management Cloud, or a non-Jira help desk API.
+- `.codex/rules/jira_data_center.md` is listed exactly in `Active Rules`;
+- `jira-data-center` is listed in `Active Stack Profiles`;
+- the enabled Jira Data Center specialized profile names the exact `jira_data_center.md + jira-data-center` rule/skill pair.
+
+A target-project task that merely mentions Jira, requests a live Jira operation, or reviews Jira integration code does not activate this rule by itself. When the Jira profile is missing, incomplete, disabled, set to `none`, or version-incompatible, report a profile error instead of applying this rule. Template-repository maintenance may review or edit this source rule directly under Template Repository Mode.
+
+Do not apply this rule to Jira Cloud, Jira Service Management Cloud, a non-Jira help desk API, or any Jira Data Center major/minor version outside `8.22.x`.
 
 ## Required skill
 
@@ -11,6 +17,18 @@ Use together with:
 - `jira-data-center`.
 
 Apply active language, HTTP-client, security, and testing skills separately when the implementation touches those areas. This rule does not select a Python or TypeScript HTTP stack by itself.
+
+## Profile validity
+
+The specialized Jira Data Center profile is valid only when all of these conditions hold:
+
+- `Jira Data Center enabled` is `yes`;
+- `Declared Jira version` is `8.22.x` or an exact `8.22.z` runtime version;
+- `Active Jira rule/skill` names `jira_data_center.md + jira-data-center`;
+- the Jira instance/environment, base URL source, authentication source, timeout source, and TLS verification source are declared;
+- `/rest/api/2/serverInfo` is the runtime-version verification source.
+
+Do not silently fill missing profile values from `.env`, source code, prior conversations, or a reachable Jira instance. A read-only `serverInfo` diagnostic may provide evidence for an authorized profile update, but it does not activate this rule by itself. The rule remains inactive until the profile is complete and valid.
 
 ## Request mode boundary
 
@@ -24,10 +42,16 @@ Apply active language, HTTP-client, security, and testing skills separately when
 
 ## Version and API boundary
 
-- Target Jira Data Center / Jira Software `8.22.x` unless `CODEX_PROJECT.md` declares another verified compatible version.
-- Confirm the runtime version with `GET /rest/api/2/serverInfo` before relying on version-specific behavior.
+- This rule package supports Jira Data Center / Jira Software `8.22.x` only.
+- `CODEX_PROJECT.md` must declare `8.22.x` or the exact deployed `8.22.z` version before this rule is applied.
+- Confirm the runtime version with `GET /rest/api/2/serverInfo` before version-specific implementation, diagnostics beyond version discovery, or live mutations.
+- A first read-only `serverInfo` call may be used to discover the runtime version when completing or validating the project profile.
+- If `serverInfo` reports a version outside `8.22.x`, stop applying this rule after the version diagnostic and report the profile mismatch.
+- If the profile declares an exact `8.22.z` version and `serverInfo` reports a different patch version, report the mismatch before version-sensitive work; update the profile only when the request authorizes it.
+- Do not claim compatibility with Jira 8.20, another Jira 8 minor, Jira 9/10/11, or future versions based only on shared endpoint names.
+- Supporting another major/minor version requires a separate version-specific profile and materials, or an explicit repository update that verifies and changes this package boundary.
 - Use Jira Server/Data Center platform API `/rest/api/2`.
-- Use Jira Software Agile API `/rest/agile/1.0` only when Jira Software is installed and boards, sprints, backlog, epics, or rank are in scope.
+- Use Jira Software Agile API `/rest/agile/1.0` only when the profile declares Jira Software available and boards, sprints, backlog, epics, or rank are in scope.
 - Do not use Jira Cloud `/rest/api/3`, `accountId`-only assumptions, Atlassian Document Format, Forge, or OAuth 2.0 Cloud scopes without explicit evidence that the target API supports them.
 - Do not use `/rest/api/latest` in production integration code when `/rest/api/2` is available.
 - Never write directly to the Jira database. Use the REST API or an explicitly approved Jira administrative mechanism.
@@ -103,6 +127,10 @@ Use:
 ## Review checklist
 
 - [ ] Jira Data Center, not Jira Cloud, was confirmed.
+- [ ] An allowed project-profile signal activated the exact Jira rule/skill pair.
+- [ ] The specialized Jira profile is enabled, complete, and not set to `none`.
+- [ ] The declared and runtime versions are both inside `8.22.x`.
+- [ ] A version mismatch stopped package application beyond version diagnostics.
 - [ ] Request mode separates live Jira operations from repository implementation and documentation work.
 - [ ] A read-only Jira request was not treated as mutation authorization.
 - [ ] Runtime version and context path were checked.
