@@ -1,79 +1,46 @@
 # Jira Data Center 8.22.x REST API: endpoint patterns and review notes
 
-Этот reference открывать, когда нужно реализовать или проверить конкретные REST-вызовы Jira Data Center / Jira Software 8.22.x.
+Load this reference when implementing or reviewing concrete Jira Data Center / Jira Software 8.22.x REST calls.
 
 ## 1. URL Construction
 
-Правильная сборка URL:
+Use normalized paths:
 
 ```text
 {JIRA_BASE_URL}/rest/api/2/{resource}
 {JIRA_BASE_URL}/rest/agile/1.0/{resource}
 ```
 
-`JIRA_BASE_URL` должен уже включать context path, если Jira развернута не в корне:
-
-```text
-https://jira.example.com
-https://jira.example.com/jira
-```
-
-Нельзя склеивать URL простой конкатенацией без нормализации `/`, иначе ломаются instances с context path.
+`JIRA_BASE_URL` must include the context path when Jira is deployed below `/`, for example `https://jira.example.com/jira`. Do not concatenate URL strings without normalizing `/`.
 
 ## 2. Minimal Client Contract
 
-Клиент должен уметь:
+The client must:
 
-- `request(method, path, params=None, json=None, files=None)`;
-- подставлять base URL;
-- добавлять auth headers;
-- задавать timeout и TLS/proxy policy;
-- парсить JSON и корректно обрабатывать `204 No Content`;
-- выбрасывать типизированную integration error с `status_code`, `errorMessages`, `errors` и bounded sanitized body;
-- маскировать secrets;
-- поддерживать resource-specific pagination.
+- expose one `request(method, path, params=None, json=None, files=None)`-like boundary;
+- apply the base URL, authentication, headers, timeout, TLS, proxy, and `trust_env` policy centrally;
+- parse JSON and handle `204 No Content`;
+- map failures to a typed integration error containing safe `status_code`, `errorMessages`, `errors`, and bounded sanitized body context;
+- mask secrets;
+- support resource-specific pagination.
 
 ## 3. Error Collection
 
-Типичный формат ошибок Jira:
+Typical Jira error shape:
 
 ```json
 {
   "errorMessages": ["Field 'priority' is required"],
-  "errors": {
-    "summary": "You must specify a summary of the issue."
-  },
+  "errors": {"summary": "You must specify a summary of the issue."},
   "status": 400
 }
 ```
 
-При диагностике выводи:
+Diagnostics may include HTTP status, sanitized endpoint, Jira error collections, issue/project key, and a safe operation name. Never expose authentication headers, cookies, PAT values, attachment contents, sensitive request bodies, or complete HTML login pages.
 
-- HTTP status;
-- endpoint без query secrets;
-- Jira `errorMessages`;
-- Jira `errors`;
-- issue key/project key, если есть;
-- безопасный integration operation name.
+## 4. Search And Pagination
 
-Не выводи:
-
-- `Authorization`;
-- `Cookie`/`Set-Cookie`;
-- полный request body с personal/sensitive data;
-- attachments;
-- PAT;
-- HTML login page целиком.
-
-## 4. Search Examples
-
-### GET Search Для Короткого JQL
-
-```text
-GET /rest/api/2/search?jql=project%20%3D%20ABC&fields=key,summary,status&startAt=0&maxResults=50
-```
-
-### POST Search Для Длинного JQL
+Use GET only for short JQL. Prefer POST for long JQL:
 
 ```json
 {
@@ -84,35 +51,29 @@ GET /rest/api/2/search?jql=project%20%3D%20ABC&fields=key,summary,status&startAt
 }
 ```
 
-### Search Pagination Pseudocode
+Pagination:
 
 ```text
 startAt = 0
 while true:
     page = POST /rest/api/2/search with startAt and maxResults
-    issues = page.issues or []
-    if issues is empty: break
-    yield issues
-    if len(issues) < maxResults: break
-    startAt += len(issues)
+    items = page.issues or []
+    if items is empty: break
+    yield items
+    if len(items) < maxResults: break
+    startAt += len(items)
 ```
 
-Не используй `startAt += maxResults`, если сервер вернул меньше элементов.
-
-Не полагайся на неизменность `total` между страницами.
+Increment by the actual number of returned items, not by `maxResults`. Do not assume `total` is stable between pages.
 
 ## 5. Create Issue Flow
 
-Правильный flow:
-
-1. Найти project id/key.
-2. Получить issue types проекта.
-3. Получить create fields для project + issue type.
-4. Собрать payload только из разрешённых fields.
-5. Отправить `POST /rest/api/2/issue`.
-6. Обработать `400` как metadata/payload validation failure.
-
-Payload example:
+1. Resolve project id/key.
+2. Retrieve project issue types.
+3. Retrieve create fields for the selected project and issue type.
+4. Build a payload from allowed fields only.
+5. Send `POST /rest/api/2/issue`.
+6. Treat `400` as metadata or payload validation failure.
 
 ```json
 {
@@ -126,39 +87,17 @@ Payload example:
 }
 ```
 
-Для sub-task нужен `parent`:
-
-```json
-{
-  "fields": {
-    "project": {"key": "ABC"},
-    "parent": {"key": "ABC-1"},
-    "issuetype": {"id": "10002"},
-    "summary": "Sub-task summary"
-  }
-}
-```
-
-Не используй широкий create metadata query по всем проектам, если целевая Jira 8.22.x поддерживает более точечный project/issue-type flow.
+A sub-task also requires `parent`. Avoid broad create-metadata queries when a narrower project/issue-type flow is available.
 
 ## 6. Edit Issue Flow
 
-1. `GET /rest/api/2/issue/{key}/editmeta`.
-2. Проверить наличие field.
-3. Проверить доступные operations.
-4. Отправить `PUT /rest/api/2/issue/{key}`.
-
-Payload with `fields`:
+1. Read `GET /rest/api/2/issue/{key}/editmeta`.
+2. Verify the field and supported operations.
+3. Send `PUT /rest/api/2/issue/{key}` with either `fields` or `update`.
 
 ```json
-{
-  "fields": {
-    "summary": "New summary"
-  }
-}
+{"fields": {"summary": "New summary"}}
 ```
-
-Payload with `update`:
 
 ```json
 {
@@ -171,152 +110,67 @@ Payload with `update`:
 }
 ```
 
-Не указывай один field id одновременно в `fields` и `update`.
+Do not specify the same field id in both `fields` and `update`.
 
 ## 7. Transition Flow
 
-1. `GET /rest/api/2/issue/{key}/transitions?expand=transitions.fields`.
-2. Найти transition id.
-3. Проверить required fields.
-4. Проверить текущий status.
-5. Отправить transition.
-
-Payload:
+1. Read `GET /rest/api/2/issue/{key}/transitions?expand=transitions.fields`.
+2. Resolve the transition id.
+3. Check required fields and current status.
+4. Send `POST /rest/api/2/issue/{key}/transitions`.
 
 ```json
 {
   "transition": {"id": "5"},
-  "fields": {
-    "resolution": {"name": "Fixed"}
-  },
-  "update": {
-    "comment": [
-      {"add": {"body": "Moved by integration."}}
-    ]
-  }
+  "fields": {"resolution": {"name": "Fixed"}},
+  "update": {"comment": [{"add": {"body": "Moved by integration."}}]}
 }
 ```
 
-Не меняй `status` прямым `PUT issue`; Jira workflow должен меняться transition endpoint-ом.
+Never edit `status` directly. Do not repeat a transition when the issue already has the target status.
 
-Если issue уже в целевом status, не выполняй повторный transition.
+## 8. Changelog And Status Author
 
-## 8. Changelog Extraction And Status Author
-
-Single issue:
+Scoped read:
 
 ```text
 GET /rest/api/2/issue/ABC-1?fields=key,created,updated,status&expand=changelog
 ```
 
-Ожидаемая структура history:
-
-```json
-{
-  "id": "12345",
-  "author": {
-    "name": "jdoe",
-    "key": "JIRAUSER10000",
-    "displayName": "John Doe",
-    "active": true
-  },
-  "created": "2026-01-10T09:15:00.000+0000",
-  "items": [
-    {
-      "field": "status",
-      "fieldtype": "jira",
-      "from": "1",
-      "fromString": "Open",
-      "to": "3",
-      "toString": "In Progress"
-    }
-  ]
-}
-```
-
-Для status history:
+The history record owns `author`, `created`, and `items`. The status item owns `from`, `fromString`, `to`, and `toString`.
 
 ```text
 for history in changelog.histories:
-    author = history.author
-    changed_at = history.created
     for item in history.items:
         if item.field == "status":
-            emit transition(
-                changed_at=changed_at,
-                author_name=author.name,
-                author_key=author.key,
-                author_display_name=author.displayName,
-                from_id=item.from,
-                from_name=item.fromString,
-                to_id=item.to,
-                to_name=item.toString,
-            )
+            emit changed_at=history.created,
+                 author=history.author,
+                 from_id=item.from,
+                 from_name=item.fromString,
+                 to_id=item.to,
+                 to_name=item.toString
 ```
 
-Правила:
+Rules:
 
-- author находится на history record, а не на status item;
-- не подставляй assignee, reporter, current user, comment author или worklog author;
-- обрабатывай missing/deleted/inactive author без вымышленной identity;
-- сохраняй stable `name`/`key`, если они доступны, и `displayName` только как display field;
-- сохраняй `created` как timezone-aware Jira timestamp;
-- сортируй по `created` и history id только если API order недостаточен или объединяются страницы;
-- не удаляй последовательные одинаковые display names, если IDs различаются;
-- не считай current issue status полной историей;
-- не выводи большие description/comment diffs без необходимости.
+- never infer the author from assignee, reporter, current user, comments, or worklogs;
+- preserve stable `name`/`key` when available and `displayName` as display data;
+- handle deleted/inactive users without fabricating identity;
+- preserve timezone-aware Jira timestamps;
+- do not treat current status as complete history;
+- do not use changelog expansion in unbounded JQL.
 
-Search с changelog допустим только в ограниченном scope:
-
-```json
-{
-  "jql": "project = ABC AND updated >= \"2026-01-01 00:00\" ORDER BY updated ASC, key ASC",
-  "fields": ["key", "created", "updated", "status"],
-  "expand": ["changelog"],
-  "startAt": 0,
-  "maxResults": 50
-}
-```
-
-Expanded changelog может быть bounded. Если задача требует полной длинной истории:
-
-1. проверь фактическую Jira 8.22.x response shape и `total`/page metadata;
-2. проверь поддерживаемый instance endpoint или pagination mechanism;
-3. добавь integration test против sandbox;
-4. не заявляй полноту, если pagination не подтверждена.
-
-UI History, REST changelog и database `changegroup/changeitem` — разные representations; этот skill использует REST, а не direct SQL.
+Expanded changelog may be bounded. Verify actual page metadata and the instance-supported pagination mechanism before claiming complete long history. Cover that mechanism with a sandbox integration test.
 
 ## 9. Comments
 
-Add comment:
-
 ```json
-{
-  "body": "Comment text"
-}
+{"body": "Comment text"}
 ```
 
-Restricted comment:
+A restricted comment may include `visibility` with a role or group. Do not use Cloud ADF without evidence. Add markers to machine comments, require explicit authorization for update/delete operations, and avoid logging sensitive comment bodies.
 
-```json
-{
-  "body": "Visible to Administrators role",
-  "visibility": {
-    "type": "role",
-    "value": "Administrators"
-  }
-}
-```
-
-Правила:
-
-- не используй ADF для Jira DC 8.22.x comments без проверки;
-- для machine comments добавляй marker для защиты от duplicates;
-- для update/delete comments требуй explicit scope и authorization;
-- не логируй comment body целиком, если он может содержать sensitive data.
-
-## 10. Worklog
+## 10. Worklogs
 
 ```text
 POST /rest/api/2/issue/ABC-1/worklog?adjustEstimate=auto
@@ -330,87 +184,50 @@ POST /rest/api/2/issue/ABC-1/worklog?adjustEstimate=auto
 }
 ```
 
-Rules:
-
-- `started` использует Jira timestamp format;
-- `timeSpentSeconds` предпочтительнее text `timeSpent`, если значение вычисляется кодом;
-- не меняй remaining estimate без business requirement;
-- выбери и проверь `adjustEstimate` policy;
-- write retry требует marker/state check.
+Use Jira timestamp format, prefer `timeSpentSeconds` for calculated values, select the `adjustEstimate` policy explicitly, and require a marker or state check for retries.
 
 ## 11. Attachments
 
-Curl shape:
+Attachments require `X-Atlassian-Token: no-check`, multipart form data, and a field named `file`.
 
-```text
-curl -H "Authorization: Bearer <token>" \
-     -H "X-Atlassian-Token: no-check" \
-     -F "file=@/path/to/file.txt" \
-     "{baseUrl}/rest/api/2/issue/ABC-1/attachments"
-```
+Common failures:
 
-Common errors:
+- `403 XSRF check failed`: required header missing;
+- `413 Payload Too Large`: file exceeds Jira limit;
+- `415 Unsupported Media Type`: invalid multipart type;
+- `404`: invalid key, insufficient permissions, issue security, or archived issue.
 
-- `403 XSRF check failed` — отсутствует `X-Atlassian-Token: no-check`;
-- `413 Payload Too Large` — файл больше Jira limit;
-- `415 Unsupported Media Type` — неверный multipart/content type;
-- `404` — неверный key, нет Browse Projects, issue скрыта permission/security или архивна.
-
-Перед upload проверь local path ownership, file size и allowed source. Не загружай произвольный user-controlled path без filesystem safety checks.
+Validate local path ownership, file size, and allowed source before upload. Never upload an arbitrary user-controlled path without filesystem safety checks.
 
 ## 12. Custom Field Value Shapes
 
-Examples допустимы только после metadata check.
-
-Text:
+Use shapes only after checking metadata:
 
 ```json
 {"customfield_10010": "plain text"}
 ```
 
-Single select:
-
 ```json
 {"customfield_10011": {"id": "10100"}}
 ```
-
-Multi select:
 
 ```json
 {"customfield_10012": [{"id": "10100"}, {"id": "10101"}]}
 ```
 
-User picker в Jira Server/Data Center style:
+Jira Server/Data Center user picker example:
 
 ```json
 {"customfield_10013": {"name": "jdoe"}}
 ```
 
-Versions:
-
-```json
-{"fixVersions": [{"id": "10000"}]}
-```
-
-Components:
-
-```json
-{"components": [{"id": "10001"}]}
-```
-
-Если `allowedValues` содержит id, используй id; не полагайся на name.
-
-Не переносись автоматически на `accountId` shape из Jira Cloud.
+Use ids when `allowedValues` provides them. Do not transfer Cloud `accountId` shapes automatically.
 
 ## 13. Idempotency Patterns
 
 ### Create Issue
 
-- используй external marker в label, issue property или dedicated custom field;
-- перед create ищи существующую issue по marker;
-- при повторном запуске update существующую issue только если это соответствует business contract.
-
-JQL marker example:
+Use a project-owned external marker in a label, issue property, or dedicated custom field. Search by marker before creation and update an existing issue on retry only when permitted by the business contract.
 
 ```jql
 project = ABC AND labels = integration-marker-123
@@ -418,27 +235,22 @@ project = ABC AND labels = integration-marker-123
 
 ### Comments
 
-- добавляй machine-readable marker;
-- перед create ищи marker среди relevant comments;
-- ограничивай comment pagination и scan window осознанно.
+Add a machine-readable marker and search a bounded comment window before creation.
 
 ### Transitions
 
-- сначала проверяй current status;
-- если issue уже в target status, не повторяй transition;
-- если target transition сейчас недоступен, возвращай typed workflow error.
+Check current status first. Skip an already satisfied transition and return a typed workflow error when the target transition is unavailable.
 
 ### Attachments And Worklogs
 
-Jira не предоставляет универсальный idempotency key для всех операций. Используй project-owned marker, checksum, filename+size policy, external operation id или state lookup, если повторная отправка возможна.
+Jira has no universal idempotency key. Use a project marker, checksum, filename-and-size policy, external operation id, or target-state lookup.
 
 ## 14. Jira Software Agile API
 
-Используй только если Jira Software установлен и task касается boards, sprints, backlog, epics или rank.
+Use only when Jira Software is installed and boards, sprints, backlog, epics, or rank are in scope:
 
 ```text
 GET /rest/agile/1.0/board
-GET /rest/agile/1.0/board/{boardId}
 GET /rest/agile/1.0/board/{boardId}/issue
 GET /rest/agile/1.0/board/{boardId}/backlog
 GET /rest/agile/1.0/board/{boardId}/sprint
@@ -446,27 +258,23 @@ GET /rest/agile/1.0/sprint/{sprintId}
 GET /rest/agile/1.0/sprint/{sprintId}/issue
 ```
 
-- Сначала найди board по `projectKeyOrId` и `type`.
-- Пагинируй board/sprint/issue collections.
-- Не пытайся получать sprint data через platform API, если это Jira Software board resource.
-- Rank changes требуют explicit request и sandbox verification.
+Resolve boards by `projectKeyOrId` and `type`, paginate collections, and require an explicit request plus sandbox verification for rank changes.
 
 ## 15. Review Red Flags
 
-Останови работу и исправь, если видишь:
+Stop and correct the implementation when you find:
 
-- `/rest/api/3` в Data Center integration;
-- `accountId` как универсальный user identifier;
-- ADF body для description/comment без evidence;
-- `/rest/api/latest` в production code;
-- `fields=["*all"]` в массовом search;
-- `expand=changelog` без JQL/date/project restriction;
-- status history без containing history author;
-- status author, подставленный из assignee/reporter;
-- широкий create metadata query без scope;
-- write retry без idempotency/state check;
-- hardcoded credentials или PAT в URL;
-- tokens в fixtures/snapshots;
-- direct Jira DB write;
-- swallowing `403`/`404` без permission diagnostics;
-- integration tests против production Jira.
+- `/rest/api/3` in a Data Center integration;
+- `accountId` treated as universal;
+- ADF bodies without evidence;
+- `/rest/api/latest` in production code;
+- `fields=["*all"]` in bulk search;
+- unbounded `expand=changelog`;
+- status history without the containing history author;
+- status author substituted from assignee/reporter;
+- broad create metadata without scope;
+- write retry without idempotency or state verification;
+- hardcoded credentials or secrets in URLs, fixtures, or snapshots;
+- direct Jira database writes;
+- swallowed `403`/`404` without permission diagnostics;
+- integration tests against production Jira.
