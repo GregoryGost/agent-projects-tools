@@ -1,6 +1,6 @@
 # Git work rules
 
-Apply this rule only when `CODEX_PROJECT.md` lists `.codex/rules/git.md` as active. For direct commit-text requests, also apply `.codex/rules/request_routing.md` and use `commit-text-only` mode.
+Apply this rule only when `CODEX_PROJECT.md` lists `git.md` in `Active Rules`. The source file remains `.codex/rules/git.md`; activation uses the bare rule filename used by `.codex/project.template.md`. For direct commit-text requests, also apply `.codex/rules/request_routing.md` and use `commit-text-only` mode.
 
 When requested to provide a Git commit, it must be:
 
