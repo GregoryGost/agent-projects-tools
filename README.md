@@ -60,7 +60,7 @@
 6. Явно активируйте каждую обязательную зависимость через `Active Rules`, `Active Skills`, stack profile или специализированный profile section. Отсутствие validator rule или обязательного материала считается ошибкой профиля.
 7. Перенесите только остальные нужные файлы из `.codex/rules/` и целиком соответствующие пакеты из `.agents/skills/`.
 8. Не подключайте `.codex/project.template.md` как rule после создания проектного `CODEX_PROJECT.md`.
-9. Не активируйте language-, framework-, database-, cache-, HTTP-client-, styling-, testing- или external-system-материалы без соответствующего профиля либо прямой необходимости по задаче.
+9. Не активируйте language-, framework-, database-, cache-, HTTP-client-, styling-, testing- или external-system-материалы без activation signal, разрешённого их entrypoint и `AGENTS.md`. Прямое упоминание технологии не является активацией, если entrypoint требует project profile.
 10. Для `jira-data-center` сохраните специализированный Jira Data Center profile: exact rule/skill pair, declared `8.22.x` или точную `8.22.z`, instance/environment и источники configuration. Runtime version проверяется через `/rest/api/2/serverInfo`; другая major/minor версия требует отдельных проверенных материалов.
 
 ## Фактическое покрытие
@@ -86,8 +86,8 @@
 
 Пакет `jira_data_center.md + jira-data-center` version-locked к Jira Data Center / Jira Software `8.22.x`.
 
-- активация происходит только через точный `Active Rules`, `Active Skills`, `jira-data-center` stack profile или включённый специализированный Jira section;
-- специализированный section должен назвать exact rule/skill pair и объявить `8.22.x` либо точную `8.22.z` версию;
+- отдельный rule или skill выбирается через точный `Active Rules` или `Active Skills`, а весь пакет также может быть выбран через `jira-data-center` stack profile или включённый специализированный Jira section;
+- применение пакета дополнительно требует включённый и полный специализированный Jira section с exact rule/skill pair и `8.22.x` либо точной `8.22.z` версией;
 - runtime version проверяется через `/rest/api/2/serverInfo`;
 - упоминание Jira в задаче само по себе не активирует пакет;
 - runtime вне `8.22.x` останавливает применение пакета после version diagnostic;
