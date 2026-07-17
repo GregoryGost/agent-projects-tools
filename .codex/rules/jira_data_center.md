@@ -2,9 +2,11 @@
 
 Apply this rule only when at least one allowed project-profile signal selects it:
 
-- `.codex/rules/jira_data_center.md` is listed exactly in `Active Rules`;
+- `jira_data_center.md` is listed exactly in `Active Rules`;
 - `jira-data-center` is listed in `Active Stack Profiles`;
 - the enabled Jira Data Center specialized profile names the exact `jira_data_center.md + jira-data-center` rule/skill pair.
+
+The source rule file remains `.codex/rules/jira_data_center.md`; activation through `Active Rules` uses the bare rule filename defined by `.codex/project.template.md`.
 
 A target-project task that merely mentions Jira, requests a live Jira operation, or reviews Jira integration code does not activate this rule by itself. When the Jira profile is missing, incomplete, disabled, set to `none`, or version-incompatible, report a profile error instead of applying this rule. Template-repository maintenance may review or edit this source rule directly under Template Repository Mode.
 
