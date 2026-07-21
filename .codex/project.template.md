@@ -204,8 +204,6 @@ Keep only when FastAPI is active.
 
 Keep only when Python caching through `cashews` is active. This profile and the `python_cashews_cache.md + python-cashews-cache` pair do not apply to `functools`, `cachetools`, direct Redis clients, NATS JetStream Key/Value, or another cache library. Use the separate Python NATS KV Cache Profile and `python_nats_kv_cache.md + python-nats-kv-cache` for direct distributed caching through `nats-py` and NATS JetStream KV.
 
-The old identifiers `python_cache.md` and `python-cache` are not compatibility aliases. Existing project profiles must replace them with `python_cashews_cache.md` and `python-cashews-cache`.
-
 - Python cashews cache enabled: `<yes/no>`
 - Cache library: `cashews`
 - Cache backend: `<Redis / memory / process-local / project-specific / none>`
