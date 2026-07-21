@@ -73,8 +73,10 @@ Before version-sensitive implementation:
 1. Read `CODEX_PROJECT.md` and repository dependency metadata.
 2. Resolve the installed `nats-py` version and the deployed `nats-server` version from declared sources.
 3. Verify JetStream is enabled for the selected account/domain.
-4. Check the matching official NATS and `nats.py` documentation before relying on an API or server feature.
+4. Check the matching official NATS and `nats.py` documentation and source before relying on an API or server feature.
 5. Do not transfer behavior from another language client or a newer server/client version without matching evidence.
+
+The current public `nats.py` documentation marks KeyValue functionality as experimental. Treat method signatures, exceptions, configuration propagation, and low-level behavior as version-sensitive.
 
 The base profile uses the public `nats.js.kv.KeyValue` and `KeyValueConfig` abstractions. Stream-level features do not become KV features merely because KV buckets are backed by streams.
 
@@ -101,8 +103,9 @@ Rules:
 - Prefer `infrastructure-managed` for production unless project policy explicitly assigns ownership to the application.
 - Do not silently create, purge, delete, or reconfigure a production bucket.
 - Do not mutate the backing `KV_<bucket>` stream directly unless a separately reviewed advanced profile explicitly authorizes the exact stream-level operation.
-- Do not derive `duplicate_window` from cache TTL; message de-duplication and value expiration are separate concerns.
-- Validate declared `history`, `ttl`, `max_bytes`, `max_value_size`, `storage`, `replicas`, placement, and direct-read settings.
+- Treat backing-stream `duplicate_window` as a version-sensitive `nats-py` implementation detail during `create_key_value`. Current client source derives it from bucket TTL, but application code must not independently resynchronize or reinterpret it as a cache-consistency setting.
+- Validate declared `history`, `ttl`, `max_bytes`, `max_value_size`, `storage`, `replicas`, and direct-read settings.
+- Treat placement and any other field not proven to propagate through the installed `create_key_value` implementation as infrastructure-managed or separately verified; the presence of a field on `KeyValueConfig` does not prove that the installed client applies it to the backing stream.
 - Use `history=1` for ordinary cache semantics unless the project explicitly needs and tests history.
 - Enforce bounded bucket and value sizes. Unlimited defaults are not a production sizing policy.
 - Treat bucket TTL as bucket-wide. Do not promise independent per-key TTL through the standard `KeyValueConfig` API.
@@ -184,7 +187,8 @@ JetStream `AllowAtomicPublish`, introduced at the stream layer, is outside the b
 
 ## Reads, misses, deletions, and errors
 
-- Distinguish a missing key from a deleted key when the application contract needs that difference.
+- The public `nats-py` `KeyValue.get()` in current client source maps a delete marker to `KeyNotFoundError`; do not claim that ordinary `get()` distinguishes never-created and deleted states.
+- If the application contract requires deleted-state metadata, use a documented watcher or history operation whose entries expose the operation marker, and verify behavior against the installed version. Do not call private `_get` methods.
 - A missing or deleted cache entry may map to a cache miss according to the adapter contract.
 - Do not convert connection, timeout, authorization, JetStream, configuration, or decoding failures into cache misses.
 - Translate low-level failures into stable typed errors such as configuration, unavailable, serialization, conflict, invalid-key, and unverified-write errors.
@@ -223,7 +227,8 @@ Unit tests must cover:
 
 - codec round trips and distinct empty/`None` values;
 - key validation and scope construction;
-- miss, deleted entry, hit, decode failure, and unavailable backend;
+- miss, hit, decode failure, and unavailable backend;
+- deleted-state behavior through the selected documented watcher/history contract when that distinction is required;
 - `put`, `create`, revision return, CAS success, CAS conflict, and bounded retry;
 - post-commit invalidation;
 - batch limits, duplicate keys, concurrency bounds, partial success, conflict, and unverified outcome;
@@ -233,25 +238,28 @@ Integration tests must:
 
 - use a real JetStream-enabled NATS server or an approved equivalent process boundary;
 - use unique buckets per run and per `pytest-xdist` worker when parallelized;
-- verify declared bucket configuration and ownership behavior;
+- verify declared bucket configuration, actual installed-client propagation, and ownership behavior;
 - exercise two independent clients for CAS and lost-update scenarios;
-- verify TTL, delete markers, watchers when used, reconnect behavior, and cleanup;
+- verify TTL, delete markers through documented APIs, watchers when used, reconnect behavior, and cleanup;
 - avoid production NATS accounts and production buckets.
 
-Stream-level atomic batch behavior, mirrors, direct reads, clustered replicas, and failure during acknowledgement require dedicated version-matched integration tests before they are claimed.
+Stream-level atomic batch behavior, placement, mirrors, direct reads, clustered replicas, and failure during acknowledgement require dedicated version-matched integration tests before they are claimed.
 
 ## Review checklist
 
 - [ ] The exact NATS KV rule/skill pair is active through an allowed profile signal.
 - [ ] `nats-py`, `nats-server`, JetStream, account/domain, credentials, and TLS sources were verified.
+- [ ] Experimental and version-sensitive `nats.py` behavior was checked against official documentation and source.
 - [ ] The cache is reconstructible and not the authoritative source of business data.
 - [ ] Bucket ownership and provisioning/reconciliation policy are explicit.
-- [ ] History, TTL, limits, storage, replicas, placement, and direct reads are declared.
+- [ ] History, TTL, limits, storage, replicas, placement policy, and direct reads are declared.
+- [ ] Application code does not manually resynchronize `duplicate_window` from TTL.
 - [ ] One shared lifecycle-owned NATS client is used.
 - [ ] Keys include all visibility and result-shaping scope without secrets.
 - [ ] A deterministic typed codec preserves distinct values and schema versions.
 - [ ] Revisions are preserved and mutable updates use CAS rather than get-modify-put.
-- [ ] Availability, serialization, conflict, miss, deleted, and unverified outcomes are distinct.
+- [ ] Availability, serialization, conflict, miss, and unverified outcomes are distinct.
+- [ ] Deleted-state claims use documented watcher/history behavior rather than ordinary `get()` or private APIs.
 - [ ] Invalidation occurs after successful authoritative writes.
 - [ ] Bulk operations are bounded, per-key, and never presented as multi-key transactions.
 - [ ] Atomic aggregates or generation pointers are used when consistent multi-key visibility is required.
