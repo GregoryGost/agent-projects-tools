@@ -61,7 +61,8 @@
 7. Перенесите только остальные нужные файлы из `.codex/rules/` и целиком соответствующие пакеты из `.agents/skills/`.
 8. Не подключайте `.codex/project.template.md` как rule после создания проектного `CODEX_PROJECT.md`.
 9. Не активируйте language-, framework-, database-, cache-, HTTP-client-, styling-, testing- или external-system-материалы без activation signal, разрешённого их entrypoint и `AGENTS.md`. Прямое упоминание технологии не является активацией, если entrypoint требует project profile.
-10. Для `jira-data-center` сохраните специализированный Jira Data Center profile: exact rule/skill pair, declared `8.22.x` или точную `8.22.z`, instance/environment и источники configuration. Runtime version проверяется через `/rest/api/2/serverInfo`; другая major/minor версия требует отдельных проверенных материалов.
+10. Для `python-nats-kv-cache` сохраните специализированный NATS KV cache profile: версии `nats-py` и `nats-server`, JetStream/account/domain, bucket ownership/configuration, key/codec/CAS/invalidation/outage/batch policies и exact `python_nats_kv_cache.md + python-nats-kv-cache` pair.
+11. Для `jira-data-center` сохраните специализированный Jira Data Center profile: exact rule/skill pair, declared `8.22.x` или точную `8.22.z`, instance/environment и источники configuration. Runtime version проверяется через `/rest/api/2/serverInfo`; другая major/minor версия требует отдельных проверенных материалов.
 
 ## Фактическое покрытие
 
@@ -73,6 +74,7 @@
 | Язык code-adjacent prose | `comment-language-audit` |
 | Python core и тестирование | `python-core`, `python-testing`, `python-service-e2e-testing` |
 | Python backend | `python-fastapi-expert`, `python-cache`, `python-sqlalchemy-core`, `python-sqlalchemy-sqlite`, `python-httpx-client`, `python-backend-security` |
+| Python distributed cache | `python_nats_kv_cache.md`, `python-nats-kv-cache` для NATS JetStream Key/Value |
 | TypeScript и Node.js | `typescript-core`, `typescript-jest-testing`, `eslint-typescript`, `prettier-formatting`, `nodejs-service-e2e-testing` |
 | Vue 3 + TypeScript + Vite | `vue3-typescript-vite-expert`, `vue-router-expert`, `pinia-expert`, `vueuse-expert` |
 | Vue testing и browser E2E | `vitest-vue-testing`, `vue-router-testing`, `pinia-testing`, `vueuse-testing`, `vue-playwright-e2e-testing` |
@@ -81,6 +83,22 @@
 | Obsidian | `obsidian-mcp-core`, `obsidian-llm-wiki`, `obsidian-taskbook` |
 
 Наличие технологии в `.codex/project.template.md` само по себе не означает наличие отдельного rule или skill-пакета. Фактическим источником перечня материалов служат `.codex/rules/` и `.agents/skills/`.
+
+## Профиль Python NATS JetStream KV cache
+
+Пакет `python_nats_kv_cache.md + python-nats-kv-cache` предназначен для распределённого Python cache, реализованного напрямую через `nats-py` и NATS JetStream Key/Value.
+
+- профиль отделён от `python_cache.md + python-cache`, который остаётся `cashews`-specific;
+- активация требует exact `Active Rules`, `Active Skills`, stack profile или включённый специализированный profile section;
+- профиль фиксирует версии клиента и сервера, JetStream/account/domain, connection/auth/TLS sources, bucket ownership, TTL, limits, storage, replicas, key namespace, codec, lifecycle, invalidation и outage policy;
+- bucket рассматривается как восстанавливаемый cache, а не как единственный system of record;
+- mutable read-modify-write операции используют revision-based CAS и не выполняются через `get -> modify -> put`;
+- bounded bulk operations допустимы только для независимых ключей с per-key результатами и partial-completion policy;
+- базовый профиль не обещает multi-key transaction, не публикует напрямую в `$KV.*` и не трактует stream-level `AllowAtomicPublish` как стандартный KV batch API;
+- live bucket create/reconfigure/purge/delete operations требуют отдельного `external-system-only` gate;
+- unit tests дополняются integration tests с реальным JetStream-enabled NATS и изолированными buckets.
+
+Официальные NATS и `nats.py` источники, version/feature precedence и границы stream-level возможностей перечислены в `.agents/skills/python-nats-kv-cache/references/official-sources.md`.
 
 ## Профиль Jira Data Center
 
