@@ -61,7 +61,7 @@
 7. Перенесите только остальные нужные файлы из `.codex/rules/` и целиком соответствующие пакеты из `.agents/skills/`.
 8. Не подключайте `.codex/project.template.md` как rule после создания проектного `CODEX_PROJECT.md`.
 9. Не активируйте language-, framework-, database-, cache-, HTTP-client-, styling-, testing- или external-system-материалы без activation signal, разрешённого их entrypoint и `AGENTS.md`. Прямое упоминание технологии не является активацией, если entrypoint требует project profile.
-10. Для `cashews` используйте только `python_cashews_cache.md + python-cashews-cache`. Старые идентификаторы `python_cache.md` и `python-cache` удалены; существующие `CODEX_PROJECT.md` должны быть обновлены.
+10. Для `cashews` используйте `python_cashews_cache.md + python-cashews-cache` и специализированный Python cashews cache profile.
 11. Для `python-nats-kv-cache` сохраните специализированный NATS KV cache profile: версии `nats-py` и `nats-server`, JetStream/account/domain, bucket ownership/configuration, key/codec/CAS/invalidation/outage/batch policies и exact `python_nats_kv_cache.md + python-nats-kv-cache` pair.
 12. Для `jira-data-center` сохраните специализированный Jira Data Center profile: exact rule/skill pair, declared `8.22.x` или точную `8.22.z`, instance/environment и источники configuration. Runtime version проверяется через `/rest/api/2/serverInfo`; другая major/minor версия требует отдельных проверенных материалов.
 
@@ -89,9 +89,7 @@
 
 Пакет `python_cashews_cache.md + python-cashews-cache` предназначен только для Python cache на базе библиотеки `cashews`.
 
-- новый идентификатор явно называет библиотеку и не пересекается с другими cache profiles;
-- старые `python_cache.md` и `python-cache` не являются compatibility aliases и больше не активируют пакет;
-- существующие целевые проекты должны заменить старые entries в `Active Stack Profiles`, `Active Rules`, `Active Skills` и specialized profile section;
+- пакет активируется через exact `Active Rules`, `Active Skills`, stack profile или специализированный profile section;
 - Redis или memory могут быть backend библиотеки `cashews`, но direct Redis clients и NATS JetStream KV требуют отдельных материалов;
 - FastAPI wiring остаётся в `python-fastapi-expert`, а cache keys, TTL, tags, invalidation, lifecycle и tests — в `python-cashews-cache`.
 
