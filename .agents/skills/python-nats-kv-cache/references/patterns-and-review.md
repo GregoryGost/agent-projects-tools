@@ -18,6 +18,8 @@ Use NATS KV as a cache only when all of these are known:
 
 Do not add NATS KV merely because NATS already exists in the project. Core messaging and distributed cache are separate responsibilities.
 
+The current public `nats.py` documentation marks KeyValue as experimental. Verify the installed version before copying signatures, exceptions, or configuration behavior from current documentation or source.
+
 ## Cache placement
 
 Preferred placement:
@@ -54,7 +56,7 @@ Use this mode by default for shared production infrastructure.
 
 ### Application-managed
 
-Application startup may create a missing bucket only when the project explicitly assigns ownership and supplies a complete `KeyValueConfig`.
+Application startup may create a missing bucket only when the project explicitly assigns ownership and supplies every required field supported by the installed `create_key_value` implementation.
 
 ```python
 from nats.js.api import KeyValueConfig, StorageType
@@ -68,24 +70,24 @@ async def bind_or_create_cache_bucket(
     try:
         kv = await jetstream.key_value(settings.bucket)
     except BucketNotFoundError:
-        kv = await jetstream.create_key_value(
-            config=KeyValueConfig(
-                bucket=settings.bucket,
-                description=settings.description,
-                history=settings.history,
-                ttl=settings.ttl_seconds,
-                max_bytes=settings.max_bytes,
-                max_value_size=settings.max_value_size,
-                storage=StorageType.FILE,
-                replicas=settings.replicas,
-                placement=settings.placement,
-                direct=settings.direct,
-            )
+        config = KeyValueConfig(
+            bucket=settings.bucket,
+            description=settings.description,
+            history=settings.history,
+            ttl=settings.ttl_seconds,
+            max_bytes=settings.max_bytes,
+            max_value_size=settings.max_value_size,
+            storage=StorageType.FILE,
+            replicas=settings.replicas,
+            direct=settings.direct,
         )
+        kv = await jetstream.create_key_value(config=config)
 
     validate_bucket_status(await kv.status(), settings)
     return kv
 ```
+
+This example intentionally omits placement. Current `nats.py` source exposes `placement` on `KeyValueConfig`, but the current `create_key_value` implementation does not propagate it to the generated `StreamConfig`. Verify the installed version. When placement is mandatory and the public KV creation path does not apply it, use infrastructure-managed provisioning rather than direct `$KV.*` publishing or private client methods.
 
 Do not pass only `bucket`, `history`, and `ttl` while silently accepting unlimited sizes, default replicas, or an unknown storage policy.
 
@@ -106,11 +108,13 @@ Compare the actual bucket status with declared expectations. Classify mismatches
 - fatal and non-editable;
 - editable but infrastructure-owned;
 - editable and explicitly application-owned;
-- informational.
+- informational or client-version-dependent.
 
-Do not mutate the backing `KV_<bucket>` stream just because a value differs. Reconciliation requires explicit profile authorization and version-matched official evidence for each field.
+Do not mutate the backing `KV_<bucket>` stream merely because a value differs. Reconciliation requires explicit profile authorization and version-matched official evidence for each field.
 
-Cache TTL and JetStream duplicate-window are unrelated policies. Do not derive one from the other.
+Current `nats.py` source derives the backing stream's `duplicate_window` during `create_key_value`: it uses an internal default and reduces it when bucket TTL is shorter. This is client implementation behavior, not an independent cache policy. Do not add application startup code that recomputes and rewrites `duplicate_window` from TTL. Validate version compatibility instead.
+
+The presence of a field on `KeyValueConfig` does not prove that the installed client propagates it. Integration tests must inspect the resulting `BucketStatus.stream_info.config` for every required setting.
 
 ## Typed settings
 
@@ -137,7 +141,7 @@ class NatsKvCacheSettings:
     batch_concurrency: int
 ```
 
-Connection URLs, authentication, TLS, domain, and timeouts may live in the shared NATS client settings rather than the cache-specific model, but their source must remain explicit in `CODEX_PROJECT.md`.
+Connection URLs, authentication, TLS, domain, and timeouts may live in shared NATS client settings rather than the cache-specific model, but their source must remain explicit in `CODEX_PROJECT.md`.
 
 ## Key construction
 
@@ -169,22 +173,24 @@ def profile_key(profile_id: int) -> str:
 
 This can collide across tenants, roles, locales, feature flags, or schema versions.
 
-Validate key length and NATS key/subject syntax before making a network call. Do not place raw tokens, passwords, email addresses, or unbounded queries in a key. Normalize or hash bounded sensitive/high-cardinality inputs when the project contract requires them.
+Validate key length and NATS key syntax before making a network call. Current `nats.py` accepts a restricted character set and rejects empty keys and keys beginning or ending with a dot. Verify the installed implementation rather than duplicating a stale regular expression.
+
+Do not place raw tokens, passwords, email addresses, or unbounded queries in a key. Normalize or hash bounded sensitive/high-cardinality inputs when the project contract requires them.
 
 ## Codec boundary
 
 ### Protocol
 
 ```python
-from typing import Protocol, TypeVar
-
-T = TypeVar("T")
+from typing import Protocol
 
 
 class CacheCodec[T](Protocol):
     def encode(self, value: T) -> bytes: ...
     def decode(self, value: bytes) -> T: ...
 ```
+
+Adapt generic syntax to the project's declared Python version.
 
 ### JSON codec
 
@@ -229,7 +235,7 @@ bytes(list_value)
 
 `bytes(integer)` allocates that number of zero bytes, and `bytes(list_value)` expects byte-range integers; neither is a general serialization contract.
 
-Do not encode `None` as `b""` if an empty byte value or empty string can be valid. Use a typed envelope or a codec whose domain excludes `None`.
+Do not encode `None` as `b""` if empty bytes or an empty string can be valid. Use a typed envelope or a codec whose domain explicitly excludes `None`.
 
 ## Entry and revision
 
@@ -245,12 +251,12 @@ class CacheEntry[T]:
     created_at: datetime | None
 ```
 
-Preserve the entry revision returned by NATS. It is part of the concurrency contract, not incidental metadata.
+Preserve the revision returned by NATS. It is part of the concurrency contract, not incidental metadata. The ordinary current `get()` path may not populate creation time; do not require metadata that the selected public API does not provide.
 
 ## Reads and misses
 
 ```python
-from nats.js.errors import KeyDeletedError, KeyNotFoundError
+from nats.js.errors import KeyNotFoundError
 
 
 async def get_entry(self, key: str) -> CacheEntry[T] | None:
@@ -258,26 +264,25 @@ async def get_entry(self, key: str) -> CacheEntry[T] | None:
 
     try:
         entry = await self._kv.get(key)
-    except (KeyNotFoundError, KeyDeletedError):
+    except KeyNotFoundError:
         return None
     except Exception as exc:
         raise CacheUnavailableError("NATS KV read failed") from exc
 
-    try:
-        value = self._codec.decode(entry.value)
-    except CacheSerializationError:
-        raise
+    if entry.value is None or entry.revision is None:
+        raise CacheSerializationError("Incomplete NATS KV entry")
 
+    value = self._codec.decode(entry.value)
     return CacheEntry(
         value=value,
         revision=entry.revision,
-        created_at=entry.created,
+        created_at=None,
     )
 ```
 
 Adapt the low-level exception set to the installed `nats-py` version. Do not catch every exception and return `None`; an outage is not a cache miss.
 
-If the project needs to distinguish never-created and deleted states, expose that explicitly rather than collapsing both to `None`.
+Current public `nats.py` `KeyValue.get()` catches a delete marker and raises `KeyNotFoundError`. Ordinary reads therefore collapse never-created and deleted states. When the project needs delete operation metadata, use documented `watch` or `history` entries and verify their `operation` values. Do not call the private `_get` method.
 
 ## Unconditional put
 
@@ -298,6 +303,9 @@ Use `put` only when last-write-wins is acceptable. Return the revision.
 ## Atomic create
 
 ```python
+from nats.js.errors import KeyWrongLastSequenceError
+
+
 async def create(self, key: str, value: T) -> int:
     self._validate_key(key)
     encoded = self._codec.encode(value)
@@ -309,7 +317,7 @@ async def create(self, key: str, value: T) -> int:
         raise CacheConflictError(key=key) from exc
 ```
 
-Do not implement create with `exists()` followed by `put()`; another writer can insert between those calls.
+Do not implement create with `exists()` followed by `put()`; another writer can insert between those calls. Verify exact conflict exceptions against the installed client.
 
 ## Compare-and-set
 
@@ -375,7 +383,7 @@ The whole read/compute/CAS cycle is retried. The retry budget is bounded.
 
 ```python
 async def update_field_bad(key: str, field: str, value: object) -> None:
-    data = json.loads(await cache.get(key))
+    data = await cache.get(key)
     data[field] = value
     await cache.put(key, data)
 ```
@@ -394,12 +402,11 @@ Use these terms precisely:
 
 Do not call a bulk helper `atomic_update_many`.
 
-## Bounded bulk put
+## Batch result contract
 
 ```python
-import asyncio
-from collections.abc import Mapping
 from dataclasses import dataclass
+from typing import Literal
 
 
 @dataclass(frozen=True, slots=True)
@@ -411,7 +418,14 @@ class BatchItemSuccess:
 @dataclass(frozen=True, slots=True)
 class BatchItemFailure:
     key: str
-    kind: str
+    kind: Literal[
+        "conflict",
+        "unavailable",
+        "serialization",
+        "invalid_key",
+        "unverified",
+        "unknown",
+    ]
     retryable: bool
 
 
@@ -419,6 +433,17 @@ class BatchItemFailure:
 class BatchWriteResult:
     succeeded: tuple[BatchItemSuccess, ...]
     failed: tuple[BatchItemFailure, ...]
+```
+
+One item may succeed while another fails or conflicts. The result must preserve that fact.
+
+## Bounded bulk put
+
+A semaphore limits active calls, but creating one task per item can still consume excessive memory for very large collections. Use this shape only after enforcing a small declared maximum item count:
+
+```python
+import asyncio
+from collections.abc import Mapping
 
 
 async def put_many(
@@ -427,8 +452,8 @@ async def put_many(
     *,
     concurrency: int,
 ) -> BatchWriteResult:
-    reject_duplicate_or_invalid_keys(values)
     validate_batch_limits(values)
+    reject_duplicate_or_invalid_keys(values)
     semaphore = asyncio.Semaphore(concurrency)
 
     async def put_one(key: str, value: T) -> BatchItemSuccess | BatchItemFailure:
@@ -437,11 +462,11 @@ async def put_many(
                 revision = await cache.put(key, value)
                 return BatchItemSuccess(key=key, revision=revision)
             except CacheConflictError:
-                return BatchItemFailure(key=key, kind="conflict", retryable=True)
+                return BatchItemFailure(key, "conflict", True)
             except CacheUnavailableError:
-                return BatchItemFailure(key=key, kind="unavailable", retryable=True)
+                return BatchItemFailure(key, "unavailable", True)
             except CacheSerializationError:
-                return BatchItemFailure(key=key, kind="serialization", retryable=False)
+                return BatchItemFailure(key, "serialization", False)
 
     results = await asyncio.gather(
         *(put_one(key, value) for key, value in values.items())
@@ -453,7 +478,7 @@ async def put_many(
     )
 ```
 
-The collection is validated before task creation, and concurrency is bounded inside the operation. For very large inputs, prefer a bounded worker queue rather than creating one task per item even when a semaphore is present.
+For larger inputs, use a bounded worker queue or async iterator so the number of scheduled tasks is bounded as well as the number of active network calls.
 
 ## Bad unbounded bulk write
 
@@ -468,7 +493,7 @@ Problems:
 - creates unbounded tasks;
 - has no total payload limit;
 - can overwhelm the connection or server;
-- commonly raises only one visible exception;
+- commonly exposes only one raised exception;
 - hides successful writes completed before another item failed;
 - encourages a false all-or-nothing interpretation.
 
@@ -483,6 +508,9 @@ Do not schedule concurrent operations against the same key and rely on task comp
 Each update requires its own expected revision:
 
 ```python
+from dataclasses import dataclass
+
+
 @dataclass(frozen=True, slots=True)
 class CasWrite[T]:
     key: str
@@ -548,7 +576,7 @@ Do not move the business transaction into KV merely to avoid database coordinati
 
 ## Stream-level atomic batch publishing
 
-NATS Server introduced `AllowAtomicPublish` for streams. The base `nats.py` `KeyValue` API still exposes per-key operations, not a portable KV `update_many` transaction.
+NATS Server introduced `AllowAtomicPublish` for streams. The base `nats.py` `KeyValue` API exposes per-key operations, not a portable KV `update_many` transaction.
 
 Do not:
 
@@ -561,7 +589,7 @@ A future advanced profile may permit an official client abstraction only after m
 
 ## Unverified writes
 
-A timeout or lost connection after publishing can leave the client unable to tell whether the server committed the write.
+A timeout or lost connection after publishing can leave the client unable to determine whether the server committed the write.
 
 Do not automatically classify every such result as failed and retry unconditionally. Depending on the operation:
 
@@ -610,7 +638,7 @@ async with unit_of_work.transaction():
     await cache.delete(cache_key)
 ```
 
-If the transaction later rolls back, the invalidation no longer reflects committed state.
+If the transaction later rolls back, invalidation no longer reflects committed state.
 
 ## Delete and purge distinctions
 
@@ -623,6 +651,8 @@ Keep separate adapter methods or administrative boundaries for:
 - delete the bucket and backing stream.
 
 Ordinary application invalidation should normally use exact-key delete. Bucket purge and deletion are administrative operations and require `external-system-only` authorization when performed live.
+
+Current public `KeyValue.get()` maps delete markers to `KeyNotFoundError`. Use watcher or history entries when the application needs to observe `DEL` or `PURGE`; do not call private methods.
 
 ## Watch-assisted local L1 cache
 
@@ -672,7 +702,8 @@ Cover:
 - key normalization and rejection;
 - codec round trips and malformed data;
 - distinct `None`, empty bytes, empty text, false, zero, empty list, and empty mapping behavior as applicable;
-- miss and deleted-state behavior;
+- miss behavior and public `get()` treatment of delete markers;
+- deleted operation metadata through watcher/history when required;
 - unavailable backend and secret-safe errors;
 - revision return;
 - create conflict;
@@ -692,8 +723,9 @@ Cover:
 
 - infrastructure-managed bind and validation;
 - application-managed create-if-missing when active;
-- TTL expiration;
-- exact-key delete and deleted-state behavior;
+- actual propagation of every required `KeyValueConfig` field;
+- TTL expiration and resulting backing stream configuration;
+- exact-key delete and documented deleted-state observation;
 - revisions and CAS conflict between two clients;
 - prevention of lost updates;
 - reconnect and shutdown;
@@ -703,7 +735,7 @@ Cover:
 
 For `pytest-xdist`, derive bucket names from a run identifier and `PYTEST_XDIST_WORKER`. Do not share one mutable bucket between workers unless the test intentionally verifies concurrency.
 
-Clustered replicas, direct reads, mirrors, acknowledgement loss, and stream-level atomic publish require dedicated environment-specific tests.
+Clustered replicas, placement, direct reads, mirrors, acknowledgement loss, and stream-level atomic publish require dedicated environment-specific tests.
 
 ## Review red flags
 
@@ -716,9 +748,12 @@ Stop and correct the implementation when you find:
 - `exists -> put` used for create;
 - `get -> modify -> put` used for concurrent mutable values;
 - unexpected errors converted to misses or `False`;
+- ordinary `get()` claimed to distinguish delete markers;
+- private `_get` used to bypass public API semantics;
 - generic `Exception` as the public adapter contract;
 - application startup silently rewriting production stream configuration;
-- TTL coupled to `duplicate_window`;
+- application code manually synchronizing `duplicate_window` from TTL;
+- a `KeyValueConfig` field assumed to propagate without version-matched verification;
 - unlimited bucket or value sizes accepted without review;
 - unbounded `asyncio.gather` for bulk writes;
 - one boolean returned for a partially completed bulk operation;
@@ -732,12 +767,15 @@ Stop and correct the implementation when you find:
 
 - [ ] Cache suitability and authoritative fallback are documented.
 - [ ] Bucket ownership and configuration are explicit.
-- [ ] Version-matched official sources were checked.
+- [ ] Version-matched official sources and experimental API status were checked.
+- [ ] Required `KeyValueConfig` propagation was verified for the installed client.
+- [ ] Application code does not manually rewrite `duplicate_window` from TTL.
 - [ ] Shared NATS lifecycle and secret handling follow project policy.
 - [ ] Key scope and codec are deterministic and typed.
 - [ ] Values remain detached from runtime and persistence resources.
 - [ ] Revisions and CAS protect mutable updates.
-- [ ] Miss, delete, conflict, unavailable, serialization, and unverified outcomes are distinct.
+- [ ] Miss, conflict, unavailable, serialization, and unverified outcomes are distinct.
+- [ ] Deleted-state behavior uses documented watcher/history APIs when required.
 - [ ] Bulk operations have limits, backpressure, per-key results, and no transaction claim.
 - [ ] Aggregate or generation patterns protect related values when needed.
 - [ ] Invalidation occurs after authoritative commit.
