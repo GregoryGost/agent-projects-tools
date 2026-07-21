@@ -1,6 +1,6 @@
-# Python Cache Sources
+# Python Cashews Cache Sources
 
-Use project-approved source documentation before changing cache behavior.
+Use project-approved source documentation before changing `cashews` cache behavior.
 
 ## Cache Libraries
 

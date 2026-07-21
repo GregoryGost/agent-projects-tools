@@ -15,7 +15,8 @@ Use together with:
 Add specialist skills only when they are active in `CODEX_PROJECT.md` or directly touched by the task:
 
 - `python-fastapi-expert` for FastAPI/API boundaries;
-- `python-cache` for cache-backed flows;
+- `python-cashews-cache` for `cashews` cache-backed flows;
+- `python-nats-kv-cache` for NATS JetStream KV cache-backed flows;
 - database-specific rules/skills for persistence behavior;
 - HTTP-client or external-system rules for integrations outside the application boundary.
 

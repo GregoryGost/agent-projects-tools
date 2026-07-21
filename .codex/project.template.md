@@ -62,7 +62,7 @@ Selection examples:
 - `python-testing`
 - `python-service-e2e-testing`
 - `python-fastapi`
-- `python-cache`
+- `python-cashews-cache`
 - `python-nats-kv-cache`
 - `typescript-core`
 - `typescript-jest-testing`
@@ -105,7 +105,7 @@ List only additional rule files active in this project.
 
 - Optional core rules: `<source_code_hygiene.md / none / other>`
 - Git rules: `<git.md / none>`
-- Python/backend rules: `<python_fastapi.md / python_cache.md / python_nats_kv_cache.md / none>`
+- Python/backend rules: `<python_fastapi.md / python_cashews_cache.md / python_nats_kv_cache.md / none>`
 - Formatting/linting rules: `<prettier_formatting.md / eslint_typescript.md / none>`
 - Language rules: `<typescript_core.md / typescript_jest_testing.md / none / other>`
 - Framework rules: `<vue3_typescript_vite.md / vue_router.md / pinia.md / vueuse.md / none / other>`
@@ -120,7 +120,7 @@ List only additional rule files active in this project.
 List only reusable skills active in this project.
 
 - Code prose / language-policy skills: `<comment-language-audit / none>`
-- Python skills: `<python-core / python-testing / python-fastapi-expert / python-cache / python-nats-kv-cache / none / other>`
+- Python skills: `<python-core / python-testing / python-fastapi-expert / python-cashews-cache / python-nats-kv-cache / none / other>`
 - Language skills: `<typescript-core / typescript-jest-testing / none / other>`
 - Formatting/linting skills: `<prettier-formatting / eslint-typescript / none>`
 - Framework skills: `<vue3-typescript-vite-expert / vue-router-expert / pinia-expert / vueuse-expert / none>`
@@ -200,22 +200,24 @@ Keep only when FastAPI is active.
 - Background task policy: `<BackgroundTasks / worker queue / project-specific / none>`
 - Active FastAPI rule/skill: `<python_fastapi.md + python-fastapi-expert / none>`
 
-## Python Cache Profile
+## Python Cashews Cache Profile
 
-Keep only when Python caching through `cashews` is active. This profile and the `python_cache.md + python-cache` pair do not apply to `functools`, `cachetools`, direct Redis clients, NATS JetStream Key/Value, or another cache library. Use the separate Python NATS KV Cache Profile and `python_nats_kv_cache.md + python-nats-kv-cache` for direct distributed caching through `nats-py` and NATS JetStream KV.
+Keep only when Python caching through `cashews` is active. This profile and the `python_cashews_cache.md + python-cashews-cache` pair do not apply to `functools`, `cachetools`, direct Redis clients, NATS JetStream Key/Value, or another cache library. Use the separate Python NATS KV Cache Profile and `python_nats_kv_cache.md + python-nats-kv-cache` for direct distributed caching through `nats-py` and NATS JetStream KV.
 
-- Python cache enabled: `<yes/no>`
+The old identifiers `python_cache.md` and `python-cache` are not compatibility aliases. Existing project profiles must replace them with `python_cashews_cache.md` and `python-cashews-cache`.
+
+- Python cashews cache enabled: `<yes/no>`
 - Cache library: `cashews`
 - Cache backend: `<Redis / memory / process-local / project-specific / none>`
 - Cache lifecycle owner: `<FastAPI lifespan / app resource manager / CLI / worker / project-specific / none>`
 - Cache key scope policy: `<tenant/user/role/filter/pagination/schema-version / project-specific / none>`
 - Cache invalidation policy: `<post-commit tags / exact key delete / TTL-only immutable data / project-specific / none>`
-- Active Python cache rule/skill: `<python_cache.md + python-cache / none>`
+- Active Python cashews cache rule/skill: `<python_cashews_cache.md + python-cashews-cache / none>`
 - If FastAPI is active, use FastAPI rule/skill for app wiring and API behavior: `<yes/no/not applicable>`
 
 ## Python NATS KV Cache Profile
 
-Keep only when distributed Python caching through `nats-py` and NATS JetStream Key/Value is active. This profile does not activate Core NATS messaging, JetStream consumers, Object Store, distributed locking, or the `cashews`-specific `python-cache` profile.
+Keep only when distributed Python caching through `nats-py` and NATS JetStream Key/Value is active. This profile does not activate Core NATS messaging, JetStream consumers, Object Store, distributed locking, or the `cashews`-specific `python-cashews-cache` profile.
 
 The specialized section activates the NATS KV cache rule/skill pair only when it is enabled, names the exact pair, and declares all required connection, bucket, consistency, outage, and batch policies. Missing values, `none`, or a disabled section make the profile invalid.
 

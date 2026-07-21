@@ -32,7 +32,7 @@ Apply additional active skills only when the task touches their area:
 - `python-backend-security` for credentials, NATS permissions, tenant isolation, cache poisoning, logging, and secret handling;
 - `python-sqlalchemy-core` and the active database-specific skill for post-commit invalidation and source-of-truth transaction boundaries.
 
-Do not apply the `python-cache` skill to NATS KV behavior. `python-cache` is the separate `cashews` profile.
+Do not apply the `python-cashews-cache` skill to NATS KV behavior. `python-cashews-cache` is the separate `cashews` profile.
 
 ## References
 

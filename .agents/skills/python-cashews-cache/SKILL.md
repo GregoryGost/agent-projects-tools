@@ -1,15 +1,15 @@
 ---
-name: python-cache
+name: python-cashews-cache
 description: "Use for cashews cache design, keys, TTL, invalidation, backend lifecycle, testing, and FastAPI integration."
 ---
 
-# Python Cache
+# Python Cashews Cache
 
 Use this skill when `CODEX_PROJECT.md` declares `Cache library: cashews`, or when a task directly changes `cashews` setup, cached read paths, TTL, invalidation, or cache backend configuration.
 
 This skill is the `cashews` cache profile. Do not apply it to `functools`, `cachetools`, direct Redis clients, NATS JetStream Key/Value, or another cache library unless the project has a separate skill for that library. Use `python-nats-kv-cache` for direct distributed caching through `nats-py` and NATS JetStream KV. This skill can be combined with FastAPI, database, HTTP client, or testing skills when those profiles are active.
 
-Apply `.codex/rules/python_cache.md`, `python-core`, and this skill together.
+Apply `.codex/rules/python_cashews_cache.md`, `python-core`, and this skill together.
 
 When FastAPI is active, also apply `python-fastapi-expert` for app lifespan, middleware, dependency, and API contract concerns. Keep cache policy here and FastAPI routing/API policy in `python-fastapi-expert`.
 
