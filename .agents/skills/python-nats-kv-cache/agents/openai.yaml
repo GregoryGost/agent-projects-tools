@@ -1,0 +1,4 @@
+interface:
+  display_name: "Python NATS KV Cache"
+  short_description: "Distributed Python cache with NATS JetStream KV"
+  default_prompt: "Use $python-nats-kv-cache for distributed Python caching through nats-py and NATS JetStream Key/Value, including bucket lifecycle, typed codecs, revisions, CAS, bounded batch operations, invalidation, and real-NATS tests."

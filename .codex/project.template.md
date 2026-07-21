@@ -63,6 +63,7 @@ Selection examples:
 - `python-service-e2e-testing`
 - `python-fastapi`
 - `python-cache`
+- `python-nats-kv-cache`
 - `typescript-core`
 - `typescript-jest-testing`
 - `eslint-typescript`
@@ -104,7 +105,7 @@ List only additional rule files active in this project.
 
 - Optional core rules: `<source_code_hygiene.md / none / other>`
 - Git rules: `<git.md / none>`
-- Python/backend rules: `<python_fastapi.md / python_cache.md / none>`
+- Python/backend rules: `<python_fastapi.md / python_cache.md / python_nats_kv_cache.md / none>`
 - Formatting/linting rules: `<prettier_formatting.md / eslint_typescript.md / none>`
 - Language rules: `<typescript_core.md / typescript_jest_testing.md / none / other>`
 - Framework rules: `<vue3_typescript_vite.md / vue_router.md / pinia.md / vueuse.md / none / other>`
@@ -119,7 +120,7 @@ List only additional rule files active in this project.
 List only reusable skills active in this project.
 
 - Code prose / language-policy skills: `<comment-language-audit / none>`
-- Python skills: `<python-core / python-testing / python-fastapi-expert / python-cache / none / other>`
+- Python skills: `<python-core / python-testing / python-fastapi-expert / python-cache / python-nats-kv-cache / none / other>`
 - Language skills: `<typescript-core / typescript-jest-testing / none / other>`
 - Formatting/linting skills: `<prettier-formatting / eslint-typescript / none>`
 - Framework skills: `<vue3-typescript-vite-expert / vue-router-expert / pinia-expert / vueuse-expert / none>`
@@ -201,7 +202,7 @@ Keep only when FastAPI is active.
 
 ## Python Cache Profile
 
-Keep only when Python caching through `cashews` is active. This profile and the `python_cache.md + python-cache` pair do not apply to `functools`, `cachetools`, direct Redis clients, or another cache library; use a separate project-specific profile, rule, and skill for those libraries.
+Keep only when Python caching through `cashews` is active. This profile and the `python_cache.md + python-cache` pair do not apply to `functools`, `cachetools`, direct Redis clients, NATS JetStream Key/Value, or another cache library. Use the separate Python NATS KV Cache Profile and `python_nats_kv_cache.md + python-nats-kv-cache` for direct distributed caching through `nats-py` and NATS JetStream KV.
 
 - Python cache enabled: `<yes/no>`
 - Cache library: `cashews`
@@ -211,6 +212,63 @@ Keep only when Python caching through `cashews` is active. This profile and the 
 - Cache invalidation policy: `<post-commit tags / exact key delete / TTL-only immutable data / project-specific / none>`
 - Active Python cache rule/skill: `<python_cache.md + python-cache / none>`
 - If FastAPI is active, use FastAPI rule/skill for app wiring and API behavior: `<yes/no/not applicable>`
+
+## Python NATS KV Cache Profile
+
+Keep only when distributed Python caching through `nats-py` and NATS JetStream Key/Value is active. This profile does not activate Core NATS messaging, JetStream consumers, Object Store, distributed locking, or the `cashews`-specific `python-cache` profile.
+
+The specialized section activates the NATS KV cache rule/skill pair only when it is enabled, names the exact pair, and declares all required connection, bucket, consistency, outage, and batch policies. Missing values, `none`, or a disabled section make the profile invalid.
+
+- Python NATS KV cache enabled: `<yes/no>`
+- Cache technology: `NATS JetStream Key/Value`
+- Python client library: `nats-py`
+- `nats-py` version source: `<pyproject.toml / lockfile / project-specific / none>`
+- NATS server version source: `<deployment config / runtime diagnostics / project documentation / none>`
+- JetStream enabled: `<yes/no>`
+- NATS instance/environment: `<instance name + prod/stage/dev/test / none>`
+- NATS account/domain: `<account + domain / project-specific / none>`
+- Connection settings source: `<settings provider / project-root .env / secret manager / none>`
+- Authentication source: `<credentials file / NKey/JWT / user/password / token / secret manager / project-specific / none>`
+- TLS verification source: `<settings provider / secret manager / project-specific / none>`
+- Shared NATS client lifecycle owner: `<FastAPI lifespan / app resource manager / CLI / worker / project-specific / none>`
+- Bucket name source: `<settings field / project-specific / none>`
+- Bucket ownership: `<infrastructure-managed / application-managed / test-managed / none>`
+- Bucket provisioning policy: `<validate-only / create-if-missing / reconcile-approved-fields / none>`
+- Bucket history: `<1 / project-specific / none>`
+- Bucket TTL policy: `<duration / separate buckets by TTL class / none>`
+- Bucket storage: `<memory / file / project-specific / none>`
+- Bucket replicas: `<1 / 3 / project-specific / none>`
+- Bucket placement: `<placement / project-specific / none>`
+- Bucket maximum bytes: `<number / project-specific / none>`
+- Maximum encoded value size: `<number / project-specific / none>`
+- Direct read policy: `<enabled / disabled / project-specific / none>`
+- Read-after-write requirement: `<not required / leader-consistent path / project-specific / none>`
+- Cache key scope and schema version: `<tenant/user/role/filter/pagination/locale/feature/schema policy / none>`
+- Value codec/schema: `<JSON / bytes / text / project-specific / none>`
+- Concurrency policy: `<unconditional put / create / revision CAS / project-specific / none>`
+- CAS retry policy: `<bounded attempts / no retry / project-specific / none>`
+- Cache invalidation policy: `<exact delete / aggregate replace / namespace version / generation pointer / watch-assisted L1 / project-specific / none>`
+- Authoritative fallback source: `<database / external API / computed source / project-specific / none>`
+- Cache outage policy: `<fallback to source / fail operation / bounded bypass / feature-specific / none>`
+- Unverified write policy: `<read-back marker check / expose unverified / no automatic retry / project-specific / none>`
+- Bulk operations enabled: `<yes/no>`
+- Maximum bulk item count: `<number / project-specific / none>`
+- Maximum bulk encoded bytes: `<number / project-specific / none>`
+- Bulk concurrency limit: `<number / project-specific / none>`
+- Bulk timeout/deadline policy: `<policy / none>`
+- Bulk partial completion policy: `<allowed / forbidden / operation-specific / none>`
+- Per-key bulk result required: `yes`
+- Duplicate-key policy: `<reject / deterministic collapse / none>`
+- Bulk CAS retry policy: `<bounded per-item attempts / no retry / project-specific / none>`
+- Multi-key consistency policy: `<independent keys / single aggregate key / generation pointer / transactional source of truth / none>`
+- Direct `$KV.*` publishing allowed: `no`
+- JetStream atomic batch publishing: `<disabled / separately verified advanced profile / none>`
+- Production bucket administrative operations use `external-system-only`: `yes`
+- Active NATS KV cache rule/skill: `<python_nats_kv_cache.md + python-nats-kv-cache / none>`
+- If FastAPI is active, use FastAPI rule/skill for app wiring and API behavior: `<yes/no/not applicable>`
+- If security-sensitive data or credentials are involved, use security skill: `<yes/no/not applicable>`
+- Real JetStream integration-test boundary: `<Testcontainers / Docker Compose / project test server / none>`
+- Test bucket isolation policy: `<unique run/test/xdist-worker buckets / project-specific / none>`
 
 ## Database Profile
 
