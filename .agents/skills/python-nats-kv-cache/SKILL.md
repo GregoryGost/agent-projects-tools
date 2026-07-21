@@ -50,11 +50,12 @@ Before changing NATS KV cache behavior:
 3. Resolve the deployed `nats-server` version, JetStream availability, account/domain, and environment from declared sources.
 4. Locate connection, authentication, TLS, bucket, timeout, and lifecycle settings without printing secrets.
 5. Confirm bucket ownership and whether application code may only bind, create if missing, or reconcile approved fields.
-6. Confirm history, TTL, storage, replicas, placement, direct reads, size limits, key namespace, codec, invalidation, outage, and batch policies.
+6. Confirm history, TTL, storage, replicas, placement policy, direct reads, size limits, key namespace, codec, invalidation, outage, and batch policies.
 7. Inspect all cache callers, authoritative read/write paths, transaction boundaries, tests, and deployment assumptions.
-8. Use project-declared validation commands.
+8. Check the installed `nats-py` source or matching official documentation for configuration propagation and public exception behavior.
+9. Use project-declared validation commands.
 
-Do not infer production infrastructure configuration from a sample class or from defaults in `KeyValueConfig`.
+The current public `nats.py` documentation marks KeyValue functionality as experimental. Do not infer production infrastructure configuration or stable API behavior from a sample class, current defaults, or a different client version.
 
 ## Design workflow
 
@@ -73,14 +74,12 @@ Do not infer production infrastructure configuration from a sample class or from
 
 Prefer one adapter boundary that owns NATS-specific details and exposes stable project-level types.
 
-A typical interface separates values, entries, revisions, and codecs:
+A typical Python 3.14 interface separates values, entries, revisions, and codecs:
 
 ```python
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Protocol, TypeVar
-
-T = TypeVar("T")
+from typing import Protocol
 
 
 @dataclass(frozen=True, slots=True)
@@ -109,7 +108,7 @@ class NatsKvCache[T]:
     async def delete(self, key: str) -> None: ...
 ```
 
-Adapt names to the project, but preserve these semantics:
+Adapt names and generic syntax to the project's declared Python version, but preserve these semantics:
 
 - encoded values are bytes;
 - reads may expose the revision;
@@ -147,7 +146,11 @@ status = await kv.status()
 validate_bucket_status(status, expected_config)
 ```
 
-Create-if-missing is acceptable only when the specialized profile assigns bucket ownership to the application and all required limits are supplied through `KeyValueConfig`.
+Create-if-missing is acceptable only when the specialized profile assigns bucket ownership to the application and all required limits supported by the installed `create_key_value` implementation are supplied through `KeyValueConfig`.
+
+Do not assume every field exposed by `KeyValueConfig` is propagated by every `nats-py` version. Verify the installed implementation. If placement or another required setting is not applied by the public KV creation path, provision the backing stream through the infrastructure-owned process rather than patching private KV protocol behavior.
+
+Current `nats-py` source derives the backing stream's duplicate window from bucket TTL during `create_key_value`. Treat this as a client implementation detail: do not add a second startup routine that independently rewrites `duplicate_window` from TTL.
 
 Do not update the backing stream automatically to force undeclared settings. If approved reconciliation is required, compare the actual and declared configuration, change only supported editable fields, log safe before/after summaries, and verify the resulting status.
 
@@ -215,7 +218,7 @@ For related values that must change atomically, prefer one aggregate value under
 
 Do not publish directly to `$KV.*` subjects. Stream-level atomic batch publishing is outside this base skill and requires a separate version-matched advanced profile and official client abstraction.
 
-## Error contract
+## Error and deleted-state contract
 
 Define stable project errors for at least:
 
@@ -227,6 +230,8 @@ Define stable project errors for at least:
 - unverified write outcome.
 
 A missing or deleted key may become a cache miss according to the adapter contract. Other failures must not silently become misses.
+
+Current public `nats-py` `KeyValue.get()` maps delete markers to `KeyNotFoundError`; ordinary `get()` therefore does not distinguish never-created and deleted keys. When the distinction is required, use a documented watcher or history operation and verify its entry operation field against the installed version. Do not call private `_get` methods.
 
 Use `raise` to preserve the current traceback. Use `raise ProjectCacheError(...) from exc` when translating a lower-level failure.
 
@@ -246,8 +251,9 @@ Unit tests should use a project adapter protocol or focused fake rather than moc
 Integration tests should use a real JetStream-enabled NATS process and cover:
 
 - bind and approved create-if-missing behavior;
-- bucket configuration validation;
-- misses, deleted entries, codecs, TTL, and exact-key invalidation;
+- bucket configuration validation and installed-client propagation of required fields;
+- misses, codecs, TTL, and exact-key invalidation;
+- deleted-state behavior through documented watcher/history APIs when required;
 - revisions, `create`, CAS success, CAS conflict, and two-client lost-update prevention;
 - bounded batch concurrency, duplicate rejection, partial completion, and unverified outcomes where reproducible;
 - reconnect and shutdown behavior;
@@ -260,13 +266,16 @@ Use Testcontainers, Docker Compose, a project-owned test process, or another dec
 
 - [ ] An allowed profile signal activated the exact NATS KV rule/skill pair.
 - [ ] Installed `nats-py` and deployed `nats-server` versions were verified from declared sources.
+- [ ] Experimental and version-sensitive `nats.py` behavior was checked against official documentation and source.
 - [ ] JetStream, environment, account/domain, authentication, TLS, and lifecycle ownership are explicit.
 - [ ] The bucket is a reconstructible cache rather than the system of record.
-- [ ] Bucket ownership, provisioning, history, TTL, limits, storage, replicas, and direct reads are declared.
+- [ ] Bucket ownership, provisioning, history, TTL, limits, storage, replicas, placement policy, and direct reads are declared.
+- [ ] Application code does not manually resynchronize `duplicate_window` from TTL.
 - [ ] Keys contain all visibility-affecting scope and no secrets.
 - [ ] A deterministic typed codec preserves distinct values and schema versions.
 - [ ] Revisions are returned and mutable updates use CAS.
 - [ ] Availability failures are not hidden as cache misses.
+- [ ] Deleted-state claims use documented watcher/history behavior rather than ordinary `get()` or private APIs.
 - [ ] Invalidation follows successful authoritative commits.
 - [ ] Batch operations are bounded and report per-key outcomes without transactional claims.
 - [ ] Related values use an aggregate key, generation pointer, or transactional source of truth when required.
