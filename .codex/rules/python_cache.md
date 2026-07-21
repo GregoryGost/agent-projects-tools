@@ -2,7 +2,7 @@
 
 Apply this rule when `CODEX_PROJECT.md` declares Python caching with `cashews` active, or when the task directly changes `cashews` setup, cached read paths, TTL, invalidation, or cache backend configuration.
 
-This rule is the `cashews` cache profile. Do not apply it to `functools`, `cachetools`, direct Redis clients, or another cache library unless the project has a separate rule for that library. Combine it with FastAPI, database, HTTP client, or testing skills only when those profiles are active.
+This rule is the `cashews` cache profile. Do not apply it to `functools`, `cachetools`, direct Redis clients, NATS JetStream Key/Value, or another cache library unless the project has a separate rule for that library. Use `.codex/rules/python_nats_kv_cache.md` with `python-nats-kv-cache` for direct distributed caching through `nats-py` and NATS JetStream KV. Combine this rule with FastAPI, database, HTTP client, or testing skills only when those profiles are active.
 
 ## Required skills
 
