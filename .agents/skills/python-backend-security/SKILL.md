@@ -18,7 +18,7 @@ Apply this skill for any task touching authentication, authorization, user ident
 Apply additional active skills only when the task touches their area:
 
 - `python-fastapi-expert` for FastAPI endpoints, dependencies, middleware, routers, lifespan, OpenAPI, and API contract changes.
-- `python-cache` for `cashews` setup, cache key construction, TTL, tags, invalidation, backend/lifecycle configuration, test isolation, and FastAPI cache integration.
+- `python-cashews-cache` for `cashews` setup, cache key construction, TTL, tags, invalidation, backend/lifecycle configuration, test isolation, and FastAPI cache integration.
 - `python-nats-kv-cache` for NATS connection and bucket credentials, key scope, typed codecs, revisions, CAS, batch boundaries, invalidation, degraded mode, and distributed cache tests.
 - `python-sqlalchemy-core` for common SQLAlchemy models, repositories, raw SQL, sessions, transactions, and DB integration tests.
 - The active database-specific skill from `CODEX_PROJECT.md` for database-specific behavior, migrations, locking, connection configuration, and backend-specific tests.
@@ -139,7 +139,7 @@ For lifecycle, retry, streaming, timeout, and HTTPX test details, apply `python-
 - Include tenant, user, role, permission scope, and visibility-affecting filters in cache keys whenever response visibility depends on them.
 - Do not cache authenticated or permission-filtered responses unless scope, invalidation, and TTL are explicit.
 - Do not put raw tokens, passwords, emails, or long sensitive values into cache keys.
-- Reference the active cache policy declared by `CODEX_PROJECT.md`. Use the selected active cache skill for TTL, keys, backend/lifecycle, invalidation, concurrency, and cache-test mechanics: `python-cache` for `cashews`, or `python-nats-kv-cache` for direct NATS JetStream KV caching. Use `python-fastapi-expert` only for FastAPI-specific lifespan, dependency, middleware, routing, and API contract concerns.
+- Reference the active cache policy declared by `CODEX_PROJECT.md`. Use the selected active cache skill for TTL, keys, backend/lifecycle, invalidation, concurrency, and cache-test mechanics: `python-cashews-cache` for `cashews`, or `python-nats-kv-cache` for direct NATS JetStream KV caching. Use `python-fastapi-expert` only for FastAPI-specific lifespan, dependency, middleware, routing, and API contract concerns.
 
 ## Rate Limiting And Abuse Controls
 

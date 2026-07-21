@@ -1,4 +1,4 @@
-# Python cache rules
+# Python cashews cache rules
 
 Apply this rule when `CODEX_PROJECT.md` declares Python caching with `cashews` active, or when the task directly changes `cashews` setup, cached read paths, TTL, invalidation, or cache backend configuration.
 
@@ -9,7 +9,7 @@ This rule is the `cashews` cache profile. Do not apply it to `functools`, `cache
 Use together with:
 
 - `python-core`;
-- `python-cache`.
+- `python-cashews-cache`.
 
 ## Source of truth
 

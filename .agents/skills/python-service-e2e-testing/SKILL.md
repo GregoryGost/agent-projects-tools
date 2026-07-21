@@ -9,7 +9,7 @@ Use this skill for Python projects that do not expose a browser UI: APIs, CLIs, 
 
 Apply `CODEX_PROJECT.md`, `.codex/rules/python_service_e2e_testing.md`, `python-core`, and `python-testing` together with this skill.
 
-Add active specialist skills only when the target project declares or touches those areas, such as `python-fastapi-expert`, `python-cache`, database-specific skills, HTTP-client skills, or external-system skills.
+Add active specialist skills only when the target project declares or touches those areas, such as `python-fastapi-expert`, `python-cashews-cache`, `python-nats-kv-cache`, database-specific skills, HTTP-client skills, or external-system skills.
 
 Load references when needed:
 
