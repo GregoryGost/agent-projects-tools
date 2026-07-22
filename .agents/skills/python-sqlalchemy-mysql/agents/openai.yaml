@@ -1,0 +1,4 @@
+interface:
+  display_name: "Python SQLAlchemy MySQL"
+  short_description: "MySQL-specific SQLAlchemy and aiomysql guidance"
+  default_prompt: "Use $python-sqlalchemy-mysql together with $python-sqlalchemy-core to review SQLAlchemy 2.x with MySQL through aiomysql, including pools, InnoDB transactions, locking, retries, migrations, and integration tests."
