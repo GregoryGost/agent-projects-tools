@@ -63,7 +63,8 @@
 9. Не активируйте language-, framework-, database-, cache-, HTTP-client-, styling-, testing- или external-system-материалы без activation signal, разрешённого их entrypoint и `AGENTS.md`. Прямое упоминание технологии не является активацией, если entrypoint требует project profile.
 10. Для `cashews` используйте `python_cashews_cache.md + python-cashews-cache` и специализированный Python cashews cache profile.
 11. Для `python-nats-kv-cache` сохраните специализированный NATS KV cache profile: версии `nats-py` и `nats-server`, JetStream/account/domain, bucket ownership/configuration, key/codec/CAS/invalidation/outage/batch policies и exact `python_nats_kv_cache.md + python-nats-kv-cache` pair.
-12. Для `jira-data-center` сохраните специализированный Jira Data Center profile: exact rule/skill pair, declared `8.22.x` или точную `8.22.z`, instance/environment и источники configuration. Runtime version проверяется через `/rest/api/2/serverInfo`; другая major/minor версия требует отдельных проверенных материалов.
+12. Для SQLAlchemy с MySQL через `aiomysql` активируйте `python-sqlalchemy-core + python-sqlalchemy-mysql` и объявите точные server family/version, driver/version sources, pool, timeout, isolation, SQL mode, charset/collation, migration и integration-test policies.
+13. Для `jira-data-center` сохраните специализированный Jira Data Center profile: exact rule/skill pair, declared `8.22.x` или точную `8.22.z`, instance/environment и источники configuration. Runtime version проверяется через `/rest/api/2/serverInfo`; другая major/minor версия требует отдельных проверенных материалов.
 
 ## Фактическое покрытие
 
@@ -74,7 +75,7 @@
 | Маршрутизация и общие правила | `request_routing.md`, `material_dependencies.md`, `source_code_hygiene.md`, `git.md` |
 | Язык code-adjacent prose | `comment-language-audit` |
 | Python core и тестирование | `python-core`, `python-testing`, `python-service-e2e-testing` |
-| Python backend | `python-fastapi-expert`, `python-cashews-cache`, `python-sqlalchemy-core`, `python-sqlalchemy-sqlite`, `python-httpx-client`, `python-backend-security` |
+| Python backend | `python-fastapi-expert`, `python-cashews-cache`, `python-sqlalchemy-core`, `python-sqlalchemy-sqlite`, `python-sqlalchemy-mysql`, `python-httpx-client`, `python-backend-security` |
 | Python distributed cache | `python_nats_kv_cache.md`, `python-nats-kv-cache` для NATS JetStream Key/Value |
 | TypeScript и Node.js | `typescript-core`, `typescript-jest-testing`, `eslint-typescript`, `prettier-formatting`, `nodejs-service-e2e-testing` |
 | Vue 3 + TypeScript + Vite | `vue3-typescript-vite-expert`, `vue-router-expert`, `pinia-expert`, `vueuse-expert` |
@@ -108,6 +109,20 @@
 - unit tests дополняются integration tests с реальным JetStream-enabled NATS и изолированными buckets.
 
 Официальные NATS и `nats.py` источники, version/feature precedence и границы stream-level возможностей перечислены в `.agents/skills/python-nats-kv-cache/references/official-sources.md`.
+
+## Профиль Python SQLAlchemy MySQL
+
+Skill `python-sqlalchemy-mysql` предназначен для SQLAlchemy 2.x с MySQL через async driver `aiomysql` и всегда требует базовый skill `python-sqlalchemy-core`.
+
+- профиль отделён от `python-sqlalchemy-sqlite`; SQLite-specific PRAGMA, WAL и single-writer queue не применяются к MySQL;
+- активация требует `Database toolkit/ORM: SQLAlchemy`, `Active database: MySQL`, `Database driver: aiomysql` и exact `python-sqlalchemy-core + python-sqlalchemy-mysql` pair;
+- runtime server family и точная версия проверяются до применения version-specific DDL, DML, locking и type behavior;
+- MariaDB не считается молчаливой заменой MySQL и требует отдельно проверенной политики;
+- профиль фиксирует SQLAlchemy pool budget, distinct timeout categories, InnoDB, isolation, charset/collation, SQL mode, transaction retry, migration и real-MySQL integration-test policies;
+- direct `aiomysql.create_pool()` и legacy `aiomysql.sa` не смешиваются с SQLAlchemy engine ownership;
+- Python runtime, отсутствующий в upstream classifiers или CI `aiomysql`, требует project-level compatibility tests вместо неподтверждённого утверждения о совместимости.
+
+Good/bad patterns, review checklist и официальные SQLAlchemy, `aiomysql` и MySQL sources находятся в `.agents/skills/python-sqlalchemy-mysql/references/`.
 
 ## Профиль Jira Data Center
 

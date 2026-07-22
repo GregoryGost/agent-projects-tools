@@ -127,7 +127,7 @@ List only reusable skills active in this project.
 - Styling skills: `<css-expert / css-animation-expert / tailwind-expert / scss-expert / none>`
 - UI/browser validation skills: `<ui-ux-review / playwright-ui-checks-mcp / none>`
 - E2E skills: `<python-service-e2e-testing / vue-playwright-e2e-testing / nodejs-service-e2e-testing / none>`
-- Database skills: `<python-sqlalchemy-core / python-sqlalchemy-sqlite / none / other>`
+- Database skills: `<python-sqlalchemy-core / python-sqlalchemy-sqlite / python-sqlalchemy-mysql / none / other>`
 - HTTP/client skills: `<python-httpx-client / none / other>`
 - Security skills: `<python-backend-security / none / other>`
 - Obsidian skills: `<obsidian-mcp-core / obsidian-llm-wiki / obsidian-taskbook / none>`
@@ -274,18 +274,52 @@ The specialized section activates the NATS KV cache rule/skill pair only when it
 
 Keep only when the project has a database.
 
-This generic profile does not require a rule/skill pair. Select only existing materials for the active toolkit and database backend. Current repository SQLAlchemy coverage is skills-only: `python-sqlalchemy-core` for backend-neutral SQLAlchemy behavior and `python-sqlalchemy-sqlite` for SQLite-specific behavior. When `python-sqlalchemy-sqlite` is active, `python-sqlalchemy-core` is its required base skill.
+This generic profile does not require a rule/skill pair. Select only existing materials for the active toolkit and database backend. Current repository SQLAlchemy coverage is skills-only: `python-sqlalchemy-core` for backend-neutral SQLAlchemy behavior, `python-sqlalchemy-sqlite` for SQLite-specific behavior, and `python-sqlalchemy-mysql` for MySQL through `aiomysql`. Both database-specific skills require `python-sqlalchemy-core` as their base skill.
 
 - Database enabled: `<yes/no>`
 - Database toolkit/ORM: `<SQLAlchemy / Prisma / Django ORM / raw SQL / none / other>`
 - Active database: `<SQLite / PostgreSQL / MySQL / none / other>`
-- Database driver: `<aiosqlite / asyncpg / psycopg / mysqlclient / none / other>`
+- Database server family: `<SQLite / MySQL / MariaDB / PostgreSQL / project-specific / none>`
+- Database server version: `<exact version / supported version constraint / project-specific / none>`
+- Database driver: `<aiosqlite / aiomysql / asyncpg / psycopg / mysqlclient / none / other>`
 - Database pool library: `<aiosqlitepool / SQLAlchemy pool / none / other>`
 - Migration tool: `<Alembic / raw SQL / Prisma migrations / project-specific / none>`
 - Migration policy: `<policy / none>`
 - Active database toolkit skill: `<python-sqlalchemy-core / none / other>`
-- Active database-specific skill: `<python-sqlalchemy-sqlite / none / other>`
+- Active database-specific skill: `<python-sqlalchemy-sqlite / python-sqlalchemy-mysql / none / other>`
 - Dependency versions source: `<pyproject.toml / package.json / go.mod / project-specific / none>`
+
+### SQLAlchemy MySQL Through aiomysql
+
+Keep only when SQLAlchemy 2.x uses MySQL through the `aiomysql` async driver. This subsection activates `python-sqlalchemy-mysql` only when it is enabled, declares MySQL rather than MariaDB, and names the exact required skill pair.
+
+- SQLAlchemy MySQL enabled: `<yes/no>`
+- Declared server family: `<MySQL / none>`
+- Declared MySQL version: `<exact major.minor.patch / supported major.minor constraint / none>`
+- Runtime server verification: `<SELECT @@version, @@version_comment / deployment source / none>`
+- SQLAlchemy version source: `<pyproject.toml / lockfile / project-specific / none>`
+- `aiomysql` version source: `<pyproject.toml / lockfile / project-specific / none>`
+- Python runtime compatibility evidence: `<upstream supported / project integration tests / none>`
+- Connection settings source: `<settings provider / project-root .env / secret manager / none>`
+- TLS verification source: `<settings provider / secret manager / project-specific / none>`
+- Shared engine lifecycle owner: `<FastAPI lifespan / app resource manager / CLI / worker / project-specific / none>`
+- Pool settings source: `<settings provider / project-specific / none>`
+- Total pool connection budget: `<calculation across engines/workers/replicas + reserve / none>`
+- Pool stale-connection policy: `<pool_pre_ping + pool_recycle / project-specific / none>`
+- Pool checkout timeout source: `<settings field / project-specific / none>`
+- Connect timeout source: `<settings field / project-specific / none>`
+- InnoDB row-lock timeout policy: `<settings/runtime contract / project-specific / none>`
+- Metadata-lock timeout policy: `<migration session setting / deployment timeout / project-specific / none>`
+- Transaction isolation policy: `<READ COMMITTED / REPEATABLE READ / SERIALIZABLE / project-specific / none>`
+- SQL mode policy: `<strict declared value / deployment source / runtime verification / project-specific / none>`
+- Connection character set: `<utf8mb4 / project-specific / none>`
+- Collation policy: `<schema/table/column policy / project-specific / none>`
+- Transactional table engine: `<InnoDB / project-specific / none>`
+- Deadlock and lock-timeout retry policy: `<bounded whole-unit-of-work retry / no automatic retry / project-specific / none>`
+- Migration compatibility policy: `<expand-backfill-contract / project-specific / none>`
+- Real MySQL integration-test boundary: `<Testcontainers / Docker Compose / project test server / none>`
+- Test database isolation policy: `<unique run/xdist-worker database or schema / project-specific / none>`
+- Active SQLAlchemy MySQL skills: `<python-sqlalchemy-core + python-sqlalchemy-mysql / none>`
 
 ## Persistence / Runtime Write Policy
 
