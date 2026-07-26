@@ -65,6 +65,7 @@
 11. Для `python-nats-kv-cache` сохраните специализированный NATS KV cache profile: версии `nats-py` и `nats-server`, JetStream/account/domain, bucket ownership/configuration, key/codec/CAS/invalidation/outage/batch policies и exact `python_nats_kv_cache.md + python-nats-kv-cache` pair.
 12. Для SQLAlchemy с MySQL через `aiomysql` активируйте `python-sqlalchemy-core + python-sqlalchemy-mysql` и объявите точные server family/version, driver/version sources, pool, timeout, isolation, SQL mode, charset/collation, migration и integration-test policies.
 13. Для `jira-data-center` сохраните специализированный Jira Data Center profile: exact rule/skill pair, declared `8.22.x` или точную `8.22.z`, instance/environment и источники configuration. Runtime version проверяется через `/rest/api/2/serverInfo`; другая major/minor версия требует отдельных проверенных материалов.
+14. Для параметризуемой SVG-графики во Vue активируйте `vue3-typescript-vite`, профиль `vue-svg-graphics` и exact `vue_svg_graphics.md + vue-svg-graphics-expert` pair. CSS, CSS animation, Tailwind, UI validation и testing остаются отдельными опциональными overlays.
 
 ## Фактическое покрытие
 
@@ -78,7 +79,7 @@
 | Python backend | `python-fastapi-expert`, `python-cashews-cache`, `python-sqlalchemy-core`, `python-sqlalchemy-sqlite`, `python-sqlalchemy-mysql`, `python-httpx-client`, `python-backend-security` |
 | Python distributed cache | `python_nats_kv_cache.md`, `python-nats-kv-cache` для NATS JetStream Key/Value |
 | TypeScript и Node.js | `typescript-core`, `typescript-jest-testing`, `eslint-typescript`, `prettier-formatting`, `nodejs-service-e2e-testing` |
-| Vue 3 + TypeScript + Vite | `vue3-typescript-vite-expert`, `vue-router-expert`, `pinia-expert`, `vueuse-expert` |
+| Vue 3 + TypeScript + Vite | `vue3-typescript-vite-expert`, `vue-svg-graphics-expert`, `vue-router-expert`, `pinia-expert`, `vueuse-expert` |
 | Vue testing и browser E2E | `vitest-vue-testing`, `vue-router-testing`, `pinia-testing`, `vueuse-testing`, `vue-playwright-e2e-testing` |
 | Styling и UI validation | `css-expert`, `css-animation-expert`, `scss-expert`, `tailwind-expert`, `ui-ux-review`, `playwright-ui-checks-mcp` |
 | Jira Data Center 8.22.x | `jira_data_center.md`, `jira-data-center` |
@@ -123,6 +124,21 @@ Skill `python-sqlalchemy-mysql` предназначен для SQLAlchemy 2.x �
 - Python runtime, отсутствующий в upstream classifiers или CI `aiomysql`, требует project-level compatibility tests вместо неподтверждённого утверждения о совместимости.
 
 Good/bad patterns, review checklist и официальные SQLAlchemy, `aiomysql` и MySQL sources находятся в `.agents/skills/python-sqlalchemy-mysql/references/`.
+
+## Профиль Vue SVG graphics
+
+Пакет `vue_svg_graphics.md + vue-svg-graphics-expert` предназначен для переиспользуемой параметризуемой SVG-графики, которую Vue 3 формирует или изменяет на уровне geometry, paint, semantics либо motion.
+
+- профиль требует активный `vue3-typescript-vite` и exact Vue SVG rule/skill pair;
+- статичная графика без внутренней параметризации остаётся Vite-managed asset, а inline SVG используется только при необходимости реактивной геометрии, внутренних токенов, definitions, анимации или semantics;
+- профиль фиксирует назначение SVG, rendering mode, browser targets, SSR и ID strategy, geometry source, `viewBox`/aspect-ratio policy, color token source, accessibility classification, motion, optimization и validation matrix;
+- gradients, masks, clip paths, filters, markers, titles и descriptions используют уникальные детерминированные IDs, совместимые с несколькими экземплярами и SSR/hydration;
+- untrusted SVG не вставляется через `v-html`;
+- visual references преобразуются в переносимые решения по композиции, слоям, negative space, silhouette language, lighting и semantic color roles, а не копируются как конкретные защищённые assets;
+- CSS, CSS animation, Tailwind CSS, UI/UX validation и тестирование подключаются только как отдельные активные overlays;
+- Vite target, CSS target, Tailwind compatibility и native SVG/browser behavior проверяются как разные границы совместимости.
+
+Архитектура компонентов, browser/accessibility/motion, art direction/color, good/bad patterns и официальные источники находятся в `.agents/skills/vue-svg-graphics-expert/references/`.
 
 ## Профиль Jira Data Center
 
