@@ -1,6 +1,6 @@
 # Vue SVG graphics rules
 
-Apply this rule only when `CODEX_PROJECT.md` declares the `vue-svg-graphics` profile active, or when an already active Vue SVG component is directly changed and the project profile permits task-local activation.
+Apply this rule only when `CODEX_PROJECT.md` declares the `vue-svg-graphics` profile active.
 
 This rule is an overlay for reusable, parameterized SVG graphics rendered by Vue 3. It does not replace general Vue, TypeScript, CSS, motion, Tailwind, UI/UX, or testing materials.
 
@@ -12,6 +12,8 @@ Use together with:
 
 - `vue3-typescript-vite-expert`;
 - `vue-svg-graphics-expert`.
+
+The mutual `vue_svg_graphics.md` and `vue-svg-graphics-expert` dependency is intentional: this rule defines mandatory constraints and the skill defines the implementation and review workflow.
 
 ## Source of truth
 
