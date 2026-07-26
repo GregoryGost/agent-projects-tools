@@ -1,0 +1,4 @@
+interface:
+  display_name: "Vue SVG Graphics Expert"
+  short_description: "Parameterized SVG graphics for Vue 3"
+  default_prompt: "Use $vue-svg-graphics-expert to build or review reusable parameterized SVG graphics in a Vue 3 application."

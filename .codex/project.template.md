@@ -70,6 +70,7 @@ Selection examples:
 - `prettier-formatting`
 - `nodejs-service-e2e-testing`
 - `vue3-typescript-vite`
+- `vue-svg-graphics`
 - `vue-router`
 - `pinia`
 - `vueuse`
@@ -108,7 +109,7 @@ List only additional rule files active in this project.
 - Python/backend rules: `<python_fastapi.md / python_cashews_cache.md / python_nats_kv_cache.md / none>`
 - Formatting/linting rules: `<prettier_formatting.md / eslint_typescript.md / none>`
 - Language rules: `<typescript_core.md / typescript_jest_testing.md / none / other>`
-- Framework rules: `<vue3_typescript_vite.md / vue_router.md / pinia.md / vueuse.md / none / other>`
+- Framework rules: `<vue3_typescript_vite.md / vue_svg_graphics.md / vue_router.md / pinia.md / vueuse.md / none / other>`
 - Styling rules: `<css.md / css_animation.md / tailwind_css.md / scss_styling.md / none>`
 - UI/browser validation rules: `<ui_ux_validation.md / playwright_ui_validation.md / none>`
 - E2E rules: `<python_service_e2e_testing.md / vue_playwright_e2e_testing.md / nodejs_service_e2e_testing.md / none>`
@@ -123,7 +124,7 @@ List only reusable skills active in this project.
 - Python skills: `<python-core / python-testing / python-fastapi-expert / python-cashews-cache / python-nats-kv-cache / none / other>`
 - Language skills: `<typescript-core / typescript-jest-testing / none / other>`
 - Formatting/linting skills: `<prettier-formatting / eslint-typescript / none>`
-- Framework skills: `<vue3-typescript-vite-expert / vue-router-expert / pinia-expert / vueuse-expert / none>`
+- Framework skills: `<vue3-typescript-vite-expert / vue-svg-graphics-expert / vue-router-expert / pinia-expert / vueuse-expert / none>`
 - Styling skills: `<css-expert / css-animation-expert / tailwind-expert / scss-expert / none>`
 - UI/browser validation skills: `<ui-ux-review / playwright-ui-checks-mcp / none>`
 - E2E skills: `<python-service-e2e-testing / vue-playwright-e2e-testing / nodejs-service-e2e-testing / none>`
@@ -406,6 +407,29 @@ Keep only when `vue3-typescript-vite` is active. This profile and the `vue3_type
 - Vue Router enabled: `<yes/no>`
 - Pinia enabled: `<yes/no>`
 - VueUse enabled: `<yes/no>`
+
+## Vue SVG Graphics Profile
+
+Keep only when `vue-svg-graphics` is active. This profile is an overlay for reusable SVG graphics rendered by Vue 3 and requires the active `vue3-typescript-vite` profile together with the exact `vue_svg_graphics.md + vue-svg-graphics-expert` pair. Static SVG assets that do not need Vue-rendered geometry, paint, semantics, or motion do not require this profile.
+
+- Vue SVG graphics enabled: `<yes/no>`
+- SVG usage: `<icons / illustrations / backgrounds / charts / diagrams / interactive graphics / mixed / none>`
+- Primary rendering mode: `<inline Vue SFC / Vite-managed asset / symbol sprite / data-driven SVG / mixed / none>`
+- Browser targets: `<exact Chrome/Edge/Firefox/Safari/iOS targets / browserslist source / project-specific / none>`
+- SSR enabled: `<yes/no>`
+- SVG ID strategy: `<Vue useId / explicit idPrefix / deterministic project allocator / none>`
+- Geometry source: `<static presets / typed props / external data / geometry helpers or composables / mixed / none>`
+- Coordinate-system policy: `<stable viewBox + preserveAspectRatio policy / data coordinates / project-specific / none>`
+- Responsive composition policy: `<safe central crop / named landscape and portrait presets / edge-aligned focal point / project-specific / none>`
+- Color token source: `<CSS custom properties / Tailwind v4 @theme / design system / currentColor / mixed / none>`
+- Accessibility classification policy: `<decorative/informative/functional/complex required / project-specific / none>`
+- Animation mechanisms: `<none / CSS transitions / CSS keyframes / Web Animations API / SMIL / controlled script / mixed>`
+- Reduced-motion policy: `<required / project-specific / none>`
+- SVG optimization policy: `<reviewed SVGO config / manual / project-specific / none>`
+- Visual validation matrix: `<Chromium / Firefox / WebKit / exact-version browser farm / manual target browsers / project-specific / none>`
+- Active Vue SVG rule/skill: `<vue_svg_graphics.md + vue-svg-graphics-expert / none>`
+- Optional active styling/motion overlays: `<css / css-animation / tailwind-css / scss / none>`
+- Optional active UI/testing overlays: `<ui-ux-validation / playwright-ui-validation-mcp / vitest-vue-testing / vue-playwright-e2e-testing / none>`
 
 ## Styling Profile
 
