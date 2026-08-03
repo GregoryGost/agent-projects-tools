@@ -22,8 +22,11 @@ Choose the narrowest applicable mode before acting:
   external system through its approved connector, MCP server, or API. Do not
   change repository files, code, tests, configuration, taskbook, or wiki state
   unless the request separately authorizes those surfaces.
-- `commit-text-only`: prepare commit message text only; do not commit or add
-  explanatory prose outside the requested format.
+- `commit-text-only`: prepare commit message text only. Read-only inspection of
+  the current Git state is allowed solely to determine the complete verified
+  change set. Do not mutate Git state. When verification succeeds, do not add
+  explanatory prose outside the requested format; when it is unavailable,
+  report the verification gap instead of fabricating commit text.
 - `status-only`: report the current state; do not continue implementation unless
   the user asks to keep working.
 - `question-only`: answer the question; do not make repository changes or
@@ -64,7 +67,9 @@ creation or updates performed as part of an authorized `implementation` or
 mode. A standalone operation on remote issue or pull-request metadata, such as
 adding a comment, label, assignee, reviewer, or changing remote state without a
 repository change, uses `external-system-only`. `commit-text-only` remains a
-strict text-output mode and never authorizes Git or remote hosting operations.
+strict text-output mode and never authorizes Git mutations or remote hosting
+operations. It may use read-only Git inspection solely to verify the commit
+contents.
 
 If the request combines repository work with a direct external-system operation,
 identify each requested surface and side effect separately. A repository change
