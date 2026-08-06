@@ -13,7 +13,7 @@ The LLM Wiki stores project knowledge as:
 - `wiki/log.md` — chronological log of wiki changes;
 - `archive/` — obsolete material excluded from current analysis.
 
-Task notes and task logs are not part of this workflow.
+Activity-context notes, task notes, and task logs are not part of this workflow.
 
 ## Raw Source Policy
 
@@ -21,6 +21,7 @@ Task notes and task logs are not part of this workflow.
 - Do not edit, rename, normalize, move, or delete raw sources unless the user explicitly requests it.
 - New raw entries may be created only through MCP and only when the request authorizes source storage.
 - Reference raw sources from wiki pages using logical Markdown links and original URLs when available.
+- Do not place mutable activity-context notes in `raw/`.
 
 ## Query Workflow
 
@@ -33,7 +34,7 @@ When the user asks a project knowledge question:
 5. Cite relevant wiki/raw sources for non-trivial claims.
 6. State uncertainty when sources are missing, contradictory, or insufficient.
 
-Query does not authorize ingest or wiki mutation.
+Query does not authorize ingest or wiki mutation. It also does not search activity-context or taskbook notes automatically.
 
 ## Ingest Workflow
 
@@ -53,6 +54,16 @@ Run ingest only after an explicit user request or an allowed wiki-write request 
 
 Atomicity is preferred over dumping unrelated concepts into one page.
 
+## Explicit Activity Context As Source
+
+An activity context may be used as an ingest source only when the user explicitly authorizes both the wiki and activity-context surfaces.
+
+- Preserve the activity-context note in place.
+- Do not move it into `raw/` or make it immutable.
+- Do not alter its lifecycle, template, task links, or result while performing wiki-only work.
+- Create or update wiki pages using the same ordinary source attribution and verification standards.
+- Do not infer future context-to-wiki synchronization.
+
 ## Templater-Aware Wiki Formatting
 
 - Use templates only when enabled, explicitly requested, or already used by the target note.
@@ -64,10 +75,11 @@ Atomicity is preferred over dumping unrelated concepts into one page.
 
 ## Wiki Boundaries
 
+- Do not create, update, complete, reopen, or synchronize activity-context notes.
 - Do not create, update, close, archive, or re-index taskbook notes.
 - Do not write to task logs during wiki work.
-- Do not infer ingest from implementation or task tracking.
-- Use `obsidian-taskbook` separately when taskbook work is requested and authorized.
+- Do not infer ingest from implementation, activity-context tracking, or task tracking.
+- Use `obsidian-activity-context` or `obsidian-taskbook` separately when those surfaces are requested and authorized.
 
 ## Review Checklist
 
@@ -75,6 +87,8 @@ Atomicity is preferred over dumping unrelated concepts into one page.
 - [ ] Ingest had explicit authorization.
 - [ ] Wiki was searched before raw sources and before creating duplicate pages.
 - [ ] Existing raw sources remained immutable.
+- [ ] Activity contexts were not placed in `raw/` or ingested automatically.
+- [ ] Explicit context-source ingest preserved the original context note.
 - [ ] Wikilinks and source references were preserved or added appropriately.
 - [ ] Source register, index, and log updates matched the actual change.
-- [ ] No taskbook notes or logs were modified.
+- [ ] No activity-context or taskbook notes were modified implicitly.
