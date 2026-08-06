@@ -11,6 +11,8 @@ Use together with:
 - `obsidian-mcp-core`;
 - `obsidian-activity-context`.
 
+The dependency cycle between this rule and the `obsidian-activity-context` skill is intentional: this rule defines authorization and invariants, while the skill defines the reusable workflow.
+
 Apply `.codex/rules/request_routing.md` before every activity-context read, write, template check, template creation, fallback write, or synchronization.
 
 ## Authorization
