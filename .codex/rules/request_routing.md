@@ -10,18 +10,26 @@ Choose the narrowest applicable mode before acting:
 
 - `implementation`: code, tests, configuration, or project files may be changed
   when the request asks to perform work.
-- `review-only`: inspect and report findings; do not create tasks, contexts, or
-  code changes unless the user explicitly changes the mode.
+- `review-only`: inspect and report findings; do not create tasks or code changes
+  unless the user explicitly changes the mode. Activity-context creation or
+  updates are allowed only through an explicitly composed
+  `activity-context-only` surface and the active project policy.
 - `analysis-only`: investigate and explain; do not change files or taskbook
-  state.
-- `taskbook-only`: read or update Obsidian task/context/log state only through
-  the configured MCP or declared fallback outbox.
+  state. Activity-context creation or updates are allowed only through an
+  explicitly composed `activity-context-only` surface and the active project
+  policy.
+- `activity-context-only`: read or update one canonical Obsidian activity
+  context, its required Templater template, or its temporary fallback outbox
+  only through the configured MCP or declared fallback path.
+- `taskbook-only`: read or update Obsidian task state only through the
+  configured MCP or declared fallback outbox.
 - `wiki-only`: query or update LLM Wiki/backlog content only through the
   configured MCP or declared fallback outbox.
 - `external-system-only`: read or mutate explicitly scoped data in a configured
   external system through its approved connector, MCP server, or API. Do not
-  change repository files, code, tests, configuration, taskbook, or wiki state
-  unless the request separately authorizes those surfaces.
+  change repository files, code, tests, configuration, activity context,
+  taskbook, or wiki state unless the request separately authorizes those
+  surfaces.
 - `commit-text-only`: prepare commit message text only. Read-only inspection of
   the current Git state is allowed solely to determine the complete verified
   change set. Do not mutate Git state. When verification succeeds, do not add
@@ -54,11 +62,27 @@ without the external-system gate.
 
 Use the specialized Obsidian modes instead of the generic external-system mode:
 
+- `activity-context-only` has priority for activity-context reads, writes,
+  template management, fallback writes, and synchronization;
 - `taskbook-only` has priority for all taskbook reads and writes;
 - `wiki-only` has priority for all LLM Wiki Query/Ingest reads and writes;
-- `external-system-only` does not authorize taskbook or wiki side effects;
+- `external-system-only` does not authorize activity-context, taskbook, or wiki
+  side effects;
 - other explicitly requested Obsidian MCP operations outside those overlays may
   use `external-system-only` together with `obsidian-mcp-core`.
+
+Activity-context tracking may compose with another mode only when the profile or
+the user authorizes it. The default activity-context profile may automatically
+compose `activity-context-only` with `implementation`, `documentation-only`,
+`analysis-only`, `review-only`, and mutating `external-system-only`.
+`taskbook-only`, `wiki-only`, `question-only`, `status-only`, and
+`commit-text-only` do not create a new activity context automatically, but may
+update an existing context when the message continues the same tracked activity
+and the combined gate explicitly includes the activity-context surface.
+
+Reclassifying a follow-up message does not create a new activity by itself.
+Resolve whether the message continues an existing activity independently from
+the request-mode classification.
 
 Repository-hosting operations that complete the current repository workflow
 inherit the repository mode. Branch creation, commits, pushes, and pull-request
@@ -75,8 +99,9 @@ If the request combines repository work with a direct external-system operation,
 identify each requested surface and side effect separately. A repository change
 does not authorize an external-system mutation, and an external-system operation
 does not authorize repository changes. Use a combined gate only for side
-effects explicitly requested by the user. If the required target or side effect
-remains ambiguous, ask before acting.
+effects explicitly requested by the user or automatically authorized by an
+active activity-context profile. If the required target or side effect remains
+ambiguous, ask before acting.
 
 ## Surface and side-effect gate
 
@@ -87,7 +112,9 @@ first action:
 - tests
 - project configuration
 - Markdown rules/docs
-- Obsidian MCP
+- Obsidian activity context
+- Obsidian taskbook
+- Obsidian wiki
 - shell commands
 - Git commands
 - web access
@@ -98,7 +125,7 @@ Do not run tools or produce the final answer until this gate is resolved.
 For the selected mode, explicitly account for:
 
 - whether file edits are allowed;
-- whether task/context/wiki updates are allowed;
+- whether activity-context, taskbook, or wiki updates are allowed;
 - whether shell/Git commands are allowed;
 - whether external network calls are allowed;
 - which repository rules and skills are active;
@@ -139,7 +166,8 @@ workflows. When a remembered workflow conflicts with current project rules, the
 current project rules win.
 
 Do not treat a follow-up request as continuing the previous mode by default.
-Reclassify the new user message independently before acting.
+Reclassify the new user message independently before acting, then separately
+resolve whether it belongs to an existing tracked activity.
 
 ## Output gate
 
