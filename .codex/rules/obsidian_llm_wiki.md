@@ -2,7 +2,7 @@
 
 Apply this rule only when `CODEX_PROJECT.md` declares the `obsidian-llm-wiki` active stack profile, or when the task directly queries, ingests, creates, changes, or reviews LLM Wiki content.
 
-Do not activate this rule solely because `obsidian-mcp-core` is active. Core MCP access does not imply a wiki workflow.
+Do not activate this rule solely because `obsidian-mcp-core` or `obsidian-activity-context` is active. Core MCP access and activity-context tracking do not imply a wiki workflow.
 
 ## Required skills
 
@@ -24,17 +24,28 @@ This rule governs:
 - immutable `raw/` source policy;
 - Templater-aware wiki formatting when enabled.
 
-It does not govern task creation, task status, task checks, task overview pages, or task archive.
+It does not govern:
+
+- activity-context identity, lifecycle, Templater context templates, context results, or context fallback outboxes;
+- task creation, task status, task checks, task overview pages, or task archive.
 
 ## Authorization
 
-- Use `wiki-only` for every LLM Wiki Query or write. When another repository or external-system operation is also requested, use a combined gate that explicitly includes the `wiki-only` surface.
+- Use `wiki-only` for every LLM Wiki Query or write. When another repository, activity-context, taskbook, or external-system operation is also requested, use a combined gate that explicitly includes every requested surface.
 - Generic `external-system-only` does not authorize LLM Wiki Query, Ingest, or writes and must not substitute for `wiki-only`.
 - Query is read-oriented and must use the MCP-only access rules from `obsidian-mcp-core`.
 - Query does not authorize Ingest, crystallization, page creation, page updates, index changes, source-register changes, or wiki-log changes.
 - Ingest and wiki writes require explicit user authorization and a `wiki-only` or explicitly combined request gate that authorizes the wiki surface.
-- Never infer Ingest from ordinary analysis, implementation, taskbook, review, status, or external-system work.
-- Do not read or modify taskbook notes as part of the wiki workflow unless the user separately authorizes taskbook work and the `obsidian-taskbook` profile is active.
+- Never infer Ingest from ordinary analysis, implementation, activity-context, taskbook, review, status, or external-system work.
+- Do not read or modify activity-context or taskbook notes as part of the wiki workflow unless the user separately authorizes those surfaces and the corresponding profiles are active.
+
+## Activity Context Boundary
+
+- Activity contexts are mutable working records and do not belong to immutable `raw/` storage.
+- Wiki Query does not search activity contexts automatically.
+- Wiki Ingest does not ingest activity contexts automatically.
+- An explicitly authorized combined wiki and activity-context workflow may use a context as a source while preserving the context note in place.
+- Wiki-only work does not create a new activity context automatically and does not update context lifecycle fields.
 
 ## Workflow
 
@@ -59,5 +70,6 @@ When the task explicitly concerns confidence, freshness, supersession, archival,
 - [ ] Query remained read-only unless a separate write operation was explicitly authorized.
 - [ ] Ingest was explicitly authorized.
 - [ ] Raw sources remained immutable unless explicitly requested.
+- [ ] Activity contexts were not treated as raw sources or ingested automatically.
 - [ ] Wiki index, source register, and log were updated only when required by an authorized write.
-- [ ] No taskbook side effects were introduced.
+- [ ] No activity-context or taskbook side effects were introduced implicitly.
