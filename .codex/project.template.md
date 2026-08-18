@@ -105,7 +105,6 @@ The conditional dependency validator is a bootstrap support file, not an optiona
 List only additional rule files active in this project.
 
 - Optional core rules: `<source_code_hygiene.md / none / other>`
-- Documentation retrieval rules: `<context7_documentation.md / none / other>`
 - Git rules: `<git.md / none>`
 - Python/backend rules: `<python_fastapi.md / python_cashews_cache.md / python_nats_kv_cache.md / none>`
 - Formatting/linting rules: `<prettier_formatting.md / eslint_typescript.md / none>`
@@ -134,38 +133,6 @@ List only reusable skills active in this project.
 - Security skills: `<python-backend-security / none / other>`
 - Obsidian skills: `<obsidian-mcp-core / obsidian-llm-wiki / obsidian-taskbook / none>`
 - External-system skills: `<jira-data-center / none / other>`
-
-## Active Integrations
-
-List only integrations configured and available to the agent. An integration entry does not activate a rule or skill by itself.
-
-- Documentation retrieval integrations: `<Context7 MCP / none / other>`
-- Browser/UI integrations: `<Playwright MCP / none / other>`
-- Knowledge/task integrations: `<Semantic Notes Vault MCP / none / other>`
-- External-system integrations: `<Jira Data Center API / none / other>`
-- Other integrations: `<list / none>`
-
-## Context7 Documentation Profile
-
-Keep only when Context7 MCP is available to the agent for read-only documentation retrieval. This profile does not activate any subject-matter language, framework, database, cache, HTTP, testing, styling, UI, security, Jira, or Obsidian material.
-
-The specialized section activates only `context7_documentation.md` when it is enabled and names that exact rule. Context7 remains optional: if it is unavailable, otherwise active subject-matter materials remain valid and use their curated primary sources or direct official documentation instead.
-
-- Context7 documentation enabled: `<yes/no>`
-- Context7 MCP server name: `<configured server name / none>`
-- Context7 transport: `<remote HTTP / local stdio / project-specific / none>`
-- MCP configuration source: `<global Codex config / project Codex config / project-specific / none>`
-- Authentication source: `<OAuth / API key from MCP configuration or environment / none / project-specific>`
-- Credential values stored in `CODEX_PROJECT.md`: `no`
-- Active Context7 rule: `<context7_documentation.md / none>`
-- Project version source priority: `<lockfile -> exact installed/runtime version -> manifest constraint -> project-specific>`
-- Context7 library resolution policy: `<resolve before query / verified project-declared ID allowed / project-specific>`
-- Source selection policy: `<official or verified source preferred / high-confidence source / project-specific>`
-- Version matching policy: `<exact project version preferred / compatible version only with evidence / no silent latest substitution>`
-- Fallback documentation source: `<active skill official-sources reference / direct official documentation / project-specific / none>`
-- Sensitive query policy: `<strip secrets, credentials, personal data, private source code, and proprietary payloads / project-specific>`
-- Read-only retrieval requires `external-system-only`: `no`
-- Context7 administrative/account mutations covered by this profile: `no`
 
 ## Build And Validation Commands
 
