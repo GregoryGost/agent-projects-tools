@@ -97,13 +97,6 @@ Do not include API keys, OAuth tokens, passwords, secrets, private source code,
 personal data, or proprietary payloads in Context7 queries. Keep Context7
 credentials in the configured MCP authentication boundary.
 
-## Request routing
-
-Read-only Context7 retrieval inherits the current request mode and requires only
-that the current surface gate permit MCP/external-network access. Context7
-account, credential, private-source, or other administrative mutations require
-the appropriate external-system authorization.
-
 ## Official Context7 references
 
 Use the current official Context7 documentation when validating Context7 itself:
