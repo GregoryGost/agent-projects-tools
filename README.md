@@ -88,7 +88,7 @@
 
 Наличие технологии в `.codex/project.template.md` само по себе не означает наличие отдельного rule или skill-пакета. Фактическим источником перечня материалов служат `.codex/rules/` и `.agents/skills/`.
 
-## Профиль Context7 documentation
+## Context7 documentation
 
 `context7_documentation.md` — опциональное cross-cutting правило для получения актуальной или version-specific технической документации через Context7 MCP.
 
