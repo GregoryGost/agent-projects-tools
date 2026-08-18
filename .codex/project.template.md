@@ -567,8 +567,7 @@ Keep only when framework-neutral TypeScript unit or integration testing through 
 - E2E boundary: `<HTTP API / CLI / worker / queue / database-backed flow / filesystem flow / mixed>`
 - E2E command: `<command / none>`
 - Dependency setup: `<Testcontainers / Docker Compose / project-specific / none>`
-- Active Node.js service E2E rule: `<nodejs_service_e2e_testing.md / none>`
-- Active Node.js service E2E skill: `<nodejs-service-e2e-testing / none>`
+- Active Node.js service E2E rule/skill: `<nodejs_service_e2e_testing.md + nodejs-service-e2e-testing / none>`
 
 ## External Systems Profile
 
