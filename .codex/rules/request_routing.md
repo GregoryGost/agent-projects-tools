@@ -48,6 +48,12 @@ For read-only calls, keep the operation read-only and preserve the requested
 answer format; `question-only`, `status-only`, `analysis-only`, or `review-only`
 do not authorize a mutation.
 
+Read-only source retrieval, including web access or documentation MCPs, inherits
+the selected request mode and does not require `external-system-only` by itself.
+The surface gate must still permit network/MCP access. Changing the retrieval
+service's account, credentials, indexed private sources, or other remote state is
+an external-system operation.
+
 If the request only discusses an external system without calling it, use the
 ordinary `question-only`, `status-only`, `analysis-only`, or `review-only` mode
 without the external-system gate.
