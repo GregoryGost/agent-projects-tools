@@ -48,13 +48,11 @@ For read-only calls, keep the operation read-only and preserve the requested
 answer format; `question-only`, `status-only`, `analysis-only`, or `review-only`
 do not authorize a mutation.
 
-Read-only documentation-retrieval tools such as Context7 MCP are source
-retrieval rather than operations on application or business state. They inherit
-the already selected request mode and do not require `external-system-only`
-solely because retrieval is performed through MCP. Their use is allowed only
-when the current surface gate permits MCP/external-network access. Mutating the
-documentation service's account, credentials, indexed private sources, or other
-remote administrative state remains an external-system operation.
+Read-only source retrieval, including web access or documentation MCPs, inherits
+the selected request mode and does not require `external-system-only` by itself.
+The surface gate must still permit network/MCP access. Changing the retrieval
+service's account, credentials, indexed private sources, or other remote state is
+an external-system operation.
 
 If the request only discusses an external system without calling it, use the
 ordinary `question-only`, `status-only`, `analysis-only`, or `review-only` mode
