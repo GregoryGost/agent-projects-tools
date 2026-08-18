@@ -66,6 +66,7 @@
 12. Для SQLAlchemy с MySQL через `aiomysql` активируйте `python-sqlalchemy-core + python-sqlalchemy-mysql` и объявите точные server family/version, driver/version sources, pool, timeout, isolation, SQL mode, charset/collation, migration и integration-test policies.
 13. Для `jira-data-center` сохраните специализированный Jira Data Center profile: exact rule/skill pair, declared `8.22.x` или точную `8.22.z`, instance/environment и источники configuration. Runtime version проверяется через `/rest/api/2/serverInfo`; другая major/minor версия требует отдельных проверенных материалов.
 14. Для параметризуемой SVG-графики во Vue активируйте `vue3-typescript-vite`, профиль `vue-svg-graphics` и exact `vue_svg_graphics.md + vue-svg-graphics-expert` pair. CSS, CSS animation, Tailwind, UI validation и testing остаются отдельными опциональными overlays.
+15. Если проект использует Context7 MCP для актуальной документации библиотек и API, включите Context7 Documentation Profile и `context7_documentation.md`. Context7 остаётся опциональным retrieval-слоем и не становится hard dependency предметных rules или skills.
 
 ## Фактическое покрытие
 
@@ -74,6 +75,7 @@
 | Область | Фактическое покрытие |
 | --- | --- |
 | Маршрутизация и общие правила | `request_routing.md`, `material_dependencies.md`, `source_code_hygiene.md`, `git.md` |
+| Актуальная техническая документация | `context7_documentation.md` для опционального Context7 MCP retrieval |
 | Язык code-adjacent prose | `comment-language-audit` |
 | Python core и тестирование | `python-core`, `python-testing`, `python-service-e2e-testing` |
 | Python backend | `python-fastapi-expert`, `python-cashews-cache`, `python-sqlalchemy-core`, `python-sqlalchemy-sqlite`, `python-sqlalchemy-mysql`, `python-httpx-client`, `python-backend-security` |
@@ -86,6 +88,23 @@
 | Obsidian | `obsidian-mcp-core`, `obsidian-llm-wiki`, `obsidian-taskbook` |
 
 Наличие технологии в `.codex/project.template.md` само по себе не означает наличие отдельного rule или skill-пакета. Фактическим источником перечня материалов служат `.codex/rules/` и `.agents/skills/`.
+
+## Профиль Context7 documentation
+
+`context7_documentation.md` — cross-cutting rule для проектов, где агенту доступен Context7 MCP как read-only источник актуальной или version-specific документации библиотек, frameworks, SDK и tooling.
+
+- Context7 не является отдельным предметным skill и не активирует Python, Vue, SQLAlchemy, HTTPX, NATS, testing, styling или другие материалы;
+- версия и фактическая конфигурация определяются из project manifests, lockfiles, runtime/deployment diagnostics и `CODEX_PROJECT.md`, а Context7 используется для retrieval документации, соответствующей этим фактам;
+- перед запросом документации нужно разрешить корректный Context7 library ID либо использовать ранее проверенный однозначный ID; namesake-пакеты и неподтверждённая подмена версии недопустимы;
+- для version-sensitive поведения нельзя молча заменять отсутствующую документацию нужной версии на `latest`;
+- curated official-source references активных skills сохраняют силу и используются как fallback или более специфичный источник;
+- отсутствие, rate limit или неполное покрытие Context7 не делает предметные rules/skills невалидными: при разрешённом network access используется официальный источник напрямую, а неподтверждённый факт отмечается как verification gap;
+- Context7 особенно применим к Python/FastAPI/SQLAlchemy/HTTPX/NATS/cashews/testing, TypeScript/Vue/Vite/Vitest/Playwright, Tailwind/Sass и другим version-sensitive библиотекам;
+- Context7 не заменяет repository governance, runtime state, project-specific Obsidian workflow и не должен подменять version-locked Jira Data Center sources расплывчатыми Jira/Cloud результатами;
+- read-only Context7 retrieval наследует текущий request mode и сам по себе не требует `external-system-only`;
+- credentials, private source code, personal data и secrets не включаются в Context7 queries или `CODEX_PROJECT.md`.
+
+Официальные Context7 overview, MCP client configuration, retrieval/version guidance и query privacy перечислены непосредственно в `.codex/rules/context7_documentation.md`.
 
 ## Профиль Python cashews cache
 
