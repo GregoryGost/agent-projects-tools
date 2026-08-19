@@ -1,4 +1,4 @@
 interface:
   display_name: "Obsidian Activity Context"
   short_description: "One canonical context note per user activity"
-  default_prompt: "Use $obsidian-activity-context with $obsidian-mcp-core to maintain one canonical Obsidian context note for the full lifecycle of a user activity, including clarifications, linked tasks, results, Templater validation, and fallback synchronization."
+  default_prompt: "Use $obsidian-activity-context with $obsidian-mcp-core to maintain one canonical Obsidian activity context through the project-configured routing policy and the skill references for schema, lifecycle, task links, Templater, and fallback synchronization."
