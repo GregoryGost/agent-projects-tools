@@ -34,11 +34,11 @@ A direct user request for activity-context tracking authorizes the activity-cont
 
 ## New Context Workflow
 
-1. Read `CODEX_PROJECT.md` and resolve the project root, context folder, template path, language, schema version, naming policy, creation-mode policy, task backlink field, and fallback outbox.
+1. Read `CODEX_PROJECT.md` and resolve the project root, context folder, template path, language, naming policy, creation-mode policy, task backlink field, and fallback outbox.
 2. Resolve the request mode and activity-context surface.
 3. Search active and recently completed activity contexts by `activity_id`, title, task links, current scope, and project key.
 4. If no canonical context exists and creation is authorized, check the configured Templater template through MCP.
-5. Follow `activity-context-template.md` for missing-template creation and existing-template drift handling.
+5. Follow `activity-context-template.md` for schema version, missing-template creation, and existing-template drift handling.
 6. Create one context note and populate identity, original request, current scope, timestamps, and status.
 7. Re-read the created note and verify required semantic roles.
 
@@ -128,7 +128,7 @@ When MCP recovers:
 - [ ] The user goal was resolved to one stable activity identity.
 - [ ] Existing contexts were searched before creation.
 - [ ] Automatic creation and continuation followed the project-declared mode lists.
-- [ ] Template handling followed `activity-context-template.md`.
+- [ ] Schema and template handling followed `activity-context-template.md`.
 - [ ] Clarifications preserved history and updated the consolidated scope.
 - [ ] Related task links used the canonical template field and the configured task backlink when applicable.
 - [ ] Completion updated the same context note.
