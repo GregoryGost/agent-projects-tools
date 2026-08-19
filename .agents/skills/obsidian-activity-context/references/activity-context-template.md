@@ -31,8 +31,6 @@ tasks: []
 
 ## Decisions and work progress
 
-## Related tasks
-
 ## Result
 
 ## Open questions
@@ -48,7 +46,9 @@ tasks: []
 - `created_at`: creation timestamp;
 - `updated_at`: last material update timestamp;
 - `completed_at`: completion timestamp or empty value;
-- `tasks`: links or identifiers for related task notes.
+- `tasks`: canonical structured links or identifiers for related task notes.
+
+Do not require a second body section for the same task-link set. Project-specific prose about task outcomes may appear in another suitable section, but `tasks` remains the canonical task-link field in the context note.
 
 ## Required Section Roles
 
@@ -56,7 +56,6 @@ tasks: []
 - clarifications and requirement changes: chronological material follow-ups and corrections;
 - current scope: the consolidated latest requirement;
 - decisions and work progress: durable decisions and meaningful activity-level progress;
-- related tasks: links to task notes when taskbook tracking is active;
 - result: aggregate outcome, partial completion, limitations, and relevant deliverables;
 - open questions: unresolved items that may affect continuation.
 
@@ -67,7 +66,7 @@ Section titles may be localized or renamed only when `CODEX_PROJECT.md` explicit
 These additions do not make an existing template outdated by themselves:
 
 - additional frontmatter fields;
-- additional Markdown sections;
+- additional Markdown sections that do not duplicate a canonical required field as a second source of truth;
 - aliases and tags;
 - Dataview-compatible fields;
 - visual formatting;
