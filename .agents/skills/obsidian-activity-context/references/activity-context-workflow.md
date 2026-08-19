@@ -26,54 +26,23 @@ If multiple existing contexts remain plausible, ask the user to select one.
 
 ## Stable Identity And Path
 
-Use the project-declared identity and naming policy. A recommended pattern is:
-
-```text
-contexts/{project_key}/{activity_id}-{slug}.md
-```
-
-A recommended identifier is:
-
-```text
-{PROJECT_KEY}-CTX-{YYYYMMDD}-{sequence}
-```
+Use the identity, naming, and creation-mode policies declared by `CODEX_PROJECT.md`. Do not duplicate those project-configured values in this reference.
 
 The `activity_id` remains stable when the title, slug, status, or current scope changes.
 
-## Automatic Creation Modes
-
-The default project profile policy creates a new context automatically for:
-
-- `implementation`;
-- `documentation-only`;
-- `analysis-only`;
-- `review-only`;
-- mutating `external-system-only`.
-
-These modes do not create a new context automatically:
-
-- `taskbook-only`;
-- `wiki-only`;
-- `question-only`;
-- `status-only`;
-- `commit-text-only`.
-
-Continuation-only modes may update an existing context when the message belongs to the same tracked activity and an explicitly combined gate authorizes the context surface.
-
-A direct user request for activity-context tracking always permits creation after routing and profile resolution.
+A direct user request for activity-context tracking authorizes the activity-context surface after routing. For automatic creation and continuation behavior, use the exact mode lists declared by the active project profile.
 
 ## New Context Workflow
 
-1. Read `CODEX_PROJECT.md` and resolve the project root, context folder, template path, language, schema version, naming policy, automatic modes, and fallback outbox.
+1. Read `CODEX_PROJECT.md` and resolve the project root, context folder, template path, language, schema version, naming policy, creation-mode policy, task backlink field, and fallback outbox.
 2. Resolve the request mode and activity-context surface.
 3. Search active and recently completed activity contexts by `activity_id`, title, task links, current scope, and project key.
 4. If no canonical context exists and creation is authorized, check the configured Templater template through MCP.
-5. If the template is absent, create it from `activity-context-template.md` and verify it.
-6. If the template exists, validate required roles and drift policy.
-7. Create one context note and populate identity, original request, current scope, timestamps, and status.
-8. Re-read the created note and verify required semantic roles.
+5. Follow `activity-context-template.md` for missing-template creation and existing-template drift handling.
+6. Create one context note and populate identity, original request, current scope, timestamps, and status.
+7. Re-read the created note and verify required semantic roles.
 
-Do not create the context before reading `CODEX_PROJECT.md` and resolving routing, because the project profile is the source of truth for paths and policy.
+Do not create the context before reading `CODEX_PROJECT.md` and resolving routing, because the project profile is the source of truth for paths and configurable policy.
 
 ## Clarification Workflow
 
@@ -94,12 +63,12 @@ During work:
 
 - record durable decisions and meaningful activity-level progress;
 - keep detailed checks, Definition Of Done, and implementation logs in task notes;
-- link relevant tasks instead of copying their complete contents;
+- keep related task links in the context frontmatter `tasks` field rather than duplicating the same link set in a required body section;
 - avoid hidden reasoning, raw tool transcripts, transient debugging, secrets, or credentials.
 
 At completion:
 
-1. Read the context and linked tasks.
+1. Read the context and linked tasks when taskbook coordination is active.
 2. Update the result section with the aggregate outcome, deliverables, partial failures, limitations, and unresolved items.
 3. Update `updated_at`, `completed_at`, and status.
 4. Do not create a separate result or final context note.
@@ -111,8 +80,8 @@ When the same activity resumes, change the status according to project policy an
 
 When `obsidian-taskbook` is active and both surfaces are authorized:
 
-- one activity context may link multiple task notes;
-- each related task note should link back to the canonical activity context using the project-declared field or section;
+- one activity context may link multiple task notes through the context frontmatter `tasks` field;
+- each related task note links back using the task backlink field declared by `CODEX_PROJECT.md`;
 - creating a task does not create another context automatically;
 - completing one task does not necessarily complete the activity;
 - task notes remain the source of truth for task status, Definition Of Done, checks, and detailed work notes;
@@ -126,22 +95,6 @@ Activity contexts are mutable working records, not immutable raw sources or cano
 - Wiki Ingest does not ingest an activity context automatically.
 - Explicitly authorized wiki ingest may use a context as a source while preserving the context note in place.
 - Wiki work does not modify context lifecycle fields unless activity-context work is separately authorized.
-
-## Template Drift Workflow
-
-When an existing template differs from the canonical reference:
-
-1. Compare required frontmatter and section roles.
-2. Ignore safe additional user-defined content.
-3. Identify missing roles, outdated schema, incompatible automation, or unsafe behavior.
-4. Report the exact differences.
-5. Ask the user to choose:
-   - update the existing template with bounded MCP edits while preserving custom content;
-   - declare an explicit project-specific semantic mapping when the structure is intentionally different;
-   - cancel context creation.
-6. Apply only the selected action and verify the result.
-
-Do not silently use a structurally incompatible template, create a duplicate, or replace the entire file.
 
 ## Temporary Fallback Outbox
 
@@ -164,7 +117,7 @@ When MCP recovers:
 
 1. Read the pending record.
 2. Search for an existing canonical context before creation.
-3. Check or create the configured template.
+3. Check or create the configured template according to `activity-context-template.md`.
 4. Apply ordered pending updates to one canonical context.
 5. Re-read and verify the template and context.
 6. Delete the pending record only after successful verification.
@@ -174,11 +127,9 @@ When MCP recovers:
 
 - [ ] The user goal was resolved to one stable activity identity.
 - [ ] Existing contexts were searched before creation.
-- [ ] Automatic creation followed the project-declared modes.
-- [ ] The configured Templater template was checked through MCP.
-- [ ] Missing-template creation used the canonical reference.
-- [ ] Existing-template drift was presented to the user instead of repaired automatically.
+- [ ] Automatic creation and continuation followed the project-declared mode lists.
+- [ ] Template handling followed `activity-context-template.md`.
 - [ ] Clarifications preserved history and updated the consolidated scope.
-- [ ] Related task links were bidirectional when applicable.
+- [ ] Related task links used the context `tasks` field and the configured task backlink when applicable.
 - [ ] Completion updated the same context note.
 - [ ] Fallback synchronized into one canonical note and was deleted only after verification.
