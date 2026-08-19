@@ -6,7 +6,7 @@ Use this reference only with the `obsidian-taskbook` profile. All vault access a
 
 Use the taskbook workflow only when taskbook changes are explicitly requested or implementation tracking is enabled by `CODEX_PROJECT.md` and allowed by the selected request mode.
 
-Do not create or update tasks for analysis, research, review, explanation, status-only, commit-text-only, wiki-only, documentation-only, activity-context-only, or other modes that do not authorize taskbook writes.
+Do not create or update tasks for modes that do not authorize taskbook writes.
 
 ## Project Paths
 
@@ -18,9 +18,7 @@ Resolve all paths from `CODEX_PROJECT.md`:
 - completed task archive: `tasks/archive/{project_key}/`;
 - task fallback outbox.
 
-These are logical MCP paths, not filesystem paths.
-
-Activity-context paths and fallback outboxes belong to `obsidian-activity-context`, not this workflow.
+These are logical MCP paths, not filesystem paths. Activity-context paths and fallback outboxes belong to `obsidian-activity-context`, not this workflow.
 
 ## Task Identity
 
@@ -76,7 +74,7 @@ When authorized implementation work requires task tracking:
 2. Search existing task notes and overview pages through MCP to prevent duplicates.
 3. Create the required task notes through MCP.
 4. Add or update overview entries only after task notes exist.
-5. When `obsidian-activity-context` is separately active and authorized, link every task to the single canonical activity context and add each task link to that context.
+5. Apply Activity Context Links when `obsidian-activity-context` is separately active and authorized.
 6. Re-read and verify task notes and overview pages.
 
 If MCP is unavailable, use only the configured task fallback outbox and synchronize later through MCP.
@@ -87,13 +85,13 @@ Activity-context coordination is optional and does not activate taskbook or acti
 
 When both overlays and surfaces are active:
 
-- one activity context may link multiple task notes;
-- each task note links back using the project-declared frontmatter field or section, for example `activity_context`;
+- add each related task note link to the activity context frontmatter `tasks` field; this field is the canonical task-link set in the context note;
+- link each task note back through the task backlink field declared by `CODEX_PROJECT.md`;
 - task creation does not create another context note;
 - task notes remain the source of truth for status, Definition Of Done, checks, and detailed work notes;
-- the activity context remains the source of truth for the original user request, clarification history, consolidated current scope, and aggregate result;
+- the activity context remains the source of truth for the user goal, clarification history, consolidated current scope, and aggregate result;
 - closing one task does not necessarily complete the activity;
-- completing all related tasks should trigger an activity-level result update only when the activity-context surface is also authorized.
+- update the activity-level result only when the activity-context surface is also authorized.
 
 ## Status And Work Notes
 
@@ -143,7 +141,6 @@ When both overlays and surfaces are active:
 - [ ] Task key, path, language, title, and structure follow the profile.
 - [ ] Status, work notes, checks, overview, and archive remain consistent.
 - [ ] Checks are nested inside `Notes on working on the task`, not stored as a top-level section.
-- [ ] Activity-context links are bidirectional when that overlay is active.
-- [ ] No duplicate, per-task, or final context note was created.
+- [ ] Activity-context links use the context `tasks` field and the configured task backlink when applicable.
 - [ ] Every write was re-read and verified through MCP.
 - [ ] No wiki side effects were introduced.
