@@ -66,7 +66,7 @@
 12. Для SQLAlchemy с MySQL через `aiomysql` активируйте `python-sqlalchemy-core + python-sqlalchemy-mysql` и объявите точные server family/version, driver/version sources, pool, timeout, isolation, SQL mode, charset/collation, migration и integration-test policies.
 13. Для `jira-data-center` сохраните специализированный Jira Data Center profile: exact rule/skill pair, declared `8.22.x` или точную `8.22.z`, instance/environment и источники configuration. Runtime version проверяется через `/rest/api/2/serverInfo`; другая major/minor версия требует отдельных проверенных материалов.
 14. Для параметризуемой SVG-графики во Vue активируйте `vue3-typescript-vite`, профиль `vue-svg-graphics` и exact `vue_svg_graphics.md + vue-svg-graphics-expert` pair. CSS, CSS animation, Tailwind, UI validation и testing остаются отдельными опциональными overlays.
-15. Для единого контекста пользовательской активности активируйте `obsidian-activity-context`, exact `obsidian_activity_context.md + obsidian-activity-context` pair и обязательный `obsidian-mcp-core`; шаблон Templater проверяется через MCP, отсутствующий создаётся из reference, а существующий неактуальный изменяется только после решения пользователя.
+15. Для единого контекста пользовательской активности активируйте `obsidian-activity-context`, exact `obsidian_activity_context.md + obsidian-activity-context` pair и обязательный `obsidian-mcp-core`; project-specific paths, modes и link fields задаются в Activity Context section `CODEX_PROJECT.md`.
 
 ## Фактическое покрытие
 
@@ -169,13 +169,9 @@ Good/bad patterns, review checklist и официальные SQLAlchemy, `aiomy
 Пакет `obsidian_activity_context.md + obsidian-activity-context` предназначен для ведения одного канонического контекстного файла на полный жизненный цикл одной пользовательской активности.
 
 - пакет требует `obsidian-mcp-core`, но не активирует `obsidian-taskbook` или `obsidian-llm-wiki`;
-- новый context автоматически создаётся для `implementation`, `documentation-only`, `analysis-only`, `review-only` и изменяющего `external-system-only`;
-- `taskbook-only`, `wiki-only`, `question-only`, `status-only` и `commit-text-only` могут продолжать существующий context, но не создают новый автоматически;
-- исходная постановка, все существенные уточнения, консолидированный актуальный объём, решения, ссылки на задачи и общий результат хранятся в одной context note;
-- отдельные start/result/final/per-task context notes для одной активности запрещены;
-- структура Templater-шаблона хранится в reference skill-пакета, а рабочий шаблон проверяется и при отсутствии создаётся в vault только через MCP;
-- безопасные пользовательские дополнения к шаблону сохраняются, а устаревший или несовместимый существующий шаблон изменяется только после выбора пользователя;
-- временный fallback outbox не является второй context note и удаляется только после успешной синхронизации и MCP read-back verification.
+- проектные пути, creation/continuation modes, template application mode, task backlink field и fallback path задаются в `CODEX_PROJECT.md`;
+- каноническая структура Templater и правила её drift находятся в `references/activity-context-template.md`;
+- identity, lifecycle, task linking и fallback synchronization находятся в `references/activity-context-workflow.md`.
 
 ## Правила работы с Obsidian-материалами
 
@@ -187,9 +183,6 @@ Obsidian-related rules и skills требуют MCP-only подхода:
 - перед изменением существующей заметки её нужно прочитать через MCP, изменить минимально безопасной операцией и затем перечитать для проверки результата;
 - whole-note replacement допустим только для явно запрошенной полной замены или осознанной регенерации заметки;
 - `obsidian-mcp-core` определяет безопасный доступ, а `obsidian-activity-context`, `obsidian-llm-wiki` и `obsidian-taskbook` активируются как независимые overlays.
-- `obsidian-activity-context` ведёт одну каноническую context note на пользовательскую активность: исходная постановка, все существенные уточнения, актуальный объём, связанные задачи и итог остаются в одном файле.
-- отсутствующий Templater-шаблон activity context создаётся через MCP из canonical reference; существующий неактуальный шаблон автоматически не переписывается, а расхождения передаются пользователю для выбора.
-- при недоступном MCP используется только временный fallback outbox, который позднее синхронизируется в одну каноническую context note и удаляется после read-back verification.
 
 ## Принципы ведения материалов
 
