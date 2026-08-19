@@ -33,9 +33,8 @@ Apply `.codex/rules/request_routing.md` before every activity-context read or wr
 ## Template And Lifecycle Invariants
 
 - Before creating a new context, use the configured template path and application mode from `CODEX_PROJECT.md`.
-- `references/activity-context-template.md` is the canonical source for template structure, missing-template creation, and drift handling.
+- `references/activity-context-template.md` is the canonical source for template structure, missing-template creation, drift handling, and task-link storage.
 - Never reapply the creation template to an existing activity-context note.
-- Keep the context frontmatter `tasks` field as the canonical task-link set; do not require a second body section with the same links.
 - Preserve the initial request, clarification history, current scope, durable decisions, aggregate result, and open questions in the same note.
 - Completion and reopening update that same canonical note.
 
@@ -55,8 +54,7 @@ Use `.agents/skills/obsidian-activity-context/references/activity-context-workfl
 - [ ] The activity-context surface was active and project-configured mode policy was used.
 - [ ] Exactly one canonical note represents the activity.
 - [ ] Existing contexts were searched before creation.
-- [ ] Template behavior followed the canonical template reference.
-- [ ] Task links used one canonical context field.
+- [ ] Template behavior and task-link storage followed the canonical template reference.
 - [ ] Clarifications and the result stayed in the same note.
 - [ ] Every MCP write was re-read and verified.
 - [ ] No taskbook, wiki, raw-source, shell, or Git side effects were introduced implicitly.
