@@ -13,7 +13,7 @@ The `obsidian-mcp-core` profile and skill are required. This overlay does not au
 
 Load references when needed:
 
-- `references/wiki-workflow.md` for detailed Query/Ingest, structure, source, index, and log conventions.
+- `references/wiki-workflow.md` for detailed Query/Ingest, structure, source, index, log, and optional activity-context source conventions.
 - `references/wiki-lifecycle.md` when the task explicitly concerns confidence, freshness, supersession, archival, or typed wiki relationships.
 
 ## Scope
@@ -21,36 +21,20 @@ Load references when needed:
 This skill owns:
 
 - knowledge queries through `wiki/` and verified `raw/` sources;
-- explicit ingest from `raw/` into processed wiki pages;
-- `wiki/index.md`, `wiki/Source Notes.md`, and `wiki/log.md` maintenance;
-- atomic concept/entity/comparison/synthesis pages;
-- wikilinks and source references;
-- the immutable `raw/` policy;
-- the Query/Ingest workflow in `references/wiki-workflow.md`;
+- explicit ingest into processed wiki pages;
+- wiki index, source register, log, wikilinks, and immutable `raw/` policy;
 - optional lifecycle conventions in `references/wiki-lifecycle.md` when directly in scope.
 
-It does not own:
-
-- activity-context identity, lifecycle, Templater context template management, aggregate results, or context fallback synchronization;
-- task creation, status changes, checks, task overviews, or task archive;
-- generic MCP access and mutation safety, which remain in `obsidian-mcp-core`.
+It does not own activity-context lifecycle/template/fallback behavior, taskbook lifecycle, or generic MCP safety.
 
 ## Activation And Side Effects
 
-- Query is read-oriented and must use MCP-only access.
-- Query does not authorize ingest, crystallization, page creation, page updates, index changes, source-register changes, or wiki-log changes.
-- Ingest and wiki writes require an explicit user request or an allowed wiki-write request mode/surface.
+- Query is read-oriented and does not authorize ingest or wiki mutation.
+- Ingest and wiki writes require an explicit user request or an allowed wiki-write surface.
 - Do not infer wiki ingest from ordinary implementation, activity-context, taskbook, review, or status requests.
 - Do not read or update activity-context or task notes while performing wiki-only work.
-- Wiki-only work does not create a new activity context automatically.
 
-## Activity Context Boundary
-
-- Activity contexts are mutable working records, not immutable raw sources or canonical wiki pages.
-- Query does not search contexts automatically.
-- Ingest does not ingest contexts automatically.
-- When the user explicitly authorizes a combined wiki and activity-context workflow, a context may be used as a source without moving, freezing, or replacing the original context note.
-- Context lifecycle fields remain owned by `obsidian-activity-context`.
+Activity contexts are mutable working records, not immutable `raw/` sources. Use `references/wiki-workflow.md` as the single detailed source for any explicitly authorized context-to-wiki source handling.
 
 ## Workflow
 
@@ -68,6 +52,5 @@ It does not own:
 - [ ] Query remained read-only unless a separate write operation was explicitly authorized.
 - [ ] Ingest occurred only with explicit authorization.
 - [ ] `raw/` sources were not modified unless explicitly requested.
-- [ ] Activity contexts were not treated as raw sources or ingested automatically.
-- [ ] Wiki index, source register, and log were updated only when required by an authorized write.
+- [ ] Optional activity-context source handling followed `references/wiki-workflow.md`.
 - [ ] No activity-context or taskbook side effects were introduced.
