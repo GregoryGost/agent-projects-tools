@@ -2,7 +2,7 @@
 
 Use this reference as the canonical schema for the Templater template declared by `CODEX_PROJECT.md`.
 
-The working template lives in the Obsidian vault and is managed only through Semantic Notes Vault MCP. This repository reference defines its required semantic structure. It is not a second working context note.
+The working template lives in the Obsidian vault and is managed only through Semantic Notes Vault MCP. This repository reference defines its required semantic structure and schema version. It is not a second working context note.
 
 ## Canonical Templater Template
 
@@ -39,7 +39,7 @@ tasks: []
 ## Required Frontmatter Roles
 
 - `type`: exact value `activity-context`;
-- `schema_version`: project-declared supported schema version;
+- `schema_version`: exact schema version defined by this canonical reference; current value `1`;
 - `activity_id`: stable identifier assigned by the agent workflow;
 - `project`: project key or project identifier;
 - `status`: lifecycle status such as `active`, `completed`, or `reopened` according to project policy;
@@ -77,7 +77,7 @@ These additions do not make an existing template outdated by themselves:
 Treat an existing template as outdated or incompatible when it has any of these conditions:
 
 - a required frontmatter role or section role is absent and no explicit mapping exists;
-- `schema_version` is older than the project-supported version;
+- `schema_version` differs from the version defined by this canonical reference;
 - the template changes the meaning of a required role;
 - automation creates multiple context notes for one activity;
 - automation moves or renames context notes outside the declared policy;
