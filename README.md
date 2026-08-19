@@ -75,6 +75,7 @@
 | Область | Фактическое покрытие |
 | --- | --- |
 | Маршрутизация и общие правила | `request_routing.md`, `material_dependencies.md`, `source_code_hygiene.md`, `git.md` |
+| Актуальная техническая документация | `context7_documentation.md` для опционального Context7 MCP retrieval |
 | Язык code-adjacent prose | `comment-language-audit` |
 | Python core и тестирование | `python-core`, `python-testing`, `python-service-e2e-testing` |
 | Python backend | `python-fastapi-expert`, `python-cashews-cache`, `python-sqlalchemy-core`, `python-sqlalchemy-sqlite`, `python-sqlalchemy-mysql`, `python-httpx-client`, `python-backend-security` |
@@ -87,6 +88,17 @@
 | Obsidian | `obsidian-mcp-core`, `obsidian-activity-context`, `obsidian-llm-wiki`, `obsidian-taskbook` |
 
 Наличие технологии в `.codex/project.template.md` само по себе не означает наличие отдельного rule или skill-пакета. Фактическим источником перечня материалов служат `.codex/rules/` и `.agents/skills/`.
+
+## Context7 documentation
+
+`context7_documentation.md` — опциональное cross-cutting правило для получения актуальной или version-specific технической документации через Context7 MCP.
+
+- правило активируется через `Active Rules` и не активирует предметные skills или rules;
+- Context7 дополняет активные материалы и не является их hard dependency;
+- применимая версия и фактическая конфигурация определяются из project/runtime evidence, а Context7 используется только для retrieval документации;
+- для version-sensitive поведения проверяются корректные library/source/version и не допускается молчаливая подмена на `latest`;
+- при недоступности или недостаточном покрытии Context7 используются curated official sources или прямая официальная документация;
+- security, Jira Data Center и Obsidian сохраняют собственные source-of-truth и workflow boundaries.
 
 ## Профиль Python cashews cache
 

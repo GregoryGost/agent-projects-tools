@@ -34,7 +34,8 @@ Choose the narrowest applicable mode before acting:
   the current Git state is allowed solely to determine the complete verified
   change set. Do not mutate Git state. When verification succeeds, do not add
   explanatory prose outside the requested format; when it is unavailable,
-  report the verification gap instead of fabricating commit text.
+  report the verification gap instead of fabricating commit text. Be sure to
+  take into account the rule for the git.md agent.
 - `status-only`: report the current state; do not continue implementation unless
   the user asks to keep working.
 - `question-only`: answer the question; do not make repository changes or
@@ -55,6 +56,12 @@ when the user-facing intent is a question, status check, analysis, or review.
 For read-only calls, keep the operation read-only and preserve the requested
 answer format; `question-only`, `status-only`, `analysis-only`, or `review-only`
 do not authorize a mutation.
+
+Read-only source retrieval, including web access or documentation MCPs, inherits
+the selected request mode and does not require `external-system-only` by itself.
+The surface gate must still permit network/MCP access. Changing the retrieval
+service's account, credentials, indexed private sources, or other remote state is
+an external-system operation.
 
 If the request only discusses an external system without calling it, use the
 ordinary `question-only`, `status-only`, `analysis-only`, or `review-only` mode
