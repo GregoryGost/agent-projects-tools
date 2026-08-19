@@ -138,6 +138,7 @@ List only reusable skills active in this project.
 ## Build And Validation Commands
 
 Use only project-declared commands.
+
 - Command source of truth: `<CODEX_PROJECT.md / package scripts / pyproject.toml / Makefile / task runner / none>`
 - Tool executable policy: `<project venv / package-manager scripts / global tools allowed / project-specific / none>`
 - Install dependencies: `<command or none>`
@@ -572,7 +573,6 @@ Keep whenever any Obsidian profile is active. The activity-context, wiki, and ta
 - Physical vault filesystem access policy: `MCP-only; no shell/editor/script/Git access`
 - Obsidian Templater enabled: `<yes/no>`
 - Templater policy: `<templates through MCP / no executable template changes without approval / project-specific / none>`
-- Required-template verification policy: `<MCP existence check + read-back / project-specific / none>`
 - PUML Viewer enabled: `<yes/no>`
 
 ### Obsidian Activity Context
@@ -583,28 +583,15 @@ Keep only when `obsidian-activity-context` is active. Requires `obsidian-mcp-cor
 - Active activity-context rule/skill: `<obsidian_activity_context.md + obsidian-activity-context / none>`
 - Context root logical path: `<contexts/{project_key} / project-specific / none>`
 - Context note language: `<language / documentation language / project-specific / none>`
-- Context identity policy: `one canonical note per user activity`
 - Context ID format: `<{PROJECT_KEY}-CTX-{YYYYMMDD}-{sequence} / project-specific / none>`
 - Context file naming policy: `<{activity_id}-{slug}.md / project-specific / none>`
 - Context schema version: `<1 / project-specific / none>`
 - Context template logical path: `<templates/activity-context.md / project-specific / none>`
-- Context template engine: `Templater`
-- Context template canonical reference: `.agents/skills/obsidian-activity-context/references/activity-context-template.md`
 - Context template application mode: `<templater-folder-trigger / mcp-resolved-template / project-specific / none>`
-- Missing context template policy: `create through MCP from canonical reference`
-- Existing context template validation: `required`
-- Outdated context template policy: `report differences and ask the user`
-- Automatic existing-template repair: `forbidden`
-- Approved template update method: `bounded MCP edits preserving custom content`
-- Template reapplication to existing contexts: `forbidden`
-- Activity context automatic creation modes: `implementation, documentation-only, analysis-only, review-only, mutating external-system-only`
-- Activity context continuation-only modes: `taskbook-only, wiki-only, question-only, status-only, commit-text-only`
-- Activity context completion policy: `update the same note; never create a final context note`
-- Task relationship policy: `<bidirectional links + aggregate result / project-specific / none>`
+- Activity context automatic creation modes: `<implementation, documentation-only, analysis-only, review-only, mutating external-system-only / project-specific / none>`
+- Activity context continuation-only modes: `<taskbook-only, wiki-only, question-only, status-only, commit-text-only / project-specific / none>`
+- Task activity-context backlink field: `<activity_context / project-specific / none>`
 - Local activity-context fallback outbox: `<path / none>`
-- MCP unavailable policy: `temporary fallback outbox`
-- Fallback synchronization policy: `merge into one canonical context and delete only after MCP read-back verification`
-- Request-routing side-effect gate required: `yes`
 
 ### Obsidian LLM Wiki
 
