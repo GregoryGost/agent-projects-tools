@@ -28,7 +28,7 @@ This skill owns:
 - one canonical context note per user activity;
 - stable activity identity across follow-ups, completion, reopening, and multiple tasks;
 - lifecycle updates for the initial request, material clarifications, current scope, decisions, aggregate result, and open questions;
-- coordination of the context frontmatter `tasks` field with taskbook backlinks when separately active;
+- task-link coordination with taskbook when separately active;
 - activity-context template and fallback workflows defined by the references.
 
 It does not own generic MCP safety, task-specific state/checks, or LLM Wiki Query/Ingest.
@@ -48,7 +48,7 @@ It does not own generic MCP safety, task-specific state/checks, or LLM Wiki Quer
 
 - Do not create start, result, final, follow-up, or per-task context notes for one activity.
 - Do not place mutable activity contexts in immutable `raw/` storage.
-- Do not duplicate the canonical context task-link set in a second required body section.
+- Use the canonical template reference as the single schema source for task-link storage.
 - Do not treat fallback records as canonical notes.
 - Do not access the vault through shell, direct filesystem operations, editor automation, or Git.
 
@@ -58,5 +58,5 @@ It does not own generic MCP safety, task-specific state/checks, or LLM Wiki Quer
 - [ ] One stable activity identity resolved to one canonical note.
 - [ ] Project-configured policies came from `CODEX_PROJECT.md` rather than duplicated defaults.
 - [ ] Template handling and fallback followed their canonical references.
-- [ ] Task links used one canonical context field and a task-side backlink when applicable.
+- [ ] Task links followed the canonical template schema and task-side backlink when applicable.
 - [ ] Clarifications and the result remained in the original context note.
