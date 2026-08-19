@@ -63,7 +63,7 @@ During work:
 
 - record durable decisions and meaningful activity-level progress;
 - keep detailed checks, Definition Of Done, and implementation logs in task notes;
-- keep related task links in the context frontmatter `tasks` field rather than duplicating the same link set in a required body section;
+- store related task links only in the canonical task-link field defined by `activity-context-template.md`;
 - avoid hidden reasoning, raw tool transcripts, transient debugging, secrets, or credentials.
 
 At completion:
@@ -80,7 +80,7 @@ When the same activity resumes, change the status according to project policy an
 
 When `obsidian-taskbook` is active and both surfaces are authorized:
 
-- one activity context may link multiple task notes through the context frontmatter `tasks` field;
+- one activity context may link multiple task notes through the canonical task-link field defined by `activity-context-template.md`;
 - each related task note links back using the task backlink field declared by `CODEX_PROJECT.md`;
 - creating a task does not create another context automatically;
 - completing one task does not necessarily complete the activity;
@@ -130,6 +130,6 @@ When MCP recovers:
 - [ ] Automatic creation and continuation followed the project-declared mode lists.
 - [ ] Template handling followed `activity-context-template.md`.
 - [ ] Clarifications preserved history and updated the consolidated scope.
-- [ ] Related task links used the context `tasks` field and the configured task backlink when applicable.
+- [ ] Related task links used the canonical template field and the configured task backlink when applicable.
 - [ ] Completion updated the same context note.
 - [ ] Fallback synchronized into one canonical note and was deleted only after verification.
