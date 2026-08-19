@@ -81,17 +81,12 @@ If MCP is unavailable, use only the configured task fallback outbox and synchron
 
 ## Activity Context Links
 
-Activity-context coordination is optional and does not activate taskbook or activity-context side effects by itself.
+Activity-context coordination is optional and requires both overlays and request surfaces.
 
-When both overlays and surfaces are active:
-
-- add each related task note link to the activity context frontmatter `tasks` field; this field is the canonical task-link set in the context note;
-- link each task note back through the task backlink field declared by `CODEX_PROJECT.md`;
-- task creation does not create another context note;
-- task notes remain the source of truth for status, Definition Of Done, checks, and detailed work notes;
-- the activity context remains the source of truth for the user goal, clarification history, consolidated current scope, and aggregate result;
-- closing one task does not necessarily complete the activity;
-- update the activity-level result only when the activity-context surface is also authorized.
+- Add each related task note link to the activity context frontmatter `tasks` field.
+- Link each task note back through the task backlink field declared by `CODEX_PROJECT.md`.
+- Do not create or complete an activity context from taskbook-only work.
+- Follow `../obsidian-activity-context/references/activity-context-workflow.md` for context lifecycle and activity-level result semantics.
 
 ## Status And Work Notes
 
@@ -101,7 +96,6 @@ When both overlays and surfaces are active:
 - Close tasks only after Definition Of Done and required checks are satisfied.
 - Move completed tasks to the configured archive through MCP.
 - Keep overview pages consistent with task state and location.
-- Do not create a separate final context note. When activity-context tracking is active, update the original canonical context through that overlay.
 
 ## Checks Convention
 
