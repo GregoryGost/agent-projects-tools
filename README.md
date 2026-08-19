@@ -170,7 +170,7 @@ Good/bad patterns, review checklist и официальные SQLAlchemy, `aiomy
 
 - пакет требует `obsidian-mcp-core`, но не активирует `obsidian-taskbook` или `obsidian-llm-wiki`;
 - проектные пути, creation/continuation modes, template application mode, task backlink field и fallback path задаются в `CODEX_PROJECT.md`;
-- каноническая структура Templater и правила её drift находятся в `references/activity-context-template.md`;
+- каноническая структура Templater, версия схемы, task-link field и правила drift находятся в `references/activity-context-template.md`;
 - identity, lifecycle, task linking и fallback synchronization находятся в `references/activity-context-workflow.md`.
 
 ## Правила работы с Obsidian-материалами
