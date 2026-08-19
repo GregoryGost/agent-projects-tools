@@ -34,20 +34,20 @@ When the user asks a project knowledge question:
 5. Cite relevant wiki/raw sources for non-trivial claims.
 6. State uncertainty when sources are missing, contradictory, or insufficient.
 
-Query does not authorize ingest or wiki mutation. It also does not search activity-context or taskbook notes automatically.
+Query does not authorize ingest or wiki mutation and does not search activity-context or taskbook notes automatically.
 
 ## Ingest Workflow
 
 Run ingest only after an explicit user request or an allowed wiki-write request mode.
 
-1. Read the authorized raw source through MCP.
+1. Read the authorized source through MCP.
 2. Summarize it in original wording rather than copying large passages.
 3. Identify key ideas, terms, entities, decisions, relationships, and project implications.
 4. Search existing wiki pages before creating new ones.
 5. Update an existing atomic page when it is the correct canonical location; otherwise create a focused new page.
 6. Add `[[wikilinks]]` between related pages.
-7. Include the raw logical path and original source URL when available.
-8. Update `wiki/Source Notes.md` with a short summary and key terms.
+7. Include the source logical path and original source URL when available.
+8. Update `wiki/Source Notes.md` when the source belongs to the raw-source register.
 9. Update `wiki/index.md` when new or significantly changed pages need discovery.
 10. Append an entry to `wiki/log.md`.
 11. Re-read and verify all modified notes through MCP.
@@ -56,13 +56,11 @@ Atomicity is preferred over dumping unrelated concepts into one page.
 
 ## Explicit Activity Context As Source
 
-An activity context may be used as an ingest source only when the user explicitly authorizes both the wiki and activity-context surfaces.
+An activity context may be used as a wiki source only when both the wiki and activity-context surfaces are explicitly authorized.
 
-- Preserve the activity-context note in place.
-- Do not move it into `raw/` or make it immutable.
-- Do not alter its lifecycle, template, task links, or result while performing wiki-only work.
-- Create or update wiki pages using the same ordinary source attribution and verification standards.
-- Do not infer future context-to-wiki synchronization.
+- Preserve the activity-context note in place and do not move it into `raw/`.
+- Apply ordinary wiki attribution and verification to the resulting wiki content.
+- Follow `.agents/skills/obsidian-activity-context/references/activity-context-workflow.md` for context-side lifecycle and ownership semantics.
 
 ## Templater-Aware Wiki Formatting
 
@@ -75,10 +73,9 @@ An activity context may be used as an ingest source only when the user explicitl
 
 ## Wiki Boundaries
 
-- Do not create, update, complete, reopen, or synchronize activity-context notes.
+- Do not create, update, complete, reopen, or synchronize activity-context notes during wiki-only work.
 - Do not create, update, close, archive, or re-index taskbook notes.
 - Do not write to task logs during wiki work.
-- Do not infer ingest from implementation, activity-context tracking, or task tracking.
 - Use `obsidian-activity-context` or `obsidian-taskbook` separately when those surfaces are requested and authorized.
 
 ## Review Checklist
@@ -87,7 +84,7 @@ An activity context may be used as an ingest source only when the user explicitl
 - [ ] Ingest had explicit authorization.
 - [ ] Wiki was searched before raw sources and before creating duplicate pages.
 - [ ] Existing raw sources remained immutable.
-- [ ] Activity contexts were not placed in `raw/` or ingested automatically.
+- [ ] Activity contexts were not placed in `raw/` or queried/ingested automatically.
 - [ ] Explicit context-source ingest preserved the original context note.
 - [ ] Wikilinks and source references were preserved or added appropriately.
 - [ ] Source register, index, and log updates matched the actual change.
