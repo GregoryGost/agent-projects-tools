@@ -11,13 +11,10 @@ Choose the narrowest applicable mode before acting:
 - `implementation`: code, tests, configuration, or project files may be changed
   when the request asks to perform work.
 - `review-only`: inspect and report findings; do not create tasks or code changes
-  unless the user explicitly changes the mode. Activity-context creation or
-  updates are allowed only through an explicitly composed
-  `activity-context-only` surface and the active project policy.
+  unless the user explicitly changes the mode. A separately authorized
+  specialized surface may compose with this mode.
 - `analysis-only`: investigate and explain; do not change files or taskbook
-  state. Activity-context creation or updates are allowed only through an
-  explicitly composed `activity-context-only` surface and the active project
-  policy.
+  state. A separately authorized specialized surface may compose with this mode.
 - `activity-context-only`: read or update one canonical Obsidian activity
   context, its required Templater template, or its temporary fallback outbox
   only through the configured MCP or declared fallback path.
@@ -78,14 +75,11 @@ Use the specialized Obsidian modes instead of the generic external-system mode:
 - other explicitly requested Obsidian MCP operations outside those overlays may
   use `external-system-only` together with `obsidian-mcp-core`.
 
-Activity-context tracking may compose with another mode only when the profile or
-the user authorizes it. The default activity-context profile may automatically
-compose `activity-context-only` with `implementation`, `documentation-only`,
-`analysis-only`, `review-only`, and mutating `external-system-only`.
-`taskbook-only`, `wiki-only`, `question-only`, `status-only`, and
-`commit-text-only` do not create a new activity context automatically, but may
-update an existing context when the message continues the same tracked activity
-and the combined gate explicitly includes the activity-context surface.
+Activity-context creation and continuation policy is not defined by this routing
+rule. Read the exact automatic-creation and continuation-only mode lists from the
+active Activity Context profile in `CODEX_PROJECT.md`. When that profile or the
+user authorizes activity-context work alongside another mode, use a combined gate
+that explicitly includes `activity-context-only`.
 
 Reclassifying a follow-up message does not create a new activity by itself.
 Resolve whether the message continues an existing activity independently from
@@ -106,8 +100,8 @@ If the request combines repository work with a direct external-system operation,
 identify each requested surface and side effect separately. A repository change
 does not authorize an external-system mutation, and an external-system operation
 does not authorize repository changes. Use a combined gate only for side
-effects explicitly requested by the user or automatically authorized by an
-active activity-context profile. If the required target or side effect remains
+effects explicitly requested by the user or explicitly authorized by an active
+specialized project profile. If the required target or side effect remains
 ambiguous, ask before acting.
 
 ## Surface and side-effect gate
