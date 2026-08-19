@@ -66,6 +66,7 @@
 12. Для SQLAlchemy с MySQL через `aiomysql` активируйте `python-sqlalchemy-core + python-sqlalchemy-mysql` и объявите точные server family/version, driver/version sources, pool, timeout, isolation, SQL mode, charset/collation, migration и integration-test policies.
 13. Для `jira-data-center` сохраните специализированный Jira Data Center profile: exact rule/skill pair, declared `8.22.x` или точную `8.22.z`, instance/environment и источники configuration. Runtime version проверяется через `/rest/api/2/serverInfo`; другая major/minor версия требует отдельных проверенных материалов.
 14. Для параметризуемой SVG-графики во Vue активируйте `vue3-typescript-vite`, профиль `vue-svg-graphics` и exact `vue_svg_graphics.md + vue-svg-graphics-expert` pair. CSS, CSS animation, Tailwind, UI validation и testing остаются отдельными опциональными overlays.
+15. Для единого контекста пользовательской активности активируйте `obsidian-activity-context`, exact `obsidian_activity_context.md + obsidian-activity-context` pair и обязательный `obsidian-mcp-core`; project-specific paths, modes и link fields задаются в Activity Context section `CODEX_PROJECT.md`.
 
 ## Фактическое покрытие
 
@@ -84,7 +85,7 @@
 | Vue testing и browser E2E | `vitest-vue-testing`, `vue-router-testing`, `pinia-testing`, `vueuse-testing`, `vue-playwright-e2e-testing` |
 | Styling и UI validation | `css-expert`, `css-animation-expert`, `scss-expert`, `tailwind-expert`, `ui-ux-review`, `playwright-ui-checks-mcp` |
 | Jira Data Center 8.22.x | `jira_data_center.md`, `jira-data-center` |
-| Obsidian | `obsidian-mcp-core`, `obsidian-llm-wiki`, `obsidian-taskbook` |
+| Obsidian | `obsidian-mcp-core`, `obsidian-activity-context`, `obsidian-llm-wiki`, `obsidian-taskbook` |
 
 Наличие технологии в `.codex/project.template.md` само по себе не означает наличие отдельного rule или skill-пакета. Фактическим источником перечня материалов служат `.codex/rules/` и `.agents/skills/`.
 
@@ -163,16 +164,25 @@ Good/bad patterns, review checklist и официальные SQLAlchemy, `aiomy
 - runtime вне `8.22.x` останавливает применение пакета после version diagnostic;
 - другая major/minor версия требует отдельного проверенного profile/rule/skill package либо явного обновления version boundary этого пакета.
 
+## Профиль Obsidian Activity Context
+
+Пакет `obsidian_activity_context.md + obsidian-activity-context` предназначен для ведения одного канонического контекстного файла на полный жизненный цикл одной пользовательской активности.
+
+- пакет требует `obsidian-mcp-core`, но не активирует `obsidian-taskbook` или `obsidian-llm-wiki`;
+- проектные пути, creation/continuation modes, template application mode, task backlink field и fallback path задаются в `CODEX_PROJECT.md`;
+- каноническая структура Templater, версия схемы, task-link field и правила drift находятся в `references/activity-context-template.md`;
+- identity, lifecycle, task linking и fallback synchronization находятся в `references/activity-context-workflow.md`.
+
 ## Правила работы с Obsidian-материалами
 
 Obsidian-related rules и skills требуют MCP-only подхода:
 
 - операции чтения, поиска, создания, обновления, перемещения, архивирования и проверки Obsidian vault выполняются через Semantic Notes Vault MCP;
-- `raw/`, `wiki/`, `tasks/` и `archive/` считаются логическими путями vault, а не путями файловой системы репозитория;
+- `contexts/`, `raw/`, `wiki/`, `tasks/` и `archive/` считаются логическими путями vault, а не путями файловой системы репозитория;
 - запрещено обходить MCP через shell-команды, скрипты, прямое чтение файлов, editor search или Git-операции по vault-содержимому;
 - перед изменением существующей заметки её нужно прочитать через MCP, изменить минимально безопасной операцией и затем перечитать для проверки результата;
 - whole-note replacement допустим только для явно запрошенной полной замены или осознанной регенерации заметки;
-- `obsidian-mcp-core` определяет безопасный доступ, а `obsidian-llm-wiki` и `obsidian-taskbook` активируются как независимые overlays.
+- `obsidian-mcp-core` определяет безопасный доступ, а `obsidian-activity-context`, `obsidian-llm-wiki` и `obsidian-taskbook` активируются как независимые overlays.
 
 ## Принципы ведения материалов
 

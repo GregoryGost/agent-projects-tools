@@ -86,6 +86,7 @@ Selection examples:
 - `ui-ux-validation`
 - `playwright-ui-validation-mcp`
 - `obsidian-mcp-core`
+- `obsidian-activity-context`
 - `obsidian-llm-wiki`
 - `obsidian-taskbook`
 - `jira-data-center`
@@ -113,7 +114,7 @@ List only additional rule files active in this project.
 - Styling rules: `<css.md / css_animation.md / tailwind_css.md / scss_styling.md / none>`
 - UI/browser validation rules: `<ui_ux_validation.md / playwright_ui_validation.md / none>`
 - E2E rules: `<python_service_e2e_testing.md / vue_playwright_e2e_testing.md / nodejs_service_e2e_testing.md / none>`
-- Obsidian rules: `<obsidian_llm_wiki.md / obsidian_taskbook.md / none>`
+- Obsidian rules: `<obsidian_activity_context.md / obsidian_llm_wiki.md / obsidian_taskbook.md / none>`
 - External-system rules: `<jira_data_center.md / none / other>`
 
 ## Active Skills
@@ -131,7 +132,7 @@ List only reusable skills active in this project.
 - Database skills: `<python-sqlalchemy-core / python-sqlalchemy-sqlite / python-sqlalchemy-mysql / none / other>`
 - HTTP/client skills: `<python-httpx-client / none / other>`
 - Security skills: `<python-backend-security / none / other>`
-- Obsidian skills: `<obsidian-mcp-core / obsidian-llm-wiki / obsidian-taskbook / none>`
+- Obsidian skills: `<obsidian-mcp-core / obsidian-activity-context / obsidian-llm-wiki / obsidian-taskbook / none>`
 - External-system skills: `<jira-data-center / none / other>`
 
 ## Build And Validation Commands
@@ -269,7 +270,7 @@ The specialized section activates the NATS KV cache rule/skill pair only when it
 - If FastAPI is active, use FastAPI rule/skill for app wiring and API behavior: `<yes/no/not applicable>`
 - If security-sensitive data or credentials are involved, use security skill: `<yes/no/not applicable>`
 - Real JetStream integration-test boundary: `<Testcontainers / Docker Compose / project test server / none>`
-- Test bucket isolation policy: `<unique run/test/xdist-worker buckets / project-specific / none>`
+- Test bucket isolation policy: `<unique run/xdist-worker buckets / project-specific / none>`
 
 ## Database Profile
 
@@ -563,7 +564,7 @@ The specialized section activates the Jira rule/skill pair only when it is enabl
 
 ### Obsidian MCP Core
 
-Keep whenever any Obsidian profile is active. The wiki and taskbook profiles require this core profile but do not activate each other.
+Keep whenever any Obsidian profile is active. The activity-context, wiki, and taskbook profiles require this core profile but do not activate each other.
 
 - Obsidian MCP core enabled: `<yes/no>`
 - Semantic Notes Vault MCP server name: `<name / none>`
@@ -573,6 +574,23 @@ Keep whenever any Obsidian profile is active. The wiki and taskbook profiles req
 - Obsidian Templater enabled: `<yes/no>`
 - Templater policy: `<templates through MCP / no executable template changes without approval / project-specific / none>`
 - PUML Viewer enabled: `<yes/no>`
+
+### Obsidian Activity Context
+
+Keep only when `obsidian-activity-context` is active. Requires `obsidian-mcp-core`; does not require `obsidian-taskbook` or `obsidian-llm-wiki`.
+
+- Obsidian activity context enabled: `<yes/no>`
+- Active activity-context rule/skill: `<obsidian_activity_context.md + obsidian-activity-context / none>`
+- Context root logical path: `<contexts/{project_key} / project-specific / none>`
+- Context note language: `<language / documentation language / project-specific / none>`
+- Context ID format: `<{PROJECT_KEY}-CTX-{YYYYMMDD}-{sequence} / project-specific / none>`
+- Context file naming policy: `<{activity_id}-{slug}.md / project-specific / none>`
+- Context template logical path: `<templates/activity-context.md / project-specific / none>`
+- Context template application mode: `<templater-folder-trigger / mcp-resolved-template / project-specific / none>`
+- Activity context automatic creation modes: `<implementation, documentation-only, analysis-only, review-only, mutating external-system-only / project-specific / none>`
+- Activity context continuation-only modes: `<taskbook-only, wiki-only, question-only, status-only, commit-text-only / project-specific / none>`
+- Task activity-context backlink field: `<activity_context / project-specific / none>`
+- Local activity-context fallback outbox: `<path / none>`
 
 ### Obsidian LLM Wiki
 
@@ -586,7 +604,6 @@ Keep only when `obsidian-llm-wiki` is active. Requires `obsidian-mcp-core`.
 - Wiki index path: `<wiki/index.md / project-specific / none>`
 - Source register path: `<wiki/Source Notes.md / project-specific / none>`
 - Wiki log path: `<wiki/log.md / project-specific / none>`
-- Local context fallback outbox: `<path / none>`
 
 ### Obsidian Taskbook
 
@@ -603,7 +620,7 @@ Keep only when `obsidian-taskbook` is active. Requires `obsidian-mcp-core`; does
 
 ## Dependency Policy
 
-- Existing dependency source of truth: `<pyproject.toml / package.json / go.mod / pom.xml / project-specific / none>`
+- Existing dependency source of truth: `<pyproject.toml / package.json / go.mod / project-specific / none>`
 - New dependencies require explicit user approval: `<yes/no>`
 - Runtime dependencies policy: `<policy>`
 - Development dependencies policy: `<policy>`

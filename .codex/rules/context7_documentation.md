@@ -33,7 +33,8 @@ runtime `/rest/api/2/serverInfo` verification, and curated Jira sources. Do not
 substitute Jira Cloud or generic Jira documentation.
 
 For Obsidian materials, Context7 does not replace the configured Semantic Notes
-Vault MCP boundary, Templater policy, or project-specific wiki/taskbook workflow.
+Vault MCP boundary, Templater policy, or project-specific activity-context,
+wiki, or taskbook workflows.
 
 ## Source precedence
 

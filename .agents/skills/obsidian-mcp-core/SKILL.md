@@ -7,14 +7,14 @@ description: "Use for MCP-only Obsidian vault access, safe partial edits, verifi
 
 Use this skill whenever a task reads, searches, creates, updates, moves, or reviews Obsidian content through the Semantic Notes Vault MCP plugin.
 
-This skill defines access and mutation safety only. It does not activate the LLM Wiki or taskbook workflows. Apply `obsidian-llm-wiki` or `obsidian-taskbook` separately when their profiles are active or their content is directly in scope.
+This skill defines access and mutation safety only. It does not activate the activity-context, LLM Wiki, or taskbook workflows. Apply `obsidian-activity-context`, `obsidian-llm-wiki`, or `obsidian-taskbook` separately when their profiles are active or their content is directly in scope.
 
 Load `references/patterns-and-review.md` for safe-edit examples and review checks.
 
 ## MCP-Only Vault Access
 
 - All Obsidian vault operations must use the connected Semantic Notes Vault MCP plugin.
-- Treat project logical roots and paths such as `raw/`, `wiki/`, `tasks/`, and `archive/` as MCP paths, not repository filesystem paths.
+- Treat project logical roots and paths such as `contexts/`, `raw/`, `wiki/`, `tasks/`, and `archive/` as MCP paths, not repository filesystem paths.
 - Do not inspect or modify vault content through shell commands, scripts, direct editor operations, Git, or repository filesystem tools.
 - Do not treat local fallback outboxes as a second vault or source of truth.
 
@@ -55,25 +55,30 @@ Do not update existing notes from memory or stale snippets.
 
 - Use Templater-aware behavior only when enabled in `CODEX_PROJECT.md`, explicitly requested, or already present in the target note/template.
 - Do not assume MCP create/update operations execute Templater expressions.
-- Write resolved Markdown for ordinary notes unless an MCP tool explicitly applies a template.
-- Preserve `<% ... %>`, `<%* ... %>`, `tp.*`, frontmatter expressions, PlantUML fences, and plugin-specific syntax.
+- When an active overlay requires a template, access it only through MCP and follow that overlay's template policy and canonical reference rather than defining template lifecycle policy in this core skill.
+- Re-read created or changed notes and verify the intended rendered or preserved structure.
+- Preserve `<% ... %>`, `<%* ... %>`, `tp.*`, frontmatter expressions, PlantUML fences, and plugin-specific syntax when they are intentional.
 - Do not add executable Templater JavaScript, user scripts, or system commands without explicit approval.
 
 ## Local Fallback Outboxes
 
 Use fallback files only when the Obsidian MCP is unavailable and the active project profile declares the relevant outbox.
 
-- Record the intended logical path, note type, source request, timestamp, and pending action.
+- Record the intended logical path, note type, stable identity when available, source request, timestamp, and pending action.
+- Treat fallback as a temporary synchronization journal, never as a second canonical note.
 - Synchronize through MCP when it becomes available.
+- Search the vault before creation so synchronization does not produce duplicates.
 - Re-read and verify the Obsidian result.
 - Delete the fallback file only after successful verification.
 - Keep and report fallback files that could not be synchronized.
 
 ## Overlay Boundaries
 
-- `obsidian-llm-wiki` owns wiki Query/Ingest, `raw/` source policy, wiki structure, index, source register, and wiki log.
-- `obsidian-taskbook` owns task creation, task status, task notes, overview pages, checks, archive, and implementation tracking.
-- Core access does not activate either overlay automatically.
+- `obsidian-activity-context` owns mutable activity-context notes, their lifecycle, template policy, and context fallback outboxes.
+- `obsidian-llm-wiki` owns wiki Query/Ingest, immutable `raw/` source policy, wiki structure, index, source register, and wiki log.
+- `obsidian-taskbook` owns task creation, task status, task notes, overview pages, checks, archive, and task fallback outboxes.
+- Activity-context notes are not immutable `raw/` sources, task notes, or wiki pages.
+- Core access does not activate any overlay automatically.
 - When an overlay is active, apply this core skill together with the corresponding overlay skill and rule.
 
 ## Review Checklist
@@ -84,6 +89,7 @@ Use fallback files only when the Obsidian MCP is unavailable and the active proj
 - [ ] Partial updates used bounded edit operations.
 - [ ] Whole-note replacement was explicit and verified.
 - [ ] Every write was followed by MCP read-back verification.
+- [ ] Template behavior followed the owning overlay instead of being redefined here.
 - [ ] Fallback was used only during MCP unavailability and remained temporary.
 - [ ] Templater and PlantUML syntax was preserved when present.
-- [ ] Wiki or taskbook behavior was applied only through its active overlay.
+- [ ] Activity-context, wiki, or taskbook behavior was applied only through its active overlay.

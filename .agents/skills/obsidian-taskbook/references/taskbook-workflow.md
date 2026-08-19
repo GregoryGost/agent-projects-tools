@@ -6,7 +6,7 @@ Use this reference only with the `obsidian-taskbook` profile. All vault access a
 
 Use the taskbook workflow only when taskbook changes are explicitly requested or implementation tracking is enabled by `CODEX_PROJECT.md` and allowed by the selected request mode.
 
-Do not create or update tasks for analysis, research, review, explanation, status-only, commit-text-only, wiki-only, documentation-only, or other modes that do not authorize taskbook writes.
+Do not create or update tasks for modes that do not authorize taskbook writes.
 
 ## Project Paths
 
@@ -16,9 +16,9 @@ Resolve all paths from `CODEX_PROJECT.md`:
 - project overview: `tasks/all-tasks-{project_key}`;
 - optional workspace overview: `all-tasks-workflow`;
 - completed task archive: `tasks/archive/{project_key}/`;
-- task and context fallback outboxes.
+- task fallback outbox.
 
-These are logical MCP paths, not filesystem paths.
+These are logical MCP paths, not filesystem paths. Activity-context paths and fallback outboxes belong to `obsidian-activity-context`, not this workflow.
 
 ## Task Identity
 
@@ -74,15 +74,24 @@ When authorized implementation work requires task tracking:
 2. Search existing task notes and overview pages through MCP to prevent duplicates.
 3. Create the required task notes through MCP.
 4. Add or update overview entries only after task notes exist.
-5. Link relevant raw/context notes from the task.
+5. Apply Activity Context Links when `obsidian-activity-context` is separately active and authorized.
 6. Re-read and verify task notes and overview pages.
 
-If MCP is unavailable, use only the configured fallback outbox and synchronize later through MCP.
+If MCP is unavailable, use only the configured task fallback outbox and synchronize later through MCP.
+
+## Activity Context Links
+
+Activity-context coordination is optional and requires both overlays and request surfaces.
+
+- Add each related task note link to the canonical task-link field defined by `.agents/skills/obsidian-activity-context/references/activity-context-template.md`.
+- Link each task note back through the task backlink field declared by `CODEX_PROJECT.md`.
+- Do not create or complete an activity context from taskbook-only work.
+- Follow `.agents/skills/obsidian-activity-context/references/activity-context-workflow.md` for context lifecycle and activity-level result semantics.
 
 ## Status And Work Notes
 
 - Set a started task to the project-approved in-progress status.
-- Record implementation progress and final results in `Notes on working on the task` rather than creating a separate final context note.
+- Record implementation progress and final task-specific results in `Notes on working on the task`.
 - Keep the nested `Checks` subsection inside `Notes on working on the task`.
 - Close tasks only after Definition Of Done and required checks are satisfied.
 - Move completed tasks to the configured archive through MCP.
@@ -103,13 +112,6 @@ If MCP is unavailable, use only the configured fallback outbox and synchronize l
 - Do not create separate Open/Closed sections unless the project explicitly requires them.
 - Update workspace overview pages only when the project participates in a multi-project workspace and the profile declares that page.
 
-## Raw Context Links
-
-- Context and analysis notes belong to `raw/` and are created through MCP when authorized.
-- Link task notes to the relevant raw/context notes.
-- Do not treat fallback files as permanent notes.
-- Complete pending links during fallback synchronization.
-
 ## Templater-Aware Task Formatting
 
 - Use task templates only when enabled, explicitly requested, or already used by the project.
@@ -121,6 +123,7 @@ If MCP is unavailable, use only the configured fallback outbox and synchronize l
 
 ## Boundaries
 
+- Do not create, update, complete, or synchronize activity contexts unless `obsidian-activity-context` is separately active and the request gate includes that surface.
 - Do not edit wiki pages, wiki indexes, source registers, or wiki logs during taskbook-only work.
 - Do not run wiki ingest from taskbook activity.
 - Use `obsidian-llm-wiki` separately when wiki changes are explicitly requested and authorized.
@@ -132,6 +135,6 @@ If MCP is unavailable, use only the configured fallback outbox and synchronize l
 - [ ] Task key, path, language, title, and structure follow the profile.
 - [ ] Status, work notes, checks, overview, and archive remain consistent.
 - [ ] Checks are nested inside `Notes on working on the task`, not stored as a top-level section.
-- [ ] Raw/context links point to MCP-managed notes.
+- [ ] Activity-context links use the canonical template field and the configured task backlink when applicable.
 - [ ] Every write was re-read and verified through MCP.
 - [ ] No wiki side effects were introduced.
