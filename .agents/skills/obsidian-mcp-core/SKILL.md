@@ -55,12 +55,8 @@ Do not update existing notes from memory or stale snippets.
 
 - Use Templater-aware behavior only when enabled in `CODEX_PROJECT.md`, explicitly requested, or already present in the target note/template.
 - Do not assume MCP create/update operations execute Templater expressions.
-- Write resolved Markdown for ordinary notes unless an MCP tool explicitly applies a template or the project declares a verified Templater trigger workflow.
-- When an active overlay declares a required template, check the configured logical template path through MCP before creating the target note.
-- If the template is absent and the overlay defines a canonical reference, create the template through MCP from that reference and verify it before use.
-- Do not overwrite, silently repair, bypass, or duplicate an existing template merely because it differs from the canonical reference. Follow the overlay's drift policy.
-- Even when a Templater folder or regex trigger is declared, re-read the newly created note and verify that required fields and sections were rendered.
-- Never reapply a creation template to an existing note unless the user explicitly requests complete regeneration and the overlay permits it.
+- When an active overlay requires a template, access it only through MCP and follow that overlay's template policy and canonical reference rather than defining template lifecycle policy in this core skill.
+- Re-read created or changed notes and verify the intended rendered or preserved structure.
 - Preserve `<% ... %>`, `<%* ... %>`, `tp.*`, frontmatter expressions, PlantUML fences, and plugin-specific syntax when they are intentional.
 - Do not add executable Templater JavaScript, user scripts, or system commands without explicit approval.
 
@@ -78,7 +74,7 @@ Use fallback files only when the Obsidian MCP is unavailable and the active proj
 
 ## Overlay Boundaries
 
-- `obsidian-activity-context` owns mutable activity-context notes, their lifecycle, Templater template policy, and context fallback outboxes.
+- `obsidian-activity-context` owns mutable activity-context notes, their lifecycle, template policy, and context fallback outboxes.
 - `obsidian-llm-wiki` owns wiki Query/Ingest, immutable `raw/` source policy, wiki structure, index, source register, and wiki log.
 - `obsidian-taskbook` owns task creation, task status, task notes, overview pages, checks, archive, and task fallback outboxes.
 - Activity-context notes are not immutable `raw/` sources, task notes, or wiki pages.
@@ -93,9 +89,7 @@ Use fallback files only when the Obsidian MCP is unavailable and the active proj
 - [ ] Partial updates used bounded edit operations.
 - [ ] Whole-note replacement was explicit and verified.
 - [ ] Every write was followed by MCP read-back verification.
-- [ ] Required templates were checked through MCP before use.
-- [ ] Missing templates were created only from an overlay-defined canonical reference.
-- [ ] Existing template drift followed the owning overlay's policy.
+- [ ] Template behavior followed the owning overlay instead of being redefined here.
 - [ ] Fallback was used only during MCP unavailability and remained temporary.
 - [ ] Templater and PlantUML syntax was preserved when present.
 - [ ] Activity-context, wiki, or taskbook behavior was applied only through its active overlay.
