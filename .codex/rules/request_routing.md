@@ -26,7 +26,8 @@ Choose the narrowest applicable mode before acting:
   the current Git state is allowed solely to determine the complete verified
   change set. Do not mutate Git state. When verification succeeds, do not add
   explanatory prose outside the requested format; when it is unavailable,
-  report the verification gap instead of fabricating commit text.
+  report the verification gap instead of fabricating commit text. Be sure to
+  take into account the rule for the git.md agent.
 - `status-only`: report the current state; do not continue implementation unless
   the user asks to keep working.
 - `question-only`: answer the question; do not make repository changes or
