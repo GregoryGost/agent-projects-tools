@@ -86,7 +86,7 @@ Activity-context coordination is optional and requires both overlays and request
 - Add each related task note link to the activity context frontmatter `tasks` field.
 - Link each task note back through the task backlink field declared by `CODEX_PROJECT.md`.
 - Do not create or complete an activity context from taskbook-only work.
-- Follow `../obsidian-activity-context/references/activity-context-workflow.md` for context lifecycle and activity-level result semantics.
+- Follow `.agents/skills/obsidian-activity-context/references/activity-context-workflow.md` for context lifecycle and activity-level result semantics.
 
 ## Status And Work Notes
 
