@@ -270,7 +270,7 @@ The specialized section activates the NATS KV cache rule/skill pair only when it
 - If FastAPI is active, use FastAPI rule/skill for app wiring and API behavior: `<yes/no/not applicable>`
 - If security-sensitive data or credentials are involved, use security skill: `<yes/no/not applicable>`
 - Real JetStream integration-test boundary: `<Testcontainers / Docker Compose / project test server / none>`
-- Test bucket isolation policy: `<unique run/test/xdist-worker buckets / project-specific / none>`
+- Test bucket isolation policy: `<unique run/xdist-worker buckets / project-specific / none>`
 
 ## Database Profile
 
@@ -585,7 +585,6 @@ Keep only when `obsidian-activity-context` is active. Requires `obsidian-mcp-cor
 - Context note language: `<language / documentation language / project-specific / none>`
 - Context ID format: `<{PROJECT_KEY}-CTX-{YYYYMMDD}-{sequence} / project-specific / none>`
 - Context file naming policy: `<{activity_id}-{slug}.md / project-specific / none>`
-- Context schema version: `<1 / project-specific / none>`
 - Context template logical path: `<templates/activity-context.md / project-specific / none>`
 - Context template application mode: `<templater-folder-trigger / mcp-resolved-template / project-specific / none>`
 - Activity context automatic creation modes: `<implementation, documentation-only, analysis-only, review-only, mutating external-system-only / project-specific / none>`
@@ -621,7 +620,7 @@ Keep only when `obsidian-taskbook` is active. Requires `obsidian-mcp-core`; does
 
 ## Dependency Policy
 
-- Existing dependency source of truth: `<pyproject.toml / package.json / go.mod / pom.xml / project-specific / none>`
+- Existing dependency source of truth: `<pyproject.toml / package.json / go.mod / project-specific / none>`
 - New dependencies require explicit user approval: `<yes/no>`
 - Runtime dependencies policy: `<policy>`
 - Development dependencies policy: `<policy>`
