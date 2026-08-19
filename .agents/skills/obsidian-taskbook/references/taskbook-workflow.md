@@ -83,7 +83,7 @@ If MCP is unavailable, use only the configured task fallback outbox and synchron
 
 Activity-context coordination is optional and requires both overlays and request surfaces.
 
-- Add each related task note link to the activity context frontmatter `tasks` field.
+- Add each related task note link to the canonical task-link field defined by `.agents/skills/obsidian-activity-context/references/activity-context-template.md`.
 - Link each task note back through the task backlink field declared by `CODEX_PROJECT.md`.
 - Do not create or complete an activity context from taskbook-only work.
 - Follow `.agents/skills/obsidian-activity-context/references/activity-context-workflow.md` for context lifecycle and activity-level result semantics.
@@ -135,6 +135,6 @@ Activity-context coordination is optional and requires both overlays and request
 - [ ] Task key, path, language, title, and structure follow the profile.
 - [ ] Status, work notes, checks, overview, and archive remain consistent.
 - [ ] Checks are nested inside `Notes on working on the task`, not stored as a top-level section.
-- [ ] Activity-context links use the context `tasks` field and the configured task backlink when applicable.
+- [ ] Activity-context links use the canonical template field and the configured task backlink when applicable.
 - [ ] Every write was re-read and verified through MCP.
 - [ ] No wiki side effects were introduced.
