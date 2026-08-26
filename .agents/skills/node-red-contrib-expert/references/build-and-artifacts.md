@@ -71,6 +71,8 @@ The script:
 - assembles or validates the matching `.html` node-set companion;
 - optionally copies explicitly configured files/directories;
 - rejects absolute paths, lexical path traversal, existing symlink traversal in intermediate path components, direct symbolic-link sources/outputs, and recursive/overlapping copy mappings;
+- requires `sourceRoot` and `outputRoot` to be separate trees when HTML is copied from source;
+- validates the complete copy-mapping graph so mapping destinations cannot overlap each other or act as another mapping's source;
 - prevents additional copy mappings from overlapping protected runtime `.js` or matching editor `.html` node-set artifacts;
 - detects stale extra paths in copy-owned destination trees and stale outputs left behind when an optional source disappears;
 - supports a read-only `--check` mode;
@@ -109,6 +111,10 @@ Example:
 ### `sourceRoot`
 
 Root used to locate source editor HTML when `editorHtml` is `copy`.
+
+It is required in `copy` mode and not required in `validate-only` mode. If provided in `validate-only`, the canonical script only validates that its path is project-relative and does not traverse an existing symlink; it is not used to derive HTML.
+
+In `copy` mode, `sourceRoot` and `outputRoot` must not be the same tree or parent/child trees. This keeps source and generated artifacts unambiguous.
 
 For:
 
@@ -161,6 +167,8 @@ Mappings are deliberately explicit. Do not turn the canonical script into a hidd
 
 Each mapping owns its destination path exclusively. Do not point a mapping at a directory that is also populated by another build stage. In normal mode the canonical script rejects stale extra paths in an existing destination tree; in `--check` mode it requires the destination tree/content to match the source exactly.
 
+The mapping graph must be order-independent: mapping destinations cannot overlap each other and a mapping destination cannot overlap another mapping's source. Chained copies where one mapping consumes another mapping's generated output require a project-specific build stage rather than the canonical postbuild baseline.
+
 A mapping destination must not be a parent/child of a `node-red.nodes` runtime `.js` artifact or its matching editor `.html`. Use narrower targets such as a dedicated `locales/`, `icons/`, or resource subdirectory instead of copying across an entire node-set directory.
 
 If an optional source does not exist, the corresponding output must also be absent. A remaining output is treated as stale rather than silently accepted.
@@ -198,7 +206,8 @@ It verifies:
 - `copy`-mode HTML matches its source exactly;
 - every configured copy mapping has the same exclusively owned file tree/content as its source;
 - required paths do not escape through lexical traversal or existing symlink path components;
-- optional mappings do not leave stale output after their source disappears.
+- optional mappings do not leave stale output after their source disappears;
+- copy mappings remain independent and do not overlap protected node-set artifacts.
 
 `--check` does not compile, copy, clean, modify package metadata, or publish anything.
 
@@ -245,7 +254,9 @@ A project-owned equivalent is suitable when it preserves the required project be
 - [ ] does not clean output after build;
 - [ ] does not publish or call package lifecycle commands recursively;
 - [ ] supports read-only artifact validation;
+- [ ] keeps source/output trees distinct for copied HTML;
 - [ ] prevents unsafe lexical/symlink traversal and unintended recursive copies;
+- [ ] validates copy mappings as an independent, non-overlapping graph;
 - [ ] prevents static copy mappings from overlapping protected node-set artifacts;
 - [ ] detects stale output in copy-owned destinations;
 - [ ] remains cross-platform without shell-specific `cp`, `rm`, or glob syntax;
