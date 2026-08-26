@@ -63,6 +63,10 @@ function isInside(basePath, candidatePath) {
   )
 }
 
+function pathsOverlap(leftPath, rightPath) {
+  return isInside(leftPath, rightPath) || isInside(rightPath, leftPath)
+}
+
 function resolveInside(basePath, value, label) {
   const input = assertNonEmptyString(value, label)
   if (isAbsolute(input)) {
@@ -205,7 +209,7 @@ async function copyTree(sourcePath, targetPath, label, checkOnly) {
     return
   }
 
-  if (isInside(sourcePath, targetPath) || isInside(targetPath, sourcePath)) {
+  if (pathsOverlap(sourcePath, targetPath)) {
     fail(`${label} source and output must not overlap`)
   }
 
@@ -289,6 +293,33 @@ function parseCopyMappings(value) {
   })
 }
 
+function resolveCopyMappings(projectRoot, mappings) {
+  return mappings.map((mapping) => ({
+    ...mapping,
+    sourcePath: resolveInside(projectRoot, mapping.from, `${mapping.label}.from`),
+    targetPath: resolveInside(projectRoot, mapping.to, `${mapping.label}.to`),
+  }))
+}
+
+function validateCopyMappingGraph(mappings) {
+  for (let leftIndex = 0; leftIndex < mappings.length; leftIndex += 1) {
+    const left = mappings[leftIndex]
+    for (let rightIndex = leftIndex + 1; rightIndex < mappings.length; rightIndex += 1) {
+      const right = mappings[rightIndex]
+
+      if (pathsOverlap(left.targetPath, right.targetPath)) {
+        fail(`${left.label}.to overlaps ${right.label}.to`)
+      }
+      if (pathsOverlap(left.targetPath, right.sourcePath)) {
+        fail(`${left.label}.to overlaps ${right.label}.from`)
+      }
+      if (pathsOverlap(right.targetPath, left.sourcePath)) {
+        fail(`${right.label}.to overlaps ${left.label}.from`)
+      }
+    }
+  }
+}
+
 async function main() {
   const args = process.argv.slice(2)
   if (args.includes(HELP_FLAG)) {
@@ -336,6 +367,9 @@ async function main() {
       `${CONFIG_KEY}.sourceRoot`,
     )
     await assertNoSymlinkPath(projectRoot, sourceRoot, `${CONFIG_KEY}.sourceRoot`)
+    if (pathsOverlap(sourceRoot, outputRoot)) {
+      fail(`${CONFIG_KEY}.sourceRoot and ${CONFIG_KEY}.outputRoot must not overlap in copy mode`)
+    }
   } else if (config.sourceRoot !== undefined) {
     sourceRoot = resolveInside(
       projectRoot,
@@ -414,33 +448,41 @@ async function main() {
     nodeSetCount += 1
   }
 
-  const copyMappings = parseCopyMappings(config.copy)
+  const copyMappings = resolveCopyMappings(
+    projectRoot,
+    parseCopyMappings(config.copy),
+  )
+  validateCopyMappingGraph(copyMappings)
+
   let copyCount = 0
   for (const mapping of copyMappings) {
-    const sourcePath = resolveInside(projectRoot, mapping.from, `${mapping.label}.from`)
-    const targetPath = resolveInside(projectRoot, mapping.to, `${mapping.label}.to`)
-    await assertNoSymlinkPath(projectRoot, sourcePath, `${mapping.label}.from`)
-    await assertNoSymlinkPath(projectRoot, targetPath, `${mapping.label}.to`)
+    await assertNoSymlinkPath(projectRoot, mapping.sourcePath, `${mapping.label}.from`)
+    await assertNoSymlinkPath(projectRoot, mapping.targetPath, `${mapping.label}.to`)
 
     for (const protectedPath of protectedArtifactPaths) {
-      if (isInside(targetPath, protectedPath) || isInside(protectedPath, targetPath)) {
+      if (pathsOverlap(mapping.targetPath, protectedPath)) {
         fail(`${mapping.label}.to overlaps a protected Node-RED node-set artifact`)
       }
     }
 
-    const sourceInfo = await getPathInfo(sourcePath)
+    const sourceInfo = await getPathInfo(mapping.sourcePath)
     if (!sourceInfo && mapping.optional) {
-      const targetInfo = await getPathInfo(targetPath)
+      const targetInfo = await getPathInfo(mapping.targetPath)
       if (targetInfo) {
-        fail(`${mapping.label} source is absent but stale output remains: ${targetPath}`)
+        fail(`${mapping.label} source is absent but stale output remains: ${mapping.targetPath}`)
       }
       continue
     }
     if (!sourceInfo) {
-      fail(`${mapping.label} source is missing: ${sourcePath}`)
+      fail(`${mapping.label} source is missing: ${mapping.sourcePath}`)
     }
 
-    await copyTree(sourcePath, targetPath, mapping.label, checkOnly)
+    await copyTree(
+      mapping.sourcePath,
+      mapping.targetPath,
+      mapping.label,
+      checkOnly,
+    )
     copyCount += 1
   }
 
