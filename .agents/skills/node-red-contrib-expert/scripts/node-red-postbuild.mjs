@@ -344,6 +344,7 @@ async function main() {
     fail("package.json node-red.nodes must contain at least one node set")
   }
 
+  const protectedArtifactPaths = []
   let nodeSetCount = 0
   for (const [nodeSetName, runtimeValue] of nodeEntries) {
     const runtimeRelative = assertNonEmptyString(
@@ -398,6 +399,7 @@ async function main() {
     }
 
     await requireRegularFile(editorOutputPath, `editor HTML for ${nodeSetName}`)
+    protectedArtifactPaths.push(runtimePath, editorOutputPath)
     nodeSetCount += 1
   }
 
@@ -408,6 +410,12 @@ async function main() {
     const targetPath = resolveInside(projectRoot, mapping.to, `${mapping.label}.to`)
     await assertNoSymlinkPath(projectRoot, sourcePath, `${mapping.label}.from`)
     await assertNoSymlinkPath(projectRoot, targetPath, `${mapping.label}.to`)
+
+    for (const protectedPath of protectedArtifactPaths) {
+      if (isInside(targetPath, protectedPath) || isInside(protectedPath, targetPath)) {
+        fail(`${mapping.label}.to overlaps a protected Node-RED node-set artifact`)
+      }
+    }
 
     const sourceInfo = await getPathInfo(sourcePath)
     if (!sourceInfo && mapping.optional) {
