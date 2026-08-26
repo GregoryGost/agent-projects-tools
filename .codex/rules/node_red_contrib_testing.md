@@ -1,8 +1,8 @@
-# Node-RED contrib testing rules
+# TypeScript Node-RED contrib testing rules
 
 Apply this rule only when `CODEX_PROJECT.md` declares the `node-red-contrib-testing` active stack profile or when the file is being maintained directly in the `agent-projects-tools` template repository.
 
-This is a Node-RED-specific testing overlay. It does not replace framework-neutral TypeScript/Jest testing or project E2E testing.
+This is a Node-RED-specific testing overlay for the **TypeScript Node-RED contrib** profile. It does not replace framework-neutral TypeScript/Jest testing or project E2E testing.
 
 ## Required skills
 
@@ -15,15 +15,19 @@ Required base rule:
 
 - `.codex/rules/node_red_contrib.md`.
 
+The base Node-RED profile transitively requires `typescript-core` and `.codex/rules/typescript_core.md`; do not duplicate those dependencies here.
+
 ## Source of truth
 
 Before adding or changing Node-RED tests:
 
 1. Read `CODEX_PROJECT.md` in a target project.
-2. Confirm the active `node-red-contrib` and `node-red-contrib-testing` profiles.
-3. Inspect `package.json`, lockfile, Node-RED version constraint, installed/development Node-RED version source, `node-red-node-test-helper` version source, test-runner configuration, setup files, and existing test flows.
+2. Confirm the active `node-red-contrib`, `node-red-contrib-testing`, and transitive TypeScript dependencies.
+3. Inspect `package.json`, lockfile, TypeScript/test compilation configuration, Node-RED version constraint, installed/development Node-RED version source, `node-red-node-test-helper` version source, helper type-definition source, test-runner configuration, setup files, and existing `.ts` test flows/tests.
 4. Check whether the project uses callback or Promise APIs for the declared helper version.
-5. Use project-declared test commands and test-runner conventions.
+5. Use project-declared type-check/test commands and test-runner conventions.
+
+Node-RED runtime/component test source is TypeScript in this profile. Do not add parallel JavaScript test implementations or edit generated JavaScript test output as source.
 
 Do not hardcode Mocha, Jest, Vitest, assertion libraries, TypeScript transformers, or coverage configuration in this Node-RED-specific layer.
 
@@ -31,7 +35,7 @@ Do not hardcode Mocha, Jest, Vitest, assertion libraries, TypeScript transformer
 
 Use this profile to test behavior that depends on a Node-RED runtime contract, including:
 
-- node registration and runtime loading;
+- typed node registration and runtime loading of the built node module;
 - flow wiring and messages between nodes;
 - multiple outputs and multiple emitted messages;
 - config-node resolution and shared-resource behavior;
@@ -40,9 +44,18 @@ Use this profile to test behavior that depends on a Node-RED runtime contract, i
 - custom `httpAdmin` or `httpNode` routes through the test runtime;
 - redeploy/set-flow behavior when the node intentionally reacts to flow changes.
 
-Keep pure transformations, DTO/model behavior, generic classes, ordinary services, and framework-neutral mocks in the active language/test-runner skill instead of repeating them through a Node-RED flow.
+Keep pure transformations, DTO/model behavior, generic classes, ordinary services, and framework-neutral mocks in the active TypeScript/test-runner skill instead of repeating them through a Node-RED flow.
 
-Actual browser interaction with the Node-RED editor belongs to an independently active UI/browser testing overlay. A real installed package running in a separate Node-RED process with real external dependencies belongs to project E2E scope rather than this runtime-component profile.
+Actual browser interaction with the Node-RED editor belongs to an independently active UI/browser testing overlay. A real packed/installed package running in a separate Node-RED process with real external dependencies belongs to project E2E scope rather than this runtime-component profile.
+
+## TypeScript test boundary
+
+- Author Node-RED runtime/component tests and reusable flow/test helpers in TypeScript.
+- Use the project-declared Node-RED and test-helper declarations when available; do not introduce `any` around helper/runtime objects merely to make tests compile.
+- Treat `@types/node-red-node-test-helper` or another declaration source as typing metadata, not proof of helper/runtime compatibility.
+- Keep test flow objects narrow and typed enough to catch misspelled ids/types/properties where the declaration/project model permits it, without building a second framework type system.
+- Narrow values returned from helper/runtime boundaries before invoking project-specific methods when their static type is broader than the actual test node.
+- Keep test-runner globals, mocks, fake timers, coverage, and transform configuration in the runner-specific overlay.
 
 ## Runtime harness
 
@@ -79,8 +92,11 @@ Actual browser interaction with the Node-RED editor belongs to an independently 
 
 ## Review checklist
 
+- [ ] The base TypeScript Node-RED contrib dependency graph is valid.
+- [ ] Node-RED runtime/component test source is TypeScript and generated JavaScript is not edited as source.
+- [ ] Node-RED, helper, declaration, TypeScript, and runner versions/sources came from project evidence.
+- [ ] Declaration package versions were not treated as runtime/helper compatibility evidence.
 - [ ] The test requires Node-RED runtime semantics rather than only generic TypeScript behavior.
-- [ ] Node-RED, helper, and runner versions came from project evidence.
 - [ ] The test uses the real Node-RED test runtime when runtime behavior is under test.
 - [ ] The flow fixture is minimal and includes required config/helper/core nodes explicitly.
 - [ ] Credentials are passed through the helper credential boundary.
