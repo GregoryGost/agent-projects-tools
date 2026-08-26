@@ -10,8 +10,6 @@ Use this skill for Node-RED-specific runtime/component tests when the `node-red-
 ## Required Dependencies
 
 - `.codex/rules/node_red_contrib_testing.md`
-- `.codex/rules/node_red_contrib.md`
-- `node-red-contrib-expert`
 
 Load references when needed:
 
@@ -23,7 +21,7 @@ Load references when needed:
 ## Workflow
 
 1. Read `CODEX_PROJECT.md` in a target project.
-2. Confirm the `node-red-contrib` and `node-red-contrib-testing` profiles and validate all required dependencies.
+2. Confirm the `node-red-contrib` and `node-red-contrib-testing` profiles and validate the full transitive dependency graph.
 3. Inspect Node-RED/runtime/helper versions, test-runner configuration, setup/teardown, existing test helpers, flow fixtures, credentials fixtures, and relevant runtime node code.
 4. Classify the behavior: framework-neutral logic, Node-RED runtime/component contract, browser editor behavior, or separate-process E2E.
 5. Use this skill only for the Node-RED runtime/component portion.
