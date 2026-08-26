@@ -42,18 +42,16 @@ Do not widen code to `any` merely because declaration packages lag a runtime fea
 
 ## Runtime initializer pattern
 
-Use the exact import/module syntax required by the project's module format and TypeScript configuration. The important part is the typed boundary, not one universal import spelling.
+Use the exact import/export syntax required by the project's module format and TypeScript configuration. The important part is the typed boundary, not one universal module spelling.
 
-Conceptual CommonJS-oriented example with the common DefinitelyTyped declarations:
+The following uses module-format-neutral type queries and intentionally leaves the final initializer export to the project build strategy:
 
 ```ts
-import type {
-  Node,
-  NodeAPI,
-  NodeDef,
-  NodeInitializer,
-  NodeMessage,
-} from "node-red"
+type Node = import("node-red").Node
+type NodeAPI = import("node-red").NodeAPI
+type NodeDef = import("node-red").NodeDef
+type NodeInitializer = import("node-red").NodeInitializer
+type NodeMessage = import("node-red").NodeMessage
 
 interface TransformNodeDef extends NodeDef {
   name: string
@@ -62,8 +60,11 @@ interface TransformNodeDef extends NodeDef {
 
 interface TransformNode extends Node {}
 
-interface TransformMessage extends NodeMessage {
-  payload: string
+function readStringPayload(msg: NodeMessage): string {
+  if (typeof msg.payload !== "string") {
+    throw new TypeError("msg.payload must be a string")
+  }
+  return msg.payload
 }
 
 const initializer: NodeInitializer = (RED: NodeAPI) => {
@@ -76,19 +77,18 @@ const initializer: NodeInitializer = (RED: NodeAPI) => {
 
     node.on("input", (msg, send, done) => {
       try {
-        const input = msg as TransformMessage
-        input.payload =
+        const payload = readStringPayload(msg)
+        msg.payload =
           config.mode === "lower"
-            ? input.payload.toLowerCase()
-            : input.payload.toUpperCase()
-        send(input)
+            ? payload.toLowerCase()
+            : payload.toUpperCase()
+        send(msg)
         done?.()
       } catch (error: unknown) {
-        if (done) {
-          done(error instanceof Error ? error : new Error(String(error)))
-        } else {
-          node.error(error instanceof Error ? error : String(error), msg)
-        }
+        const normalized =
+          error instanceof Error ? error : new Error(String(error))
+        if (done) done(normalized)
+        else node.error(normalized, msg)
       }
     })
   }
@@ -96,14 +96,14 @@ const initializer: NodeInitializer = (RED: NodeAPI) => {
   RED.nodes.registerType("example-transform", TransformNodeConstructor)
 }
 
-export = initializer
+// Export `initializer` according to the project's declared CJS/ESM strategy.
 ```
 
-This is a structural example, not a requirement to use CommonJS. For an ESM build supported by the target Node-RED version, use the project-declared ESM export shape and verify it against the applicable Node-RED loading behavior.
+For an ESM build supported by the target Node-RED version, use the project-declared ESM export shape. For CommonJS output, use the project-declared CommonJS shape. Verify the emitted artifact against the applicable Node-RED loading behavior.
 
 ## Do not cast before validation
 
-The previous example uses a cast only to illustrate the type locations. For untrusted or optional message properties, prefer real narrowing before use.
+For untrusted or optional message properties, narrow values before use.
 
 Good:
 
@@ -130,7 +130,7 @@ Keep these concepts separate:
 
 - `NodeDef` extension: persisted/configuration properties supplied by the flow;
 - `Node` extension: runtime node instance state and typed credentials where applicable;
-- `NodeMessage` extension: message properties this node consumes or emits;
+- `NodeMessage` extension: message properties this node consumes or emits after their runtime invariants are established;
 - service/domain types: framework-neutral application logic outside the Node-RED adapter.
 
 Do not put runtime clients, sockets, timers, or calculated state into the persisted `NodeDef` interface just because they are used by the same constructor.
@@ -177,6 +177,8 @@ function isServerNode(value: unknown): value is ServerNode {
   )
 }
 ```
+
+The local assertion above is limited to inspecting one already-guarded property shape; it is not being used as proof that the whole object is a `ServerNode`.
 
 Then handle the missing/invalid reference explicitly before processing messages.
 
