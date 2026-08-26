@@ -22,10 +22,11 @@ Before changing a Node-RED node module:
 1. Read `CODEX_PROJECT.md` in a target project.
 2. Inspect `package.json`, the lockfile, `node-red` metadata, Node.js `engines`, TypeScript version/configuration, build scripts, runtime source files, generated runtime artifacts, editor HTML/resources, and existing tests.
 3. Confirm that runtime authoring is TypeScript and identify the project-declared Node-RED type-definition source.
-4. Determine the supported Node-RED range from `package.json -> node-red.version` or another project-declared source and the actual development/test runtime version from project evidence.
-5. Treat Node-RED major-version behavior as version-sensitive. Do not silently apply current-runtime behavior to an older supported range.
-6. Determine the emitted JavaScript module format from project evidence. Node-RED 5 introduced support for installing ESM node modules; do not assume ESM support for older targets and do not migrate CommonJS/ESM format unless the task requires it.
-7. Use only project-declared build, type-check, test, lint, package, and validation commands.
+4. Inspect the declared Node-RED postbuild/artifact workflow: project-owned script, `node-red-build` configuration or project-specific equivalent, source/output roots, HTML strategy, clean-build policy, artifact-check command, and packed-package validation command.
+5. Determine the supported Node-RED range from `package.json -> node-red.version` or another project-declared source and the actual development/test runtime version from project evidence.
+6. Treat Node-RED major-version behavior as version-sensitive. Do not silently apply current-runtime behavior to an older supported range.
+7. Determine the emitted JavaScript module format from project evidence. Node-RED 5 introduced support for installing ESM node modules; do not assume ESM support for older targets and do not migrate CommonJS/ESM format unless the task requires it.
+8. Use only project-declared build, type-check, postbuild/artifact-check, test, lint, package, and validation commands.
 
 Do not copy historical version statements from tutorial pages into project constraints. Prefer the release plan, changelog, package metadata, applicable version-specific documentation, and current Node-RED Node.js support guidance when project metadata alone does not establish compatibility.
 
@@ -39,6 +40,20 @@ Do not copy historical version statements from tutorial pages into project const
 - Keep node-specific configuration, credentials, and message extensions as narrow project types rather than broad casts.
 - Do not duplicate or locally redefine Node-RED framework types merely to bypass a type error. If declarations do not match the verified runtime API, establish a bounded declaration augmentation or another project-approved compatibility fix.
 - Do not infer Node-RED runtime compatibility from an `@types/*` version. DefinitelyTyped declarations and the Node-RED runtime have independent release/version histories; verify APIs against the actual supported Node-RED range.
+
+## Build and postbuild contract
+
+- Treat TypeScript compilation, Node-RED postbuild assembly/validation, and packed-package validation as distinct build stages.
+- The active profile must declare a project-owned Node-RED postbuild script or an explicitly equivalent project artifact workflow. The target build must not execute `.agents/skills/node-red-contrib-expert/scripts/node-red-postbuild.mjs` directly.
+- When no suitable project-owned implementation exists and the requested task authorizes build configuration, the canonical skill asset may be copied/adapted to a project-owned path such as `scripts/node-red-postbuild.mjs`.
+- When a project-owned script already exists, validate required capabilities instead of replacing it because it differs from the canonical script or hash.
+- The canonical workflow uses project-local `package.json -> node-red-build`; this is a portable-skill convention, not an official Node-RED metadata field.
+- The postbuild stage may assemble/copy declared Node-RED artifacts and validate their layout, but it must not compile TypeScript, select CJS/ESM, clean output after compilation, run tests, invoke package lifecycle commands recursively, publish, or rewrite package metadata.
+- Keep clean-before-build behavior in the owning build stage. Keep packed-package validation in a separate project-declared command/stage.
+- Prefer a read-only `--check` mode or equivalent artifact-check command after build for CI/review validation.
+- Keep optional static copies explicit, project-relative, and bounded. Reject path traversal, unintended symlink traversal, or recursive/overlapping copy mappings in reusable postbuild logic.
+- Do not introduce runtime bundling by default. Use plain TypeScript compilation unless a project-specific bundling requirement has compatibility evidence.
+- Treat Node-RED editor HTML as a Node-RED node-set artifact, not a generic Vite `index.html` entrypoint. Preserve its registration/template/help semantics through any build step.
 
 ## Package and artifact contract
 
@@ -109,6 +124,8 @@ Do not place business logic in the editor artifact. Keep editor behavior focused
 - [ ] Node-RED declaration-package versions were not treated as runtime-version evidence.
 - [ ] Supported Node-RED and Node.js versions came from current project evidence plus applicable official compatibility sources where needed.
 - [ ] Emitted JavaScript module format and build output were verified rather than assumed.
+- [ ] Project-owned postbuild/artifact workflow is declared and does not execute the skill asset directly.
+- [ ] Postbuild capabilities, `node-red-build`/equivalent config, clean policy, and package-check boundary are explicit.
 - [ ] `node-red.nodes` points to published JavaScript runtime artifacts produced from TypeScript source.
 - [ ] Runtime/editor node-set artifact pairing survives the build/package step.
 - [ ] Runtime/editor/template/help type identifiers are consistent.
