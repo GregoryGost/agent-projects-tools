@@ -4,13 +4,15 @@
 
 Prefer a small typed flow with the node under test and a helper observer.
 
+Import `helper` and the runtime node module using the project's declared TypeScript/module strategy. `node-red-node-test-helper` declarations commonly use `export =`, so do not copy a default import unless the project configuration explicitly supports that interop.
+
 The exact flow/helper types depend on the project's declaration source; do not erase them to `any` merely to copy an example.
 
 ```ts
-import type { Node, NodeMessage } from "node-red"
-import helper from "node-red-node-test-helper"
-import exampleNode = require("../nodes/example-transform")
+type NodeMessage = import("node-red").NodeMessage
 
+// `helper` and `exampleNode` are imported above using the project-declared
+// module/interoperability strategy.
 const flow = [
   { id: "n1", type: "example-transform", wires: [["out"]] },
   { id: "out", type: "helper" },
