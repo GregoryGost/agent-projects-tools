@@ -1,0 +1,225 @@
+# TypeScript runtime and typing for Node-RED contrib nodes
+
+## Portable standard
+
+This profile assumes runtime node implementation is authored in TypeScript and emitted to JavaScript before Node-RED loads it.
+
+```text
+src/nodes/example.ts
+        |
+        | type check + build
+        v
+dist/nodes/example.js
+        |
+        +-> package.json -> node-red.nodes
+```
+
+Do not treat the emitted JavaScript as a second implementation. If behavior changes, change the TypeScript source and rebuild.
+
+## Declaration source
+
+The target project must declare where Node-RED TypeScript types come from.
+
+A common source is DefinitelyTyped's `@types/node-red`, which exposes shortcuts including:
+
+- `NodeInitializer`;
+- `NodeAPI`;
+- `NodeDef`;
+- `Node`;
+- `NodeMessage`;
+- runtime node credential-value typing through generic `Node<TCreds>`;
+- credential-definition types used when registering nodes;
+- editor-side types such as `EditorRED` and `EditorNodeDef`.
+
+`@types/node-red` is not the Node-RED runtime and its package version does not track the Node-RED major version. Treat these as separate compatibility questions:
+
+1. Which Node-RED runtime versions does the package support?
+2. Which Node.js versions do those runtimes support?
+3. Which TypeScript compiler/version does the project use?
+4. Which declaration package or project declarations provide the APIs used by the code?
+5. Do those declarations actually model the verified runtime API used by the project?
+
+Do not widen code to `any` merely because declaration packages lag a runtime feature. Prefer a narrow local module augmentation or another project-approved declaration fix scoped to the verified API difference.
+
+## Runtime initializer pattern
+
+Use the exact import/export syntax required by the project's module format and TypeScript configuration. The important part is the typed boundary, not one universal module spelling.
+
+The following uses module-format-neutral type queries and intentionally leaves the final initializer export to the project build strategy:
+
+```ts
+type Node = import("node-red").Node
+type NodeAPI = import("node-red").NodeAPI
+type NodeDef = import("node-red").NodeDef
+type NodeInitializer = import("node-red").NodeInitializer
+type NodeMessage = import("node-red").NodeMessage
+
+interface TransformNodeDef extends NodeDef {
+  name: string
+  mode: "lower" | "upper"
+}
+
+type TransformNode = Node
+
+function readStringPayload(msg: NodeMessage): string {
+  if (typeof msg.payload !== "string") {
+    throw new TypeError("msg.payload must be a string")
+  }
+  return msg.payload
+}
+
+const initializer: NodeInitializer = (RED: NodeAPI) => {
+  function TransformNodeConstructor(
+    this: TransformNode,
+    config: TransformNodeDef,
+  ): void {
+    RED.nodes.createNode(this, config)
+    const node = this
+
+    node.on("input", (msg, send, done) => {
+      try {
+        const payload = readStringPayload(msg)
+        msg.payload =
+          config.mode === "lower"
+            ? payload.toLowerCase()
+            : payload.toUpperCase()
+        send(msg)
+        done?.()
+      } catch (error: unknown) {
+        const normalized =
+          error instanceof Error ? error : new Error(String(error))
+        if (done) done(normalized)
+        else node.error(normalized, msg)
+      }
+    })
+  }
+
+  RED.nodes.registerType("example-transform", TransformNodeConstructor)
+}
+
+// Export `initializer` according to the project's declared CJS/ESM strategy.
+```
+
+For an ESM build supported by the target Node-RED version, use the project-declared ESM export shape. For CommonJS output, use the project-declared CommonJS shape. Verify the emitted artifact against the applicable Node-RED loading behavior.
+
+## Do not cast before validation
+
+For untrusted or optional message properties, narrow values before use.
+
+Good:
+
+```ts
+function readStringPayload(msg: NodeMessage): string {
+  if (typeof msg.payload !== "string") {
+    throw new TypeError("msg.payload must be a string")
+  }
+  return msg.payload
+}
+```
+
+Bad:
+
+```ts
+const payload = (msg as { payload: string }).payload
+```
+
+A TypeScript assertion does not validate a flow message at runtime.
+
+## Node definition and instance types
+
+Keep these concepts separate:
+
+- `NodeDef` extension: persisted/configuration properties supplied by the flow;
+- `Node` extension: runtime node instance state and typed credential values where applicable;
+- `NodeMessage` extension: message properties this node consumes or emits after their runtime invariants are established;
+- service/domain types: framework-neutral application logic outside the Node-RED adapter.
+
+Do not put runtime clients, sockets, timers, or calculated state into the persisted `NodeDef` interface just because they are used by the same constructor.
+
+## Credentials
+
+Model runtime credential values independently from ordinary config and from the credential-definition metadata passed to `registerType`.
+
+Conceptually:
+
+```ts
+interface ApiCredentials {
+  token: string
+}
+
+type ApiNode = Node<ApiCredentials>
+
+interface ApiNodeDef extends NodeDef {
+  endpoint: string
+}
+```
+
+Here `ApiCredentials` models the values available on the runtime node instance. The `credentials` option supplied when registering the node has a different declaration shape describing credential fields such as `text` or `password`; do not confuse those two TypeScript concepts.
+
+Keep runtime credential values, registration credential definitions, and editor credential definitions aligned without duplicating secret fields in `NodeDef`.
+
+Never log a typed credential merely because TypeScript makes it easy to access.
+
+## Config nodes
+
+When a node references a config node, do not assume `RED.nodes.getNode()` returned the expected custom type.
+
+Prefer a local type guard or another verified narrowing strategy around the config-node contract.
+
+```ts
+interface ServerNode extends Node {
+  request(input: string): Promise<string>
+}
+
+function isServerNode(value: unknown): value is ServerNode {
+  if (typeof value !== "object" || value === null || !("request" in value)) {
+    return false
+  }
+
+  return typeof value.request === "function"
+}
+```
+
+Then handle the missing/invalid reference explicitly before processing messages.
+
+## Framework-neutral logic
+
+Prefer:
+
+```text
+Node-RED adapter (typed RED/config/msg/lifecycle)
+        |
+        v
+framework-neutral TypeScript service/domain code
+```
+
+The adapter should translate Node-RED input into ordinary typed inputs, invoke reusable logic, then translate the result back into Node-RED message/status/error semantics.
+
+This lets generic logic remain covered by the active framework-neutral TypeScript testing material while Node-RED runtime behavior is covered by `node-red-contrib-testing`.
+
+## Generated artifacts
+
+Review generated JavaScript when build/package behavior changes, but do not hand-maintain it in parallel with TypeScript source.
+
+Check that:
+
+- sourcemaps point to the intended source tree when published;
+- declarations are emitted only when they are part of the package contract;
+- internal `.d.ts` output does not accidentally become a public API;
+- clean builds remove stale runtime artifacts;
+- all runtime `.js` files referenced by `node-red.nodes` are reproducible from committed TypeScript source;
+- matching editor `.html`, icons, locales, and resources survive the same package build.
+
+## Review anti-patterns
+
+Avoid:
+
+- editing generated `.js` instead of `.ts`;
+- `RED: any`, `config: any`, `msg: any`, or untyped credentials by default;
+- copying Node-RED declaration interfaces into the project without a compatibility reason;
+- using `as SomeMessage` as runtime validation;
+- mixing persisted config and runtime-only state in one interface;
+- confusing runtime credential values with registration/editor credential-definition metadata;
+- treating a passing `tsc` build as proof the node will load in Node-RED;
+- treating a passing Node-RED runtime test as replacement for project type checking;
+- assuming declaration-package semver equals Node-RED runtime semver.

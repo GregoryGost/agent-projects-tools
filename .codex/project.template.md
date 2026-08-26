@@ -69,6 +69,8 @@ Selection examples:
 - `eslint-typescript`
 - `prettier-formatting`
 - `nodejs-service-e2e-testing`
+- `node-red-contrib`
+- `node-red-contrib-testing`
 - `vue3-typescript-vite`
 - `vue-svg-graphics`
 - `vue-router`
@@ -110,6 +112,7 @@ List only additional rule files active in this project.
 - Formatting/linting rules: `<prettier_formatting.md / eslint_typescript.md / none>`
 - Language rules: `<typescript_core.md / typescript_jest_testing.md / none / other>`
 - Framework rules: `<vue3_typescript_vite.md / vue_svg_graphics.md / vue_router.md / pinia.md / vueuse.md / none / other>`
+- Node-RED rules: `<node_red_contrib.md / node_red_contrib_testing.md / none>`
 - Styling rules: `<css.md / css_animation.md / tailwind_css.md / scss_styling.md / none>`
 - UI/browser validation rules: `<ui_ux_validation.md / playwright_ui_validation.md / none>`
 - E2E rules: `<python_service_e2e_testing.md / vue_playwright_e2e_testing.md / nodejs_service_e2e_testing.md / none>`
@@ -125,6 +128,7 @@ List only reusable skills active in this project.
 - Language skills: `<typescript-core / typescript-jest-testing / none / other>`
 - Formatting/linting skills: `<prettier-formatting / eslint-typescript / none>`
 - Framework skills: `<vue3-typescript-vite-expert / vue-svg-graphics-expert / vue-router-expert / pinia-expert / vueuse-expert / none>`
+- Node-RED skills: `<node-red-contrib-expert / node-red-contrib-testing / none>`
 - Styling skills: `<css-expert / css-animation-expert / tailwind-expert / scss-expert / none>`
 - UI/browser validation skills: `<ui-ux-review / playwright-ui-checks-mcp / none>`
 - E2E skills: `<python-service-e2e-testing / vue-playwright-e2e-testing / nodejs-service-e2e-testing / none>`
@@ -151,6 +155,9 @@ Use only project-declared commands.
 - E2E tests: `<command or none>`
 - UI validation / Playwright MCP workflow: `<workflow or none>`
 - Build: `<command or none>`
+- Postbuild / artifact assembly: `<command or none>`
+- Artifact check: `<command or none>`
+- Packed-package validation: `<command or none>`
 - Preview/start app for browser tests: `<command or none>`
 - Other validation: `<command or none>`
 
@@ -378,7 +385,7 @@ Keep only when TypeScript or JavaScript is active.
 - TypeScript/JavaScript enabled: `<yes/no>`
 - Runtime: `<Node.js / browser / Deno / Bun / none / other>`
 - Package manager: `<npm / pnpm / yarn / none / other>`
-- Framework: `<Vue / Express / NestJS / none / other>`
+- Framework: `<Node-RED / Vue / Express / NestJS / none / other>`
 - Build tool: `<Vite / Webpack / Rollup / tsc / none / other>`
 - TypeScript config paths: `<tsconfig paths / none>`
 
@@ -394,6 +401,51 @@ Keep only for non-browser Node.js services.
 - Real dependency policy for tests: `<Testcontainers / Docker Compose / local services / none / project-specific>`
 - Active Node.js service E2E rule: `<nodejs_service_e2e_testing.md / none>`
 - Active Node.js service E2E skill: `<nodejs-service-e2e-testing / none>`
+
+## TypeScript Node-RED Contrib Profile
+
+Keep only when `node-red-contrib` is active. This portable profile covers **TypeScript-authored** custom/contrib node modules that register runtime node types and editor definitions. JavaScript-only node modules, packaged subflows, and the separate Node-RED plugin API are outside this profile unless separate project-specific materials are added.
+
+The specialized section activates the Node-RED contrib rule/skill pair only when it is enabled, activates the required `typescript_core.md + typescript-core` base pair, declares the TypeScript/declaration/runtime/build sources, and names the exact Node-RED pair. A project-owned postbuild/artifact implementation or explicit equivalent is also required; the target build must never execute the skill asset directly. Required fields depend on the selected artifact strategy: `sourceRoot` is required for canonical `editorHtml: copy` and may be not applicable for `validate-only`. A disabled section, a non-TypeScript runtime authoring language, a missing field required by the selected strategy, or an absent postbuild/equivalent makes the profile invalid.
+
+- Node-RED contrib enabled: `<yes/no>`
+- Runtime authoring language: `TypeScript`
+- Runtime source extension: `.ts`
+- Runtime artifact language: `JavaScript`
+- Package name source: `<package.json / project-specific / none>`
+- Supported Node-RED version constraint source: `<package.json node-red.version / project documentation / none>`
+- Development/test Node-RED version source: `<package.json / lockfile / local runtime / CI / project-specific / none>`
+- Node.js version source: `<package.json engines / CI / runtime / project-specific / none>`
+- TypeScript version source: `<package.json / lockfile / project-specific / none>`
+- TypeScript config paths: `<tsconfig paths / project-specific / none>`
+- Node-RED runtime declaration source: `<@types/node-red / project declarations / other verified declaration source / none>`
+- Node-RED declaration version source: `<package.json / lockfile / project-specific / none>`
+- Emitted JavaScript module format: `<CommonJS / ESM / mixed / project-specific / none>`
+- Runtime node entrypoint source: `package.json -> node-red.nodes`
+- Runtime TypeScript source layout: `<paths / project-specific / none>`
+- Runtime JavaScript build output: `<paths / project-specific / none>`
+- Editor artifact layout: `<paths / project-specific / none>`
+- Editor logic authoring strategy: `<inline editor JavaScript / TypeScript built into editor resources / mixed / project-specific / none>`
+- Node-RED postbuild implementation: `<canonical project-owned copy / project-specific equivalent / none>`
+- Project-owned postbuild implementation location: `<scripts/node-red-postbuild.mjs / task-runner config / build config / project-specific / none>`
+- Canonical skill asset source: `.agents/skills/node-red-contrib-expert/scripts/node-red-postbuild.mjs`
+- Postbuild configuration source: `<package.json node-red-build / project-specific / none>`
+- Postbuild source root: `<path / not applicable for validate-only / project-specific / none>`
+- Postbuild output root: `<path / project-specific / none>`
+- Editor HTML strategy: `<copy / validate-only / project-specific / none>`
+- Explicit postbuild copy mappings: `<list / none>`
+- Postbuild integration: `<npm postbuild / explicit build chain / task runner / project-specific / none>`
+- Clean-before-build policy: `<required / build tool guarantees clean output / project-specific / none>`
+- Artifact check command: `<command / none>`
+- Packed-package validation command: `<npm pack --dry-run / project-specific / none>`
+- Runtime bundling policy: `<plain TypeScript compilation / project-specific bundler with compatibility evidence / none>`
+- Config nodes enabled: `<yes/no>`
+- Node credentials enabled: `<yes/no>`
+- Custom HTTP surfaces: `<none / httpAdmin / httpNode / both / project-specific>`
+- Editor resources path: `<resources/ / project-specific / none>`
+- Required TypeScript base rule/skill: `<typescript_core.md + typescript-core / none>`
+- Active Node-RED contrib rule/skill: `<node_red_contrib.md + node-red-contrib-expert / none>`
+- Optional active overlays: `<node-red-contrib-testing / typescript-jest-testing / eslint-typescript / prettier-formatting / ui-ux-validation / playwright-ui-validation-mcp / nodejs-service-e2e-testing / none>`
 
 ## Vue 3 + TypeScript + Vite Profile
 
@@ -507,6 +559,29 @@ Keep only when framework-neutral TypeScript unit or integration testing through 
 - Unit test command: `<command / none>`
 - Integration test command: `<command / none>`
 - Active test rule/skill: `<typescript_jest_testing.md + typescript-jest-testing / none>`
+
+### TypeScript Node-RED Contrib Runtime / Component Testing
+
+Keep only when `node-red-contrib-testing` is active. This testing overlay requires the active TypeScript `node-red-contrib` profile and exact base/testing rule/skill pairs. Runner configuration, generic TypeScript tests, browser editor tests, and separate-process E2E remain independent overlays.
+
+- Node-RED contrib testing enabled: `<yes/no>`
+- Node-RED runtime/component test source language: `TypeScript`
+- Test source extension: `.ts`
+- Node-RED test helper: `<node-red-node-test-helper / project-specific / none>`
+- Test helper version source: `<package.json / lockfile / project-specific / none>`
+- Node-RED test-helper declaration source: `<@types/node-red-node-test-helper / project declarations / other verified declaration source / none>`
+- Test-helper declaration version source: `<package.json / lockfile / project-specific / none>`
+- Test TypeScript config source: `<tsconfig path / runner config / project-specific / none>`
+- Test runtime Node-RED version source: `<package.json / lockfile / helper.init runtime / CI / project-specific / none>`
+- Test runner: `<Jest / Vitest / Mocha / project-specific / none>`
+- Node-RED runtime/component test command: `<command / none>`
+- Test-flow fixture policy: `<minimal typed inline flows / dedicated typed fixtures / mixed / project-specific / none>`
+- Credentials fixture policy: `<helper credentials argument with synthetic typed values / project-specific / none>`
+- Helper HTTP server policy: `<only route suites / project-specific / none>`
+- Runtime cleanup policy: `<helper.unload + stop server when started / project-specific / none>`
+- Active base Node-RED rule/skill: `<node_red_contrib.md + node-red-contrib-expert / none>`
+- Active Node-RED testing rule/skill: `<node_red_contrib_testing.md + node-red-contrib-testing / none>`
+- Optional runner/browser/E2E overlays: `<typescript-jest-testing / ui-ux-validation / playwright-ui-validation-mcp / nodejs-service-e2e-testing / none>`
 
 ### Vue Unit / Component Testing
 
