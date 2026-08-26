@@ -66,7 +66,7 @@
 12. Для SQLAlchemy с MySQL через `aiomysql` активируйте `python-sqlalchemy-core + python-sqlalchemy-mysql` и объявите точные server family/version, driver/version sources, pool, timeout, isolation, SQL mode, charset/collation, migration и integration-test policies.
 13. Для `jira-data-center` сохраните специализированный Jira Data Center profile: exact rule/skill pair, declared `8.22.x` или точную `8.22.z`, instance/environment и источники configuration. Runtime version проверяется через `/rest/api/2/serverInfo`; другая major/minor версия требует отдельных проверенных материалов.
 14. Для параметризуемой SVG-графики во Vue активируйте `vue3-typescript-vite`, профиль `vue-svg-graphics` и exact `vue_svg_graphics.md + vue-svg-graphics-expert` pair. CSS, CSS animation, Tailwind, UI validation и testing остаются отдельными опциональными overlays.
-15. Для custom/contrib nodes Node-RED активируйте `node-red-contrib` и exact `node_red_contrib.md + node-red-contrib-expert` pair. Runtime/component tests через `node-red-node-test-helper` подключаются отдельным `node-red-contrib-testing` profile; TypeScript/Jest, browser editor testing и separate-process E2E остаются независимыми overlays.
+15. Для custom/contrib nodes Node-RED используйте TypeScript-стандарт: одновременно активируйте `typescript-core`, `node-red-contrib`, exact `typescript_core.md + typescript-core` и `node_red_contrib.md + node-red-contrib-expert` pairs. Runtime source хранится в `.ts`, Node-RED загружает сгенерированный `.js`; Node-RED runtime/component tests подключаются отдельным `node-red-contrib-testing` profile, а Jest/browser/separate-process E2E остаются независимыми overlays.
 
 ## Фактическое покрытие
 
@@ -81,7 +81,7 @@
 | Python backend | `python-fastapi-expert`, `python-cashews-cache`, `python-sqlalchemy-core`, `python-sqlalchemy-sqlite`, `python-sqlalchemy-mysql`, `python-httpx-client`, `python-backend-security` |
 | Python distributed cache | `python_nats_kv_cache.md`, `python-nats-kv-cache` для NATS JetStream Key/Value |
 | TypeScript и Node.js | `typescript-core`, `typescript-jest-testing`, `eslint-typescript`, `prettier-formatting`, `nodejs-service-e2e-testing` |
-| Node-RED contrib и runtime testing | `node_red_contrib.md`, `node-red-contrib-expert`, `node_red_contrib_testing.md`, `node-red-contrib-testing` |
+| TypeScript Node-RED contrib и runtime testing | `node_red_contrib.md`, `node-red-contrib-expert`, `node_red_contrib_testing.md`, `node-red-contrib-testing` поверх обязательного `typescript-core` |
 | Vue 3 + TypeScript + Vite | `vue3-typescript-vite-expert`, `vue-svg-graphics-expert`, `vue-router-expert`, `pinia-expert`, `vueuse-expert` |
 | Vue testing и browser E2E | `vitest-vue-testing`, `vue-router-testing`, `pinia-testing`, `vueuse-testing`, `vue-playwright-e2e-testing` |
 | Styling и UI validation | `css-expert`, `css-animation-expert`, `scss-expert`, `tailwind-expert`, `ui-ux-review`, `playwright-ui-checks-mcp` |
@@ -101,25 +101,31 @@
 - при недоступности или недостаточном покрытии Context7 используются curated official sources или прямая официальная документация;
 - security, Jira Data Center и Obsidian сохраняют собственные source-of-truth и workflow boundaries.
 
-## Профиль Node-RED contrib
+## Профиль TypeScript Node-RED contrib
 
-Пакет `node_red_contrib.md + node-red-contrib-expert` предназначен для custom/contrib node modules Node-RED и покрывает связанный runtime/editor/package contract, lifecycle, config nodes, credentials, HTTP surfaces, resources и npm packaging.
+Пакет `node_red_contrib.md + node-red-contrib-expert` предназначен только для **TypeScript-authored custom/contrib node modules Node-RED** и всегда требует `typescript_core.md + typescript-core` как базовую языковую пару.
 
-- профиль не фиксирует одну текущую версию Node-RED или Node.js: применимый support range, development/test runtime, module format и build output определяются из `package.json`, lockfile, CI/runtime и других project evidence;
-- `package.json -> node-red.nodes`, runtime registration, editor registration, edit/help templates и опубликованные artifacts рассматриваются как единый совместимый контракт;
-- TypeScript остаётся отдельным language overlay: Node-RED материалы проверяют source-to-build-to-package boundary, но не дублируют generic typing/refactoring policy `typescript-core`;
-- reusable domain/service logic по возможности остаётся framework-neutral, а Node-RED adapter отвечает за `msg`, `send`, `done`, lifecycle, config/credential и runtime/editor integration;
+- runtime implementation source — `.ts`; сгенерированный `.js` является Node-RED runtime artifact и не поддерживается вручную как параллельная реализация;
+- JavaScript-only Node-RED modules не активируют этот профиль и требуют отдельных project-specific материалов;
+- профиль не фиксирует одну текущую версию Node-RED или Node.js: применимый support range, development/test runtime, emitted module format и build output определяются из `package.json`, lockfile, CI/runtime и других project evidence;
+- `package.json -> node-red.nodes` должен указывать на JavaScript artifacts, воспроизводимо собираемые из TypeScript source; runtime/editor artifact pairing сохраняется после build/package processing;
+- Node-RED framework boundaries типизируются через объявленный проектом declaration source (`@types/node-red`, project declarations или другой проверенный источник), но версия declarations не считается доказательством версии или совместимости runtime;
+- generic TypeScript typing/refactoring/narrowing остаётся ответственностью `typescript-core`, а Node-RED слой добавляет framework-specific типизацию `NodeAPI`, node/config/message/credential boundaries, lifecycle, `msg`/`send`/`done`, config nodes и HTTP/editor integration;
+- при отставании declaration package от подтверждённого runtime API используется минимальный project-approved augmentation/workaround вместо перевода Node-RED boundary в `any`;
+- reusable domain/service logic по возможности остаётся framework-neutral TypeScript;
 - packaged subflows и отдельный Node-RED plugin API не входят в этот профиль без самостоятельных материалов.
 
-`node_red_contrib_testing.md + node-red-contrib-testing` — отдельный testing overlay для поведения, зависящего от Node-RED test runtime и `node-red-node-test-helper`.
+`node_red_contrib_testing.md + node-red-contrib-testing` — отдельный TypeScript testing overlay для поведения, зависящего от Node-RED test runtime и `node-red-node-test-helper`.
 
-- overlay требует активный базовый Node-RED contrib profile и использует helper для flow wiring, messages, config nodes, credentials, runtime lifecycle, registered HTTP routes и redeploy behavior;
-- Jest/Vitest/Mocha configuration, generic mocks, TypeScript unit tests и coverage остаются в runner/language-specific testing policy и не повторяются в Node-RED skill;
+- Node-RED runtime/component tests и reusable flow fixtures пишутся на TypeScript; handwritten `.js`-копии тех же тестов не поддерживаются;
+- overlay требует активный базовый TypeScript Node-RED contrib profile и использует helper для flow wiring, messages, config nodes, credentials, runtime lifecycle, registered HTTP routes и redeploy behavior;
+- `@types/node-red-node-test-helper` или другой declaration source рассматривается только как static typing layer и не как helper/runtime compatibility evidence;
+- Jest/Vitest/Mocha configuration, generic mocks, framework-neutral TypeScript unit tests и coverage остаются в runner/language-specific testing policy и не повторяются в Node-RED skill;
 - реальные editor DOM/widgets требуют отдельного browser/UI overlay;
 - packed module в отдельном Node-RED process и сценарии с реальными брокерами, БД или внешними API относятся к отдельному E2E/integration boundary;
 - helper/runtime/runner API выбирается по фактически объявленным версиям, а cleanup обязан выгружать flows и останавливать helper server, если тест его запускал.
 
-Архитектурные patterns, packaging/resources, runtime-test patterns, cleanup boundaries, review checklists и curated official sources находятся в `.agents/skills/node-red-contrib-expert/references/` и `.agents/skills/node-red-contrib-testing/references/`.
+Typed runtime patterns, Node-RED declaration policy, packaging/resources, runtime-test patterns, cleanup boundaries, review checklists и curated sources находятся в `.agents/skills/node-red-contrib-expert/references/` и `.agents/skills/node-red-contrib-testing/references/`.
 
 ## Профиль Python cashews cache
 
