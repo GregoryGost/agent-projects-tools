@@ -19,7 +19,7 @@ interface TransformNodeDef extends NodeDef {
   mode: "lower" | "upper"
 }
 
-interface TransformNode extends Node {}
+type TransformNode = Node
 
 function readStringPayload(msg: NodeMessage): string {
   if (typeof msg.payload !== "string") {
