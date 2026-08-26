@@ -22,6 +22,20 @@
 - [ ] Config, node instance, message, credential, and integration types remain distinct and narrow.
 - [ ] Runtime data is narrowed/validated where static typing alone cannot establish the flow contract.
 
+## Postbuild and artifact assembly
+
+- [ ] A project-owned Node-RED postbuild/artifact script or explicit equivalent is declared.
+- [ ] The target project does not execute `.agents/skills/node-red-contrib-expert/scripts/node-red-postbuild.mjs` directly.
+- [ ] If the canonical script was adopted, it was copied/adapted to a project-owned path and `package.json -> node-red-build` is explicit.
+- [ ] An existing project-owned script was reviewed by capability rather than replaced because its contents/hash differ from the canonical asset.
+- [ ] `sourceRoot`, `outputRoot`, HTML strategy, and explicit copy mappings match the actual build tree.
+- [ ] Postbuild does not compile TypeScript, choose CJS/ESM, clean output after compilation, run tests, call `npm pack`, publish, or mutate package metadata.
+- [ ] Clean-before-build behavior is owned by the build pipeline rather than hidden inside postbuild.
+- [ ] A read-only artifact-check mode/command exists when the project validation policy requires it.
+- [ ] Optional static copies are explicit and cannot traverse project boundaries, symlinks, protected node-set artifacts, or overlapping source/output trees.
+- [ ] Packed-package validation is a separate project-declared stage/command.
+- [ ] Runtime bundling is not introduced without a concrete compatibility reason.
+
 ## Package contract
 
 - [ ] Every `node-red.nodes` entry resolves to an installed/published emitted JavaScript runtime artifact.
