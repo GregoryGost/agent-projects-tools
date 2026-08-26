@@ -15,6 +15,8 @@ Treat these identifiers as one contract during renames and refactors.
 
 `package.json -> node-red.nodes` identifies runtime files/node sets to load. A single runtime file may register multiple node types, so do not assume the map key is identical to every type registered by that file.
 
+For an ordinary Node-RED node set, the runtime JavaScript artifact and its editor HTML companion must remain a matching pair after build/package processing. When TypeScript is compiled into another directory, copy/package the companion HTML into the matching runtime-artifact location rather than leaving the editor artifact behind in the source tree.
+
 ## Properties and editor controls
 
 For an ordinary property `host`:
@@ -84,24 +86,25 @@ For scoped packages, preserve the scope in the resource path.
 
 ## TypeScript build boundary
 
-A common TypeScript package has a source/build split:
+A common TypeScript package has a source/build split where compilation and copy steps preserve the Node-RED node-set pairing:
 
 ```text
 src/nodes/example.ts
+src/nodes/example.html
         |
-        | build
+        | build + copy editor artifact
         v
-dist/nodes/example.js  <- package.json node-red.nodes
-nodes/example.html     <- editor artifact
-resources/...          <- editor resources
+dist/nodes/example.js    <- package.json node-red.nodes
+dist/nodes/example.html  <- matching editor artifact
+resources/...            <- editor resources
 ```
 
-The exact layout is project-specific. The invariant is that all package paths resolve in the artifact that is actually published/installed.
+The exact source and output directories are project-specific. The invariant is that the installed/published node set contains the runtime artifact selected by `node-red.nodes` together with the editor HTML Node-RED resolves for that same node set.
 
 Check:
 
 - `package.json -> node-red.nodes` points to built runtime code;
-- editor `.html` is located where Node-RED expects it relative to the runtime node artifact/project packaging strategy;
+- the matching editor `.html` survives the build/package step in the location expected for that runtime node set;
 - required resources/icons/locales/examples are included;
 - `files`, `.npmignore`, build cleanup, and package scripts do not omit required artifacts;
 - source maps and declarations follow the project's publish policy rather than being included accidentally.
