@@ -15,7 +15,6 @@ Use project/runtime evidence first to determine the applicable Node-RED, Node.js
 - Node status: https://nodered.org/docs/creating-nodes/status
 - Editor resources: https://nodered.org/docs/creating-nodes/resources
 - Packaging: https://nodered.org/docs/creating-nodes/packaging
-- Packaging subflows: https://nodered.org/docs/creating-nodes/packaging-subflows
 - Adding examples: https://nodered.org/docs/creating-nodes/examples
 - Internationalisation: https://nodered.org/docs/creating-nodes/i18n
 
@@ -30,6 +29,7 @@ Use API-module pages carefully: some published API docs are versioned and may de
 ## Versions and compatibility
 
 - Release plan: https://nodered.org/about/releases/
+- Supported Node.js versions: https://nodered.org/docs/faq/node-versions
 - Node-RED blog/releases: https://nodered.org/blog/
 - Node-RED changelog: https://github.com/node-red/node-red/blob/main/CHANGELOG.md
 - Node-RED repository/package metadata: https://github.com/node-red/node-red
