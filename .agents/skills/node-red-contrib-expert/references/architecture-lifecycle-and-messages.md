@@ -4,10 +4,16 @@
 
 Keep Node-RED-specific orchestration at the edge and reusable logic behind an ordinary TypeScript module/service boundary.
 
+The examples below use module-format-neutral type queries. Export the initializer according to the project's declared emitted JavaScript module format rather than copying a CommonJS or ESM export blindly.
+
 Good:
 
 ```ts
-import type { Node, NodeAPI, NodeDef, NodeInitializer, NodeMessage } from "node-red"
+type Node = import("node-red").Node
+type NodeAPI = import("node-red").NodeAPI
+type NodeDef = import("node-red").NodeDef
+type NodeInitializer = import("node-red").NodeInitializer
+type NodeMessage = import("node-red").NodeMessage
 
 interface TransformNodeDef extends NodeDef {
   mode: "lower" | "upper"
@@ -41,12 +47,10 @@ const initializer: NodeInitializer = (RED: NodeAPI) => {
   RED.nodes.registerType("example-transform", TransformNodeConstructor)
 }
 
-export = initializer
+// Export `initializer` using the project's declared CJS/ESM strategy.
 ```
 
 The Node-RED adapter owns framework semantics; `createTransform` remains ordinary TypeScript and can be tested independently.
-
-The exact import/export syntax depends on the project module format and type declarations. Preserve the typed boundary and verify the emitted JavaScript form against the supported Node-RED runtime.
 
 Bad:
 
