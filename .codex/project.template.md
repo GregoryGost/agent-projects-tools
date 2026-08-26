@@ -69,6 +69,8 @@ Selection examples:
 - `eslint-typescript`
 - `prettier-formatting`
 - `nodejs-service-e2e-testing`
+- `node-red-contrib`
+- `node-red-contrib-testing`
 - `vue3-typescript-vite`
 - `vue-svg-graphics`
 - `vue-router`
@@ -110,6 +112,7 @@ List only additional rule files active in this project.
 - Formatting/linting rules: `<prettier_formatting.md / eslint_typescript.md / none>`
 - Language rules: `<typescript_core.md / typescript_jest_testing.md / none / other>`
 - Framework rules: `<vue3_typescript_vite.md / vue_svg_graphics.md / vue_router.md / pinia.md / vueuse.md / none / other>`
+- Node-RED rules: `<node_red_contrib.md / node_red_contrib_testing.md / none>`
 - Styling rules: `<css.md / css_animation.md / tailwind_css.md / scss_styling.md / none>`
 - UI/browser validation rules: `<ui_ux_validation.md / playwright_ui_validation.md / none>`
 - E2E rules: `<python_service_e2e_testing.md / vue_playwright_e2e_testing.md / nodejs_service_e2e_testing.md / none>`
@@ -125,6 +128,7 @@ List only reusable skills active in this project.
 - Language skills: `<typescript-core / typescript-jest-testing / none / other>`
 - Formatting/linting skills: `<prettier-formatting / eslint-typescript / none>`
 - Framework skills: `<vue3-typescript-vite-expert / vue-svg-graphics-expert / vue-router-expert / pinia-expert / vueuse-expert / none>`
+- Node-RED skills: `<node-red-contrib-expert / node-red-contrib-testing / none>`
 - Styling skills: `<css-expert / css-animation-expert / tailwind-expert / scss-expert / none>`
 - UI/browser validation skills: `<ui-ux-review / playwright-ui-checks-mcp / none>`
 - E2E skills: `<python-service-e2e-testing / vue-playwright-e2e-testing / nodejs-service-e2e-testing / none>`
@@ -378,7 +382,7 @@ Keep only when TypeScript or JavaScript is active.
 - TypeScript/JavaScript enabled: `<yes/no>`
 - Runtime: `<Node.js / browser / Deno / Bun / none / other>`
 - Package manager: `<npm / pnpm / yarn / none / other>`
-- Framework: `<Vue / Express / NestJS / none / other>`
+- Framework: `<Node-RED / Vue / Express / NestJS / none / other>`
 - Build tool: `<Vite / Webpack / Rollup / tsc / none / other>`
 - TypeScript config paths: `<tsconfig paths / none>`
 
@@ -394,6 +398,30 @@ Keep only for non-browser Node.js services.
 - Real dependency policy for tests: `<Testcontainers / Docker Compose / local services / none / project-specific>`
 - Active Node.js service E2E rule: `<nodejs_service_e2e_testing.md / none>`
 - Active Node.js service E2E skill: `<nodejs-service-e2e-testing / none>`
+
+## Node-RED Contrib Profile
+
+Keep only when `node-red-contrib` is active. This profile covers custom/contrib node modules that register runtime node types and editor definitions. Packaged subflows and the separate Node-RED plugin API are outside this profile unless separate project-specific materials are added.
+
+The specialized section activates the Node-RED contrib rule/skill pair only when it is enabled, declares the supported/runtime version sources, and names the exact pair. TypeScript, generic testing, browser UI validation, and separate-process E2E remain independently activated overlays.
+
+- Node-RED contrib enabled: `<yes/no>`
+- Package name source: `<package.json / project-specific / none>`
+- Supported Node-RED version constraint source: `<package.json node-red.version / project documentation / none>`
+- Development/test Node-RED version source: `<package.json / lockfile / local runtime / CI / project-specific / none>`
+- Node.js version source: `<package.json engines / CI / runtime / project-specific / none>`
+- Runtime authoring language: `<TypeScript / JavaScript / mixed / project-specific / none>`
+- Module format: `<CommonJS / ESM / mixed / project-specific / none>`
+- Runtime node entrypoint source: `package.json -> node-red.nodes`
+- Runtime source layout: `<paths / project-specific / none>`
+- Runtime build output: `<paths / project-specific / none>`
+- Editor artifact layout: `<paths / project-specific / none>`
+- Config nodes enabled: `<yes/no>`
+- Node credentials enabled: `<yes/no>`
+- Custom HTTP surfaces: `<none / httpAdmin / httpNode / both / project-specific>`
+- Editor resources path: `<resources/ / project-specific / none>`
+- Active Node-RED contrib rule/skill: `<node_red_contrib.md + node-red-contrib-expert / none>`
+- Optional active overlays: `<typescript-core / node-red-contrib-testing / typescript-jest-testing / eslint-typescript / prettier-formatting / ui-ux-validation / playwright-ui-validation-mcp / nodejs-service-e2e-testing / none>`
 
 ## Vue 3 + TypeScript + Vite Profile
 
@@ -507,6 +535,24 @@ Keep only when framework-neutral TypeScript unit or integration testing through 
 - Unit test command: `<command / none>`
 - Integration test command: `<command / none>`
 - Active test rule/skill: `<typescript_jest_testing.md + typescript-jest-testing / none>`
+
+### Node-RED Contrib Runtime / Component Testing
+
+Keep only when `node-red-contrib-testing` is active. This testing overlay requires the active `node-red-contrib` profile and exact base/testing rule/skill pairs. Runner configuration, generic TypeScript tests, browser editor tests, and separate-process E2E remain independent overlays.
+
+- Node-RED contrib testing enabled: `<yes/no>`
+- Node-RED test helper: `<node-red-node-test-helper / project-specific / none>`
+- Test helper version source: `<package.json / lockfile / project-specific / none>`
+- Test runtime Node-RED version source: `<package.json / lockfile / helper.init runtime / CI / project-specific / none>`
+- Test runner: `<Jest / Vitest / Mocha / project-specific / none>`
+- Node-RED runtime/component test command: `<command / none>`
+- Test-flow fixture policy: `<minimal inline flows / dedicated fixtures / mixed / project-specific / none>`
+- Credentials fixture policy: `<helper credentials argument with synthetic values / project-specific / none>`
+- Helper HTTP server policy: `<only route suites / project-specific / none>`
+- Runtime cleanup policy: `<helper.unload + stop server when started / project-specific / none>`
+- Active base Node-RED rule/skill: `<node_red_contrib.md + node-red-contrib-expert / none>`
+- Active Node-RED testing rule/skill: `<node_red_contrib_testing.md + node-red-contrib-testing / none>`
+- Optional runner/browser/E2E overlays: `<typescript-jest-testing / ui-ux-validation / playwright-ui-validation-mcp / nodejs-service-e2e-testing / none>`
 
 ### Vue Unit / Component Testing
 
