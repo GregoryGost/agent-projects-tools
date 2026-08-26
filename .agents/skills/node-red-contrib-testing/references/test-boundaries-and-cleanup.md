@@ -1,4 +1,4 @@
-# Node-RED test boundaries and cleanup
+# TypeScript Node-RED test boundaries and cleanup
 
 ## Boundary decision
 
@@ -6,8 +6,8 @@ Choose the smallest layer that proves the behavior.
 
 | Behavior | Preferred layer |
 | --- | --- |
-| Pure mapper/validator/codec | framework-neutral language test |
-| Service/class without `RED` APIs | framework-neutral language test |
+| Pure mapper/validator/codec | framework-neutral TypeScript test |
+| Service/class without `RED` APIs | framework-neutral TypeScript test |
 | Node registration/load | Node-RED contrib testing |
 | `msg` flow/output wiring | Node-RED contrib testing |
 | Config-node resolution | Node-RED contrib testing |
@@ -18,13 +18,13 @@ Choose the smallest layer that proves the behavior.
 | Packed module installed into separate Node-RED process | project E2E |
 | Real NATS/MQTT/database/provider end-to-end flow | project E2E or integration boundary declared by that dependency profile |
 
-Do not add a Node-RED flow test merely to re-run assertions already proven against a pure function. Add the runtime test only for the adapter contract that pure tests cannot cover.
+Do not add a Node-RED flow test merely to re-run assertions already proven against a pure TypeScript function/service. Add the runtime test only for the adapter contract that pure tests cannot cover.
 
 ## Do not fake the framework contract
 
 Bad for a runtime-contract test:
 
-```js
+```ts
 const RED = {
   nodes: {
     createNode() {},
@@ -33,21 +33,23 @@ const RED = {
 }
 ```
 
-This can be useful in a tiny isolated unit test only when the test explicitly does not claim to validate Node-RED integration. It must not replace helper-based coverage of registration, flow messaging, credentials, config nodes, or lifecycle semantics.
+This can be useful in a tiny isolated TypeScript unit test only when the test explicitly does not claim to validate Node-RED integration. It must not replace helper-based coverage of registration, flow messaging, credentials, config nodes, or lifecycle semantics.
+
+Do not give a hand-built `RED` object broad Node-RED types merely to make the fake appear equivalent to the real framework.
 
 ## Assertion failures inside flow callbacks
 
 Node-RED catches exceptions inside flow execution. If a runner assertion throws inside an `input` callback and the test does not forward that failure, the test can hang until timeout.
 
-Use a Promise or the runner's completion callback and explicitly reject/fail it:
+Use a typed Promise or the runner's completion callback and explicitly reject/fail it:
 
-```js
-await new Promise((resolve, reject) => {
+```ts
+await new Promise<void>((resolve, reject) => {
   output.on("input", (msg) => {
     try {
       assertMessage(msg)
       resolve()
-    } catch (error) {
+    } catch (error: unknown) {
       reject(error)
     }
   })
@@ -62,7 +64,7 @@ If the project uses a runner helper such as `expect(...).resolves`, `done`, or a
 
 Bad:
 
-```js
+```ts
 input.receive(msg)
 await sleep(500)
 expect(output).toHaveBeenCalled()
@@ -89,6 +91,8 @@ After each suite/test, clean what it owns:
 
 Do not rely on process exit to hide leaked listeners/timers.
 
+Do not rely on the TypeScript test process exiting cleanly as proof that the production node's `close` behavior is correct; assert the owned resource lifecycle when that contract is under test.
+
 ## Runtime settings isolation
 
 If tests change helper/runtime settings:
@@ -97,6 +101,16 @@ If tests change helper/runtime settings:
 - restore defaults or establish a fresh helper state before unrelated tests;
 - avoid mutable module-level fixtures shared across parallel tests;
 - reserve unique ports/IDs when the runner can execute Node-RED suites concurrently.
+
+## Type declaration boundary
+
+If Node-RED/helper declarations differ from verified runtime behavior:
+
+- verify the runtime/helper version first;
+- keep any TypeScript augmentation/workaround local to the mismatched API;
+- do not disable type checking for the suite or convert the helper/runtime boundary to `any`;
+- do not treat an `@types/*` version as proof of the runtime/helper API;
+- remove the workaround when the declared dependency versions make it unnecessary.
 
 ## Browser boundary
 
@@ -110,7 +124,7 @@ Use browser/UI tests only when behavior depends on actual rendering or interacti
 - keyboard/focus/accessibility behavior;
 - loading editor resources in a real editor page.
 
-Static consistency of type names, templates, defaults, and package artifacts can still be reviewed/tested without browser automation.
+Static consistency of type names, templates, defaults, typed runtime config, and package artifacts can still be reviewed/tested without browser automation.
 
 ## E2E boundary
 
@@ -127,4 +141,4 @@ separate Node-RED process
         +--> deployed flow
 ```
 
-Keep the helper suite fast and deterministic even when a smaller number of E2E scenarios also exist.
+Keep the TypeScript helper suite fast and deterministic even when a smaller number of E2E scenarios also exist.
