@@ -1,53 +1,73 @@
-# Node-RED contrib architecture, lifecycle, and messages
+# TypeScript Node-RED contrib architecture, lifecycle, and messages
 
 ## Adapter boundary
 
-Keep Node-RED-specific orchestration at the edge and reusable logic behind an ordinary module/service boundary.
+Keep Node-RED-specific orchestration at the edge and reusable logic behind an ordinary TypeScript module/service boundary.
 
 Good:
 
-```js
-module.exports = function registerNodes(RED) {
-  function TransformNode(config) {
+```ts
+import type { Node, NodeAPI, NodeDef, NodeInitializer, NodeMessage } from "node-red"
+
+interface TransformNodeDef extends NodeDef {
+  mode: "lower" | "upper"
+}
+
+interface TransformNode extends Node {}
+
+const initializer: NodeInitializer = (RED: NodeAPI) => {
+  function TransformNodeConstructor(
+    this: TransformNode,
+    config: TransformNodeDef,
+  ): void {
     RED.nodes.createNode(this, config)
     const node = this
-    const transform = createTransform(config)
+    const transform = createTransform(config.mode)
 
-    node.on("input", async (msg, send, done) => {
+    node.on("input", async (msg: NodeMessage, send, done) => {
       try {
         msg.payload = await transform(msg.payload)
         send(msg)
         done?.()
-      } catch (error) {
-        if (done) done(error)
-        else node.error(error, msg)
+      } catch (error: unknown) {
+        const normalized =
+          error instanceof Error ? error : new Error(String(error))
+        if (done) done(normalized)
+        else node.error(normalized, msg)
       }
     })
   }
 
-  RED.nodes.registerType("example-transform", TransformNode)
+  RED.nodes.registerType("example-transform", TransformNodeConstructor)
 }
+
+export = initializer
 ```
 
-The Node-RED adapter owns runtime semantics; `createTransform` can be tested independently.
+The Node-RED adapter owns framework semantics; `createTransform` remains ordinary TypeScript and can be tested independently.
+
+The exact import/export syntax depends on the project module format and type declarations. Preserve the typed boundary and verify the emitted JavaScript form against the supported Node-RED runtime.
 
 Bad:
 
-```js
+```ts
 class EntireApplication {
   // Domain logic, network policy, editor assumptions, flow parsing,
-  // Node-RED lifecycle, and persistence are all mixed here.
+  // Node-RED lifecycle, persistence, and untyped runtime values all mix here.
 }
 ```
 
-Do not select functions versus classes merely to satisfy a framework example. Follow the active language skill for framework-neutral modeling, while preserving the constructor/registration contract expected by Node-RED.
+Do not select functions versus classes merely to satisfy a framework example. Follow `typescript-core` for framework-neutral modeling while preserving Node-RED's constructor/registration contract.
 
 ## Message contract
+
+Treat `NodeMessage` as the framework base type and narrow node-specific properties at runtime when the flow contract does not guarantee their shape.
 
 When a node receives a message:
 
 - preserve the received object when the output is a continuation of that message;
 - validate properties before assuming string/object/buffer shape;
+- use narrow message-extension interfaces only after their invariants are established;
 - document properties added, removed, or changed;
 - preserve correlation metadata such as `_msgid` by reusing the message where appropriate;
 - use the input handler's `send` callback for work correlated with an incoming message on runtimes that support it;
@@ -55,7 +75,7 @@ When a node receives a message:
 
 For multiple outputs:
 
-```js
+```ts
 send([successMsg, null])
 send([null, errorMsg])
 ```
@@ -64,32 +84,46 @@ For multiple messages to one output, use the nested-array form defined by Node-R
 
 Avoid creating a new message object only to replace `payload`:
 
-```js
+```ts
 // Bad when this is just a transformation of the incoming message.
 send({ payload: mappedValue })
 ```
 
+A type assertion is not validation:
+
+```ts
+// Bad when payload is not already guaranteed by the flow contract.
+const payload = (msg as { payload: string }).payload
+```
+
+Prefer explicit narrowing:
+
+```ts
+if (typeof msg.payload !== "string") {
+  throw new TypeError("msg.payload must be a string")
+}
+```
+
 ## Error handling
 
-Node-RED flow errors are part of the flow contract.
+Node-RED flow errors are part of the flow contract. TypeScript's `unknown` catch boundary should not be weakened just to call a Node-RED API.
 
-Good:
-
-```js
-node.on("input", async (msg, send, done) => {
+```ts
+node.on("input", async (msg: NodeMessage, send, done) => {
   try {
     await service.handle(msg)
     done?.()
-  } catch (error) {
-    if (done) done(error)
-    else node.error(error, msg)
+  } catch (error: unknown) {
+    const normalized = error instanceof Error ? error : new Error(String(error))
+    if (done) done(normalized)
+    else node.error(normalized, msg)
   }
 })
 ```
 
 Do not rely on `status({ fill: "red", ... })` instead of reporting an error. Status communicates operational state; Catch/error handling is a separate contract.
 
-Register error handlers for clients, streams, EventEmitters, and libraries that can emit failures outside the input Promise chain.
+Register error handlers for typed clients, streams, EventEmitters, and libraries that can emit failures outside the input Promise chain.
 
 ## Lifecycle ownership
 
@@ -105,28 +139,30 @@ Inventory stateful resources during review:
 
 Good async close:
 
-```js
-node.on("close", async (removed, done) => {
+```ts
+node.on("close", async (removed: boolean, done: (error?: Error) => void) => {
   try {
     await client.close()
     done()
-  } catch (error) {
-    done(error)
+  } catch (error: unknown) {
+    done(error instanceof Error ? error : new Error(String(error)))
   }
 })
 ```
 
-Adapt the exact signature to the supported Node-RED range and project style. Cleanup should be safe after partial startup and should not leave timers/listeners that keep the process alive.
+Do not force a hand-written callback signature when the project's Node-RED declarations already provide a correct contextual type. The explicit annotation above is illustrative only; prefer inference from verified framework declarations when it is precise.
+
+Cleanup should be safe after partial startup and should not leave timers/listeners that keep the process alive.
 
 ## Config nodes
 
 Use a config node when several runtime nodes intentionally share durable configuration or a costly connection.
 
-A consuming node should resolve and validate the reference:
+`RED.nodes.getNode()` crosses a runtime boundary. Narrow the returned value before using custom methods/state rather than applying an unchecked cast.
 
-```js
+```ts
 const server = RED.nodes.getNode(config.server)
-if (!server) {
+if (!isServerNode(server)) {
   node.status({ fill: "red", shape: "ring", text: "missing config" })
   return
 }
@@ -142,6 +178,7 @@ Node/flow/global context is a persistence-like boundary, not a substitute for or
 
 - use node context for state that must survive individual messages within the node lifecycle;
 - use flow/global context only when cross-node scope is intentional;
+- type retrieved context values according to project policy and still handle missing/unknown stored data safely;
 - do not assume config nodes always have meaningful flow context because config nodes are global by default;
 - treat context-store async behavior according to the project's configured store and applicable Node-RED API.
 
