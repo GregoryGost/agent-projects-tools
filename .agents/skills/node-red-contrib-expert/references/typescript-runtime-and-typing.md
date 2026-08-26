@@ -146,7 +146,7 @@ interface ApiCredentials {
   token: string
 }
 
-interface ApiNode extends Node<ApiCredentials> {}
+type ApiNode = Node<ApiCredentials>
 
 interface ApiNodeDef extends NodeDef {
   endpoint: string
