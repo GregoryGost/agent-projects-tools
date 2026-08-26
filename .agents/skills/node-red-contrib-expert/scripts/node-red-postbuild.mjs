@@ -35,7 +35,7 @@ function printHelp() {
 Reads package.json fields:
   node-red.nodes                 Node-RED runtime artifacts to validate
   ${CONFIG_KEY}.outputRoot       Generated runtime node-set root
-  ${CONFIG_KEY}.editorHtml       "copy" or "validate-only"
+  ${CONFIG_KEY}.editorHtml       Required: "copy" or "validate-only"
   ${CONFIG_KEY}.sourceRoot       Required only when editorHtml is "copy"
   ${CONFIG_KEY}.copy             Optional explicit file/directory copy mappings
 
@@ -347,7 +347,10 @@ async function main() {
     }
   }
 
-  const editorHtml = config.editorHtml ?? "copy"
+  const editorHtml = assertNonEmptyString(
+    config.editorHtml,
+    `${CONFIG_KEY}.editorHtml`,
+  )
   if (editorHtml !== "copy" && editorHtml !== "validate-only") {
     fail(`${CONFIG_KEY}.editorHtml must be "copy" or "validate-only"`)
   }
