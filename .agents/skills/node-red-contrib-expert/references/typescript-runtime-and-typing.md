@@ -58,7 +58,7 @@ interface TransformNodeDef extends NodeDef {
   mode: "lower" | "upper"
 }
 
-interface TransformNode extends Node {}
+type TransformNode = Node
 
 function readStringPayload(msg: NodeMessage): string {
   if (typeof msg.payload !== "string") {
@@ -169,16 +169,13 @@ interface ServerNode extends Node {
 }
 
 function isServerNode(value: unknown): value is ServerNode {
-  return (
-    typeof value === "object" &&
-    value !== null &&
-    "request" in value &&
-    typeof (value as { request?: unknown }).request === "function"
-  )
+  if (typeof value !== "object" || value === null || !("request" in value)) {
+    return false
+  }
+
+  return typeof value.request === "function"
 }
 ```
-
-The local assertion above is limited to inspecting one already-guarded property shape; it is not being used as proof that the whole object is a `ServerNode`.
 
 Then handle the missing/invalid reference explicitly before processing messages.
 
