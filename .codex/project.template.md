@@ -155,6 +155,9 @@ Use only project-declared commands.
 - E2E tests: `<command or none>`
 - UI validation / Playwright MCP workflow: `<workflow or none>`
 - Build: `<command or none>`
+- Postbuild / artifact assembly: `<command or none>`
+- Artifact check: `<command or none>`
+- Packed-package validation: `<command or none>`
 - Preview/start app for browser tests: `<command or none>`
 - Other validation: `<command or none>`
 
@@ -403,7 +406,7 @@ Keep only for non-browser Node.js services.
 
 Keep only when `node-red-contrib` is active. This portable profile covers **TypeScript-authored** custom/contrib node modules that register runtime node types and editor definitions. JavaScript-only node modules, packaged subflows, and the separate Node-RED plugin API are outside this profile unless separate project-specific materials are added.
 
-The specialized section activates the Node-RED contrib rule/skill pair only when it is enabled, activates the required `typescript_core.md + typescript-core` base pair, declares the TypeScript/declaration/runtime/build sources, and names the exact Node-RED pair. Missing required sources, `none`, a disabled section, or a non-TypeScript runtime authoring language make the profile invalid.
+The specialized section activates the Node-RED contrib rule/skill pair only when it is enabled, activates the required `typescript_core.md + typescript-core` base pair, declares the TypeScript/declaration/runtime/build sources, and names the exact Node-RED pair. A project-owned postbuild/artifact implementation or explicit equivalent is also required; the target build must never execute the skill asset directly. Missing required sources, `none`, a disabled section, a non-TypeScript runtime authoring language, or an absent postbuild/equivalent make the profile invalid.
 
 - Node-RED contrib enabled: `<yes/no>`
 - Runtime authoring language: `TypeScript`
@@ -423,6 +426,19 @@ The specialized section activates the Node-RED contrib rule/skill pair only when
 - Runtime JavaScript build output: `<paths / project-specific / none>`
 - Editor artifact layout: `<paths / project-specific / none>`
 - Editor logic authoring strategy: `<inline editor JavaScript / TypeScript built into editor resources / mixed / project-specific / none>`
+- Node-RED postbuild implementation: `<canonical project-owned copy / project-specific equivalent / none>`
+- Project-owned postbuild script path: `<scripts/node-red-postbuild.mjs / project-specific path / none>`
+- Canonical skill asset source: `node-red-contrib-expert/scripts/node-red-postbuild.mjs`
+- Postbuild configuration source: `<package.json node-red-build / project-specific / none>`
+- Postbuild source root: `<path / project-specific / none>`
+- Postbuild output root: `<path / project-specific / none>`
+- Editor HTML strategy: `<copy / validate-only / project-specific / none>`
+- Explicit postbuild copy mappings: `<list / none>`
+- Postbuild integration: `<npm postbuild / explicit build chain / task runner / project-specific / none>`
+- Clean-before-build policy: `<required / build tool guarantees clean output / project-specific / none>`
+- Artifact check command: `<command / none>`
+- Packed-package validation command: `<npm pack --dry-run / project-specific / none>`
+- Runtime bundling policy: `<plain TypeScript compilation / project-specific bundler with compatibility evidence / none>`
 - Config nodes enabled: `<yes/no>`
 - Node credentials enabled: `<yes/no>`
 - Custom HTTP surfaces: `<none / httpAdmin / httpNode / both / project-specific>`
