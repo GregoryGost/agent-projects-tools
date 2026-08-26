@@ -1,10 +1,16 @@
-# Node-RED runtime test patterns
+# TypeScript Node-RED runtime test patterns
 
 ## Minimal message-flow test
 
-Prefer a small flow with the node under test and a helper observer:
+Prefer a small typed flow with the node under test and a helper observer.
 
-```js
+The exact flow/helper types depend on the project's declaration source; do not erase them to `any` merely to copy an example.
+
+```ts
+import type { Node, NodeMessage } from "node-red"
+import helper from "node-red-node-test-helper"
+import exampleNode = require("../nodes/example-transform")
+
 const flow = [
   { id: "n1", type: "example-transform", wires: [["out"]] },
   { id: "out", type: "helper" },
@@ -15,7 +21,11 @@ await helper.load(exampleNode, flow)
 const input = helper.getNode("n1")
 const output = helper.getNode("out")
 
-const received = new Promise((resolve) => {
+if (!input || !output) {
+  throw new Error("test flow did not create expected nodes")
+}
+
+const received = new Promise<NodeMessage>((resolve) => {
   output.on("input", resolve)
 })
 
@@ -27,6 +37,8 @@ const msg = await received
 Keeping the ordinary assertion outside the Node-RED callback avoids the swallowed-assertion problem entirely. If the assertion must run inside a Node-RED event callback, catch the failure and explicitly reject/fail the test as described in `test-boundaries-and-cleanup.md`.
 
 Keep runner-specific assertion syntax out of shared Node-RED helpers unless the project deliberately standardizes it.
+
+Do not maintain a handwritten `.js` copy of a `.ts` test. Generated JavaScript, when required by the runner/toolchain, is build output.
 
 ## Loading test flows
 
@@ -40,11 +52,13 @@ Use `helper.load` for a fresh runtime flow. Include only:
 
 Avoid pasting a production flow containing unrelated nodes into a unit/component test. Exported flow JSON is useful as a starting point, not as a reason to keep irrelevant fixtures.
 
+If flow fixture types are broader than the project's node-specific config types, use a small typed fixture builder or a narrow `satisfies` boundary where appropriate rather than an unbounded cast.
+
 ## Config nodes
 
 A config-node test should wire the reference exactly as Node-RED does:
 
-```js
+```ts
 const flow = [
   { id: "cfg", type: "example-server", host: "localhost" },
   { id: "n1", type: "example-node", server: "cfg", wires: [["out"]] },
@@ -59,7 +73,9 @@ Useful assertions include:
 - two consumers share the intended connection owner;
 - config-node shutdown closes the shared resource once.
 
-Do not unit-test the same framework-neutral connection manager again through several nearly identical flows.
+Do not unit-test the same framework-neutral TypeScript connection manager again through several nearly identical flows.
+
+When `helper.getNode()` returns a broad Node type, narrow it before invoking project-specific methods rather than forcing a global cast.
 
 ## Credentials
 
@@ -67,7 +83,7 @@ Pass credentials through the helper's credential input rather than adding passwo
 
 Conceptually:
 
-```js
+```ts
 await helper.load(nodeModule, flow, {
   n1: {
     username: "test-user",
@@ -77,6 +93,8 @@ await helper.load(nodeModule, flow, {
 ```
 
 Use synthetic test values. Never copy production credentials into tests or fixtures.
+
+Keep a typed credential fixture aligned with the production node credential contract without exporting secrets as ordinary node config.
 
 Test both presence and absence/invalid credential behavior when those branches are part of the node contract.
 
@@ -97,7 +115,7 @@ Examples:
 
 Represent output wiring explicitly:
 
-```js
+```ts
 const flow = [
   {
     id: "n1",
@@ -120,7 +138,7 @@ For nodes that register `RED.httpAdmin` or `RED.httpNode` routes:
 1. start the helper server according to the helper/project API;
 2. load the node module;
 3. for `httpAdmin`, use `helper.request()` when it matches the declared helper version and route under test;
-4. for `httpNode`, use `helper.url()` with the project-approved HTTP client and the configured runtime HTTP root, rather than assuming `helper.request()` targets runtime routes;
+4. for `httpNode`, use `helper.url()` with the project-approved typed HTTP client and the configured runtime HTTP root, rather than assuming `helper.request()` targets runtime routes;
 5. assert authentication/permission and validation behavior when relevant;
 6. unload the flow/module state;
 7. stop the helper server.
@@ -138,3 +156,13 @@ When testing redeploy:
 - await deployment completion;
 - assert shutdown/reinitialization behavior;
 - ensure the final teardown still unloads the runtime.
+
+## Declaration mismatch in tests
+
+The test-helper declaration package is an external TypeScript declaration source. If its API model differs from the verified helper version:
+
+- verify the runtime/helper API first;
+- avoid suppressing the entire test file with `any` or broad compiler exclusions;
+- use the smallest project-approved augmentation/workaround;
+- keep the mismatch documented near the compatibility boundary;
+- remove the workaround when the declared dependency versions no longer require it.
