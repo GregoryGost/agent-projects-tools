@@ -19,12 +19,13 @@ Before changing a Node-RED node module:
 5. Determine the module format from project evidence. Node-RED 5 introduced support for installing ESM node modules; do not assume ESM support for older targets and do not migrate CommonJS/ESM format unless the task requires it.
 6. Use only project-declared build, test, lint, package, and validation commands.
 
-Do not copy historical version statements from tutorial pages into project constraints. Prefer the release plan, changelog, package metadata, and applicable version-specific documentation.
+Do not copy historical version statements from tutorial pages into project constraints. Prefer the release plan, changelog, package metadata, applicable version-specific documentation, and current Node-RED Node.js support guidance when project metadata alone does not establish compatibility.
 
 ## Package and artifact contract
 
 - `package.json -> node-red.nodes` must point to runtime artifacts that actually exist after the project build and are included in the published package.
 - When TypeScript is the authoring language, treat generated JavaScript as a runtime artifact and verify the source-to-build-to-package path explicitly.
+- Preserve the Node-RED runtime/editor node-set pairing through build and package processing: the editor HTML companion for a runtime node artifact must be present where Node-RED resolves it for that node set.
 - Do not infer a runtime node type solely from a `node-red.nodes` map key. Verify the type strings registered by the runtime and editor artifacts.
 - Keep `package.json -> node-red.version` aligned with the Node-RED versions the module is intentionally tested and documented to support.
 - Runtime dependencies required after installation belong in `dependencies`; build/test-only tooling belongs in the project-declared development dependency boundary.
@@ -82,9 +83,10 @@ Do not place business logic in the editor artifact. Keep editor behavior focused
 
 ## Review checklist
 
-- [ ] Supported Node-RED and Node.js versions came from current project evidence.
+- [ ] Supported Node-RED and Node.js versions came from current project evidence plus applicable official compatibility sources where needed.
 - [ ] Module format and build output were verified rather than assumed.
 - [ ] `node-red.nodes` points to published runtime artifacts.
+- [ ] Runtime/editor node-set artifact pairing survives the build/package step.
 - [ ] Runtime/editor/template/help type identifiers are consistent.
 - [ ] Defaults, credentials, config-node references, inputs, and outputs stay aligned.
 - [ ] Input handling preserves `msg`, completion, error, and multi-output semantics.
