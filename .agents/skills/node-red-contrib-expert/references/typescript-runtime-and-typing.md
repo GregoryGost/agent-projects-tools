@@ -27,7 +27,8 @@ A common source is DefinitelyTyped's `@types/node-red`, which exposes shortcuts 
 - `NodeDef`;
 - `Node`;
 - `NodeMessage`;
-- credential types;
+- runtime node credential-value typing through generic `Node<TCreds>`;
+- credential-definition types used when registering nodes;
 - editor-side types such as `EditorRED` and `EditorNodeDef`.
 
 `@types/node-red` is not the Node-RED runtime and its package version does not track the Node-RED major version. Treat these as separate compatibility questions:
@@ -129,7 +130,7 @@ A TypeScript assertion does not validate a flow message at runtime.
 Keep these concepts separate:
 
 - `NodeDef` extension: persisted/configuration properties supplied by the flow;
-- `Node` extension: runtime node instance state and typed credentials where applicable;
+- `Node` extension: runtime node instance state and typed credential values where applicable;
 - `NodeMessage` extension: message properties this node consumes or emits after their runtime invariants are established;
 - service/domain types: framework-neutral application logic outside the Node-RED adapter.
 
@@ -137,7 +138,7 @@ Do not put runtime clients, sockets, timers, or calculated state into the persis
 
 ## Credentials
 
-Model credentials independently from ordinary config.
+Model runtime credential values independently from ordinary config and from the credential-definition metadata passed to `registerType`.
 
 Conceptually:
 
@@ -153,7 +154,9 @@ interface ApiNodeDef extends NodeDef {
 }
 ```
 
-Keep the runtime credential type aligned with the editor credential definition and do not duplicate secret fields in `NodeDef`.
+Here `ApiCredentials` models the values available on the runtime node instance. The `credentials` option supplied when registering the node has a different declaration shape describing credential fields such as `text` or `password`; do not confuse those two TypeScript concepts.
+
+Keep runtime credential values, registration credential definitions, and editor credential definitions aligned without duplicating secret fields in `NodeDef`.
 
 Never log a typed credential merely because TypeScript makes it easy to access.
 
@@ -216,6 +219,7 @@ Avoid:
 - copying Node-RED declaration interfaces into the project without a compatibility reason;
 - using `as SomeMessage` as runtime validation;
 - mixing persisted config and runtime-only state in one interface;
+- confusing runtime credential values with registration/editor credential-definition metadata;
 - treating a passing `tsc` build as proof the node will load in Node-RED;
 - treating a passing Node-RED runtime test as replacement for project type checking;
 - assuming declaration-package semver equals Node-RED runtime semver.
