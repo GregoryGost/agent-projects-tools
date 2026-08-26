@@ -23,10 +23,6 @@ await helper.load(exampleNode, flow)
 const input = helper.getNode("n1")
 const output = helper.getNode("out")
 
-if (!input || !output) {
-  throw new Error("test flow did not create expected nodes")
-}
-
 const received = new Promise<NodeMessage>((resolve) => {
   output.on("input", resolve)
 })
@@ -35,6 +31,8 @@ input.receive({ payload: "VALUE" })
 const msg = await received
 // Assert `msg` here with the project-declared assertion API.
 ```
+
+The common DefinitelyTyped helper declaration returns `Node` from `getNode`; it does not model a missing-node result. Do not add a meaningless null check solely to satisfy an example. If the project uses another helper declaration/source with a nullable return, narrow according to that actual type.
 
 Keeping the ordinary assertion outside the Node-RED callback avoids the swallowed-assertion problem entirely. If the assertion must run inside a Node-RED event callback, catch the failure and explicitly reject/fail the test as described in `test-boundaries-and-cleanup.md`.
 
