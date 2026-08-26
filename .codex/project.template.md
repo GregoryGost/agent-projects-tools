@@ -427,7 +427,7 @@ The specialized section activates the Node-RED contrib rule/skill pair only when
 - Editor artifact layout: `<paths / project-specific / none>`
 - Editor logic authoring strategy: `<inline editor JavaScript / TypeScript built into editor resources / mixed / project-specific / none>`
 - Node-RED postbuild implementation: `<canonical project-owned copy / project-specific equivalent / none>`
-- Project-owned postbuild script path: `<scripts/node-red-postbuild.mjs / project-specific path / none>`
+- Project-owned postbuild implementation location: `<scripts/node-red-postbuild.mjs / task-runner config / build config / project-specific / none>`
 - Canonical skill asset source: `.agents/skills/node-red-contrib-expert/scripts/node-red-postbuild.mjs`
 - Postbuild configuration source: `<package.json node-red-build / project-specific / none>`
 - Postbuild source root: `<path / not applicable for validate-only / project-specific / none>`
