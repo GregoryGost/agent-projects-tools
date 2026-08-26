@@ -34,9 +34,9 @@ function printHelp() {
 
 Reads package.json fields:
   node-red.nodes                 Node-RED runtime artifacts to validate
-  ${CONFIG_KEY}.sourceRoot       TypeScript/editor source root
   ${CONFIG_KEY}.outputRoot       Generated runtime node-set root
   ${CONFIG_KEY}.editorHtml       "copy" or "validate-only"
+  ${CONFIG_KEY}.sourceRoot       Required only when editorHtml is "copy"
   ${CONFIG_KEY}.copy             Optional explicit file/directory copy mappings
 
 ${CHECK_FLAG} validates the existing artifacts without writing files.`)
@@ -316,22 +316,33 @@ async function main() {
     }
   }
 
-  const sourceRoot = resolveInside(
-    projectRoot,
-    config.sourceRoot,
-    `${CONFIG_KEY}.sourceRoot`,
-  )
+  const editorHtml = config.editorHtml ?? "copy"
+  if (editorHtml !== "copy" && editorHtml !== "validate-only") {
+    fail(`${CONFIG_KEY}.editorHtml must be "copy" or "validate-only"`)
+  }
+
   const outputRoot = resolveInside(
     projectRoot,
     config.outputRoot,
     `${CONFIG_KEY}.outputRoot`,
   )
-  await assertNoSymlinkPath(projectRoot, sourceRoot, `${CONFIG_KEY}.sourceRoot`)
   await assertNoSymlinkPath(projectRoot, outputRoot, `${CONFIG_KEY}.outputRoot`)
 
-  const editorHtml = config.editorHtml ?? "copy"
-  if (editorHtml !== "copy" && editorHtml !== "validate-only") {
-    fail(`${CONFIG_KEY}.editorHtml must be "copy" or "validate-only"`)
+  let sourceRoot = null
+  if (editorHtml === "copy") {
+    sourceRoot = resolveInside(
+      projectRoot,
+      config.sourceRoot,
+      `${CONFIG_KEY}.sourceRoot`,
+    )
+    await assertNoSymlinkPath(projectRoot, sourceRoot, `${CONFIG_KEY}.sourceRoot`)
+  } else if (config.sourceRoot !== undefined) {
+    sourceRoot = resolveInside(
+      projectRoot,
+      config.sourceRoot,
+      `${CONFIG_KEY}.sourceRoot`,
+    )
+    await assertNoSymlinkPath(projectRoot, sourceRoot, `${CONFIG_KEY}.sourceRoot`)
   }
 
   const nodeRed = packageJson["node-red"]
@@ -371,16 +382,6 @@ async function main() {
     await requireRegularFile(runtimePath, `runtime artifact for ${nodeSetName}`)
 
     const editorOutputPath = runtimePath.replace(/\.js$/i, ".html")
-    const htmlRelativeToOutput = relative(outputRoot, editorOutputPath)
-    const editorSourcePath = resolve(sourceRoot, htmlRelativeToOutput)
-    if (!isInside(sourceRoot, editorSourcePath)) {
-      fail(`editor HTML source for ${nodeSetName} escapes ${config.sourceRoot}`)
-    }
-    await assertNoSymlinkPath(
-      projectRoot,
-      editorSourcePath,
-      `editor HTML source for ${nodeSetName}`,
-    )
     await assertNoSymlinkPath(
       projectRoot,
       editorOutputPath,
@@ -388,6 +389,16 @@ async function main() {
     )
 
     if (editorHtml === "copy") {
+      const htmlRelativeToOutput = relative(outputRoot, editorOutputPath)
+      const editorSourcePath = resolve(sourceRoot, htmlRelativeToOutput)
+      if (!isInside(sourceRoot, editorSourcePath)) {
+        fail(`editor HTML source for ${nodeSetName} escapes ${config.sourceRoot}`)
+      }
+      await assertNoSymlinkPath(
+        projectRoot,
+        editorSourcePath,
+        `editor HTML source for ${nodeSetName}`,
+      )
       await copyRegularFile(
         editorSourcePath,
         editorOutputPath,
