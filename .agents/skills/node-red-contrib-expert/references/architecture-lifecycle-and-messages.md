@@ -149,20 +149,25 @@ Inventory stateful resources during review:
 | Shared broker/API client | config node | disconnect when config node closes |
 | Editor text/code widget | editor dialog instance | destroy on save/cancel as applicable |
 
-Good async close:
+Prefer the contextual `close` listener type supplied by the verified Node-RED declarations:
 
 ```ts
-node.on("close", async (removed: boolean, done: (error?: Error) => void) => {
+node.on("close", async (removed, done) => {
   try {
     await client.close()
-    done()
   } catch (error: unknown) {
-    done(error instanceof Error ? error : new Error(String(error)))
+    const normalized =
+      error instanceof Error ? error : new Error(String(error))
+    node.error(normalized)
+  } finally {
+    done()
   }
 })
 ```
 
-Do not force a hand-written callback signature when the project's Node-RED declarations already provide a correct contextual type. The explicit annotation above is illustrative only; prefer inference from verified framework declarations when it is precise.
+The asynchronous `close` completion callback is a completion signal, not the input-handler `done(err?)` contract. Do not pass an error argument to the close callback merely because the input callback accepts one.
+
+If cleanup failure needs stronger handling than logging/reporting, follow the verified Node-RED version and project shutdown policy; do not invent an unsupported callback signature. Cleanup should still avoid leaving the flow shutdown hanging.
 
 Cleanup should be safe after partial startup and should not leave timers/listeners that keep the process alive.
 
