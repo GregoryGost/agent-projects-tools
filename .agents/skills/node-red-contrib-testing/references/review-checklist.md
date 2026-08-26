@@ -16,12 +16,13 @@
 - [ ] `node-red-node-test-helper` version comes from the lockfile/package metadata.
 - [ ] Node-RED/helper declaration sources and versions are known.
 - [ ] Declaration package versions are not treated as runtime/helper compatibility evidence.
-- [ ] Callback versus Promise helper API matches the declared helper version.
+- [ ] Callback versus Promise helper API matches the declared helper version rather than an assumed declaration signature.
 - [ ] Runner/transformer/coverage configuration is delegated to the active runner skill/policy.
 
 ## Typed harness boundaries
 
 - [ ] Helper/runtime objects use project-declared declarations rather than broad `any`.
+- [ ] Known declaration/runtime mismatches are checked against the verified helper API before adding a workaround.
 - [ ] Values returned from broad runtime/helper APIs are narrowed before project-specific methods are called.
 - [ ] Flow fixtures are typed enough to catch relevant property/id/type mistakes without recreating Node-RED's type system locally.
 - [ ] Declaration mismatches use minimal bounded augmentations/workarounds rather than whole-file suppression.
