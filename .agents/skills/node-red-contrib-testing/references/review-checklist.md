@@ -1,25 +1,37 @@
-# Node-RED contrib testing review checklist
+# TypeScript Node-RED contrib testing review checklist
 
 ## Scope
 
+- [ ] The base TypeScript Node-RED contrib dependency graph is active and valid.
 - [ ] The behavior under test depends on Node-RED runtime semantics.
-- [ ] Pure TypeScript/JavaScript behavior is tested at a smaller framework-neutral layer.
+- [ ] Pure framework-neutral TypeScript behavior is tested at a smaller layer.
 - [ ] Browser editor behavior is not simulated as if the runtime helper were a browser.
 - [ ] Separate-process installation/dependency E2E is not disguised as a helper test.
 
-## Versions and harness
+## TypeScript and versions
 
+- [ ] Test source and reusable flow fixtures are TypeScript rather than handwritten parallel JavaScript.
+- [ ] Test TypeScript config/transform source comes from project evidence.
 - [ ] Node-RED version/support range comes from project evidence.
 - [ ] `node-red-node-test-helper` version comes from the lockfile/package metadata.
+- [ ] Node-RED/helper declaration sources and versions are known.
+- [ ] Declaration package versions are not treated as runtime/helper compatibility evidence.
 - [ ] Callback versus Promise helper API matches the declared helper version.
 - [ ] Runner/transformer/coverage configuration is delegated to the active runner skill/policy.
+
+## Typed harness boundaries
+
+- [ ] Helper/runtime objects use project-declared declarations rather than broad `any`.
+- [ ] Values returned from broad runtime/helper APIs are narrowed before project-specific methods are called.
+- [ ] Flow fixtures are typed enough to catch relevant property/id/type mistakes without recreating Node-RED's type system locally.
+- [ ] Declaration mismatches use minimal bounded augmentations/workarounds rather than whole-file suppression.
 
 ## Flow fixtures
 
 - [ ] Test flows contain only nodes required for the behavior.
 - [ ] Config nodes are represented explicitly and referenced by id.
 - [ ] Helper nodes observe outputs instead of private implementation state.
-- [ ] Credentials use synthetic values and the helper credential boundary.
+- [ ] Credentials use synthetic typed values and the helper credential boundary.
 - [ ] Flow fixtures do not contain production secrets or unrelated exported nodes.
 
 ## Async behavior
@@ -41,5 +53,6 @@
 ## HTTP and redeploy
 
 - [ ] HTTP server setup exists only in suites that exercise registered routes.
-- [ ] Admin/runtime route behavior is tested through the correct Node-RED surface.
+- [ ] `httpAdmin` tests use the helper/admin boundary appropriate to the declared helper version.
+- [ ] `httpNode` tests target the runtime HTTP root through the helper server URL and the project-approved HTTP client.
 - [ ] `setFlows`/redeploy is used only when flow-change behavior is actually under test.
