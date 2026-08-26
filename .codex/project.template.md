@@ -399,29 +399,37 @@ Keep only for non-browser Node.js services.
 - Active Node.js service E2E rule: `<nodejs_service_e2e_testing.md / none>`
 - Active Node.js service E2E skill: `<nodejs-service-e2e-testing / none>`
 
-## Node-RED Contrib Profile
+## TypeScript Node-RED Contrib Profile
 
-Keep only when `node-red-contrib` is active. This profile covers custom/contrib node modules that register runtime node types and editor definitions. Packaged subflows and the separate Node-RED plugin API are outside this profile unless separate project-specific materials are added.
+Keep only when `node-red-contrib` is active. This portable profile covers **TypeScript-authored** custom/contrib node modules that register runtime node types and editor definitions. JavaScript-only node modules, packaged subflows, and the separate Node-RED plugin API are outside this profile unless separate project-specific materials are added.
 
-The specialized section activates the Node-RED contrib rule/skill pair only when it is enabled, declares the supported/runtime version sources, and names the exact pair. TypeScript, generic testing, browser UI validation, and separate-process E2E remain independently activated overlays.
+The specialized section activates the Node-RED contrib rule/skill pair only when it is enabled, activates the required `typescript_core.md + typescript-core` base pair, declares the TypeScript/declaration/runtime/build sources, and names the exact Node-RED pair. Missing required sources, `none`, a disabled section, or a non-TypeScript runtime authoring language make the profile invalid.
 
 - Node-RED contrib enabled: `<yes/no>`
+- Runtime authoring language: `TypeScript`
+- Runtime source extension: `.ts`
+- Runtime artifact language: `JavaScript`
 - Package name source: `<package.json / project-specific / none>`
 - Supported Node-RED version constraint source: `<package.json node-red.version / project documentation / none>`
 - Development/test Node-RED version source: `<package.json / lockfile / local runtime / CI / project-specific / none>`
 - Node.js version source: `<package.json engines / CI / runtime / project-specific / none>`
-- Runtime authoring language: `<TypeScript / JavaScript / mixed / project-specific / none>`
-- Module format: `<CommonJS / ESM / mixed / project-specific / none>`
+- TypeScript version source: `<package.json / lockfile / project-specific / none>`
+- TypeScript config paths: `<tsconfig paths / project-specific / none>`
+- Node-RED runtime declaration source: `<@types/node-red / project declarations / other verified declaration source / none>`
+- Node-RED declaration version source: `<package.json / lockfile / project-specific / none>`
+- Emitted JavaScript module format: `<CommonJS / ESM / mixed / project-specific / none>`
 - Runtime node entrypoint source: `package.json -> node-red.nodes`
-- Runtime source layout: `<paths / project-specific / none>`
-- Runtime build output: `<paths / project-specific / none>`
+- Runtime TypeScript source layout: `<paths / project-specific / none>`
+- Runtime JavaScript build output: `<paths / project-specific / none>`
 - Editor artifact layout: `<paths / project-specific / none>`
+- Editor logic authoring strategy: `<inline editor JavaScript / TypeScript built into editor resources / mixed / project-specific / none>`
 - Config nodes enabled: `<yes/no>`
 - Node credentials enabled: `<yes/no>`
 - Custom HTTP surfaces: `<none / httpAdmin / httpNode / both / project-specific>`
 - Editor resources path: `<resources/ / project-specific / none>`
+- Required TypeScript base rule/skill: `<typescript_core.md + typescript-core / none>`
 - Active Node-RED contrib rule/skill: `<node_red_contrib.md + node-red-contrib-expert / none>`
-- Optional active overlays: `<typescript-core / node-red-contrib-testing / typescript-jest-testing / eslint-typescript / prettier-formatting / ui-ux-validation / playwright-ui-validation-mcp / nodejs-service-e2e-testing / none>`
+- Optional active overlays: `<node-red-contrib-testing / typescript-jest-testing / eslint-typescript / prettier-formatting / ui-ux-validation / playwright-ui-validation-mcp / nodejs-service-e2e-testing / none>`
 
 ## Vue 3 + TypeScript + Vite Profile
 
@@ -536,18 +544,23 @@ Keep only when framework-neutral TypeScript unit or integration testing through 
 - Integration test command: `<command / none>`
 - Active test rule/skill: `<typescript_jest_testing.md + typescript-jest-testing / none>`
 
-### Node-RED Contrib Runtime / Component Testing
+### TypeScript Node-RED Contrib Runtime / Component Testing
 
-Keep only when `node-red-contrib-testing` is active. This testing overlay requires the active `node-red-contrib` profile and exact base/testing rule/skill pairs. Runner configuration, generic TypeScript tests, browser editor tests, and separate-process E2E remain independent overlays.
+Keep only when `node-red-contrib-testing` is active. This testing overlay requires the active TypeScript `node-red-contrib` profile and exact base/testing rule/skill pairs. Runner configuration, generic TypeScript tests, browser editor tests, and separate-process E2E remain independent overlays.
 
 - Node-RED contrib testing enabled: `<yes/no>`
+- Node-RED runtime/component test source language: `TypeScript`
+- Test source extension: `.ts`
 - Node-RED test helper: `<node-red-node-test-helper / project-specific / none>`
 - Test helper version source: `<package.json / lockfile / project-specific / none>`
+- Node-RED test-helper declaration source: `<@types/node-red-node-test-helper / project declarations / other verified declaration source / none>`
+- Test-helper declaration version source: `<package.json / lockfile / project-specific / none>`
+- Test TypeScript config source: `<tsconfig path / runner config / project-specific / none>`
 - Test runtime Node-RED version source: `<package.json / lockfile / helper.init runtime / CI / project-specific / none>`
 - Test runner: `<Jest / Vitest / Mocha / project-specific / none>`
 - Node-RED runtime/component test command: `<command / none>`
-- Test-flow fixture policy: `<minimal inline flows / dedicated fixtures / mixed / project-specific / none>`
-- Credentials fixture policy: `<helper credentials argument with synthetic values / project-specific / none>`
+- Test-flow fixture policy: `<minimal typed inline flows / dedicated typed fixtures / mixed / project-specific / none>`
+- Credentials fixture policy: `<helper credentials argument with synthetic typed values / project-specific / none>`
 - Helper HTTP server policy: `<only route suites / project-specific / none>`
 - Runtime cleanup policy: `<helper.unload + stop server when started / project-specific / none>`
 - Active base Node-RED rule/skill: `<node_red_contrib.md + node-red-contrib-expert / none>`
