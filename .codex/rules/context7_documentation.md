@@ -20,6 +20,8 @@ Context7 is especially useful with active materials for:
 
 - Python, testing, FastAPI, SQLAlchemy, HTTPX, `cashews`, and `nats-py`;
 - TypeScript, Jest, ESLint, and Prettier;
+- Node-RED contrib modules and `node-red-node-test-helper` when a reliable
+  matching source/version is available;
 - Vue, Vite, Vue Router, Pinia, VueUse, Vitest, and Playwright;
 - Tailwind CSS, Sass, CSS/SVG, and browser APIs when an appropriate source is
   available.
