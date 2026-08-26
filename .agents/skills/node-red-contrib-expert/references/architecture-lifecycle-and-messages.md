@@ -21,6 +21,13 @@ interface TransformNodeDef extends NodeDef {
 
 interface TransformNode extends Node {}
 
+function readStringPayload(msg: NodeMessage): string {
+  if (typeof msg.payload !== "string") {
+    throw new TypeError("msg.payload must be a string")
+  }
+  return msg.payload
+}
+
 const initializer: NodeInitializer = (RED: NodeAPI) => {
   function TransformNodeConstructor(
     this: TransformNode,
@@ -32,7 +39,8 @@ const initializer: NodeInitializer = (RED: NodeAPI) => {
 
     node.on("input", async (msg: NodeMessage, send, done) => {
       try {
-        msg.payload = await transform(msg.payload)
+        const payload = readStringPayload(msg)
+        msg.payload = await transform(payload)
         send(msg)
         done?.()
       } catch (error: unknown) {
