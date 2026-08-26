@@ -87,6 +87,29 @@ async function getPathInfo(targetPath) {
   }
 }
 
+async function assertNoSymlinkPath(projectRoot, targetPath, label) {
+  if (!isInside(projectRoot, targetPath)) {
+    fail(`${label} escapes the project root: ${targetPath}`)
+  }
+
+  const pathFromRoot = relative(projectRoot, targetPath)
+  if (pathFromRoot === "") {
+    return
+  }
+
+  let current = projectRoot
+  for (const segment of pathFromRoot.split(sep)) {
+    current = resolve(current, segment)
+    const info = await getPathInfo(current)
+    if (!info) {
+      break
+    }
+    if (info.isSymbolicLink()) {
+      fail(`${label} traverses a symbolic link: ${current}`)
+    }
+  }
+}
+
 async function requireRegularFile(targetPath, label) {
   const info = await getPathInfo(targetPath)
   if (!info) {
@@ -206,6 +229,14 @@ async function copyTree(sourcePath, targetPath, label, checkOnly) {
 
   const sourceNames = sourceEntries.map((entry) => entry.name).sort()
   const targetNames = (targetEntries ?? []).map((entry) => entry.name).sort()
+  const sourceNameSet = new Set(sourceNames)
+  const staleTargetNames = targetNames.filter((name) => !sourceNameSet.has(name))
+
+  if (staleTargetNames.length > 0) {
+    fail(
+      `${label} output contains stale path(s): ${staleTargetNames.join(", ")}`,
+    )
+  }
 
   if (checkOnly && sourceNames.join("\0") !== targetNames.join("\0")) {
     fail(`${label} output file set is stale: ${targetPath}`)
@@ -295,6 +326,8 @@ async function main() {
     config.outputRoot,
     `${CONFIG_KEY}.outputRoot`,
   )
+  await assertNoSymlinkPath(projectRoot, sourceRoot, `${CONFIG_KEY}.sourceRoot`)
+  await assertNoSymlinkPath(projectRoot, outputRoot, `${CONFIG_KEY}.outputRoot`)
 
   const editorHtml = config.editorHtml ?? "copy"
   if (editorHtml !== "copy" && editorHtml !== "validate-only") {
@@ -329,6 +362,11 @@ async function main() {
     if (!isInside(outputRoot, runtimePath)) {
       fail(`node-red.nodes.${nodeSetName} must point inside ${config.outputRoot}`)
     }
+    await assertNoSymlinkPath(
+      projectRoot,
+      runtimePath,
+      `node-red.nodes.${nodeSetName}`,
+    )
     await requireRegularFile(runtimePath, `runtime artifact for ${nodeSetName}`)
 
     const editorOutputPath = runtimePath.replace(/\.js$/i, ".html")
@@ -337,6 +375,16 @@ async function main() {
     if (!isInside(sourceRoot, editorSourcePath)) {
       fail(`editor HTML source for ${nodeSetName} escapes ${config.sourceRoot}`)
     }
+    await assertNoSymlinkPath(
+      projectRoot,
+      editorSourcePath,
+      `editor HTML source for ${nodeSetName}`,
+    )
+    await assertNoSymlinkPath(
+      projectRoot,
+      editorOutputPath,
+      `editor HTML output for ${nodeSetName}`,
+    )
 
     if (editorHtml === "copy") {
       await copyRegularFile(
@@ -358,9 +406,15 @@ async function main() {
   for (const mapping of copyMappings) {
     const sourcePath = resolveInside(projectRoot, mapping.from, `${mapping.label}.from`)
     const targetPath = resolveInside(projectRoot, mapping.to, `${mapping.label}.to`)
-    const sourceInfo = await getPathInfo(sourcePath)
+    await assertNoSymlinkPath(projectRoot, sourcePath, `${mapping.label}.from`)
+    await assertNoSymlinkPath(projectRoot, targetPath, `${mapping.label}.to`)
 
+    const sourceInfo = await getPathInfo(sourcePath)
     if (!sourceInfo && mapping.optional) {
+      const targetInfo = await getPathInfo(targetPath)
+      if (targetInfo) {
+        fail(`${mapping.label} source is absent but stale output remains: ${targetPath}`)
+      }
       continue
     }
     if (!sourceInfo) {
