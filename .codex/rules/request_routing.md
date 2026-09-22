@@ -8,8 +8,8 @@ follow-up messages after a long implementation task.
 
 Choose the narrowest applicable mode before acting:
 
-- `implementation`: code, tests, configuration, or project files may be changed
-  when the request asks to perform work.
+- `implementation`: code, tests, configuration, project assets, serialized resources, or project files may be changed when the request asks to perform work.
+- `local-environment-only`: change explicitly scoped machine-local development tools, SDKs, runtimes, Editors, modules, plugins, tool configuration, or local application state. This mode does not authorize repository/project mutations or external-system mutations unless those surfaces are separately authorized.
 - `review-only`: inspect and report findings; do not create tasks, contexts, or
   code changes unless the user explicitly changes the mode.
 - `analysis-only`: investigate and explain; do not change files or taskbook
@@ -34,6 +34,8 @@ Choose the narrowest applicable mode before acting:
   external-system mutations.
 - `documentation-only`: change only the requested documentation/rule/profile
   files.
+
+Use `local-environment-only` for mutations such as installing/removing a local SDK or Editor, changing machine-local tool/plugin/module state, changing local tool defaults, switching persistent local contexts, or configuring a local development integration when the project itself is not being changed. Read-only local-tool inspection inherits the ordinary `question-only`, `status-only`, `analysis-only`, or `review-only` mode and does not require this mutation gate.
 
 Use `external-system-only` for direct operations such as reading or changing a
 Jira issue, updating a ticket, posting a comment, changing a remote workflow
@@ -67,6 +69,8 @@ Use the specialized Obsidian modes instead of the generic external-system mode:
 - other explicitly requested Obsidian MCP operations outside those overlays may
   use `external-system-only` together with `obsidian-mcp-core`.
 
+Local tools may expose project, local-environment, and external/remote operations through the same executable. Classify the real target and side effect rather than the command name. A local IPC/HTTP/CLI boundary controlling a local application is not automatically an external-system operation. A command that also mutates cloud/account/remote state still requires the external-system gate.
+
 Repository-hosting operations that complete the current repository workflow
 inherit the repository mode. Branch creation, commits, pushes, and pull-request
 creation or updates performed as part of an authorized `implementation` or
@@ -93,7 +97,12 @@ first action:
 - code files
 - tests
 - project configuration
+- project assets and serialized resources
+- build/test/generated artifacts
 - Markdown rules/docs
+- local application/editor state
+- local development toolchain/installations
+- local package/module/plugin state
 - Obsidian MCP
 - shell commands
 - Git commands
@@ -114,6 +123,23 @@ For the selected mode, explicitly account for:
 
 If a candidate command or edit would touch a forbidden surface, replace it with
 a project-safe action or do not run it.
+
+## Local development-tool gate
+
+Before a machine-local development-tool mutation, resolve:
+
+- the exact executable/tool and installed version;
+- the target installation, project, Editor/application, module, plugin, or configuration scope;
+- whether the operation is read-only, temporary runtime state, or persistent machine state;
+- whether it also changes repository/project files;
+- whether it also changes credentials, cloud/account state, or another external system;
+- whether the operation is destructive, administrative, broad, or difficult to reverse.
+
+Read-only inspection does not authorize installation, removal, upgrade, default/context switching, authentication changes, plugin/module changes, or client/integration configuration.
+
+Ordinary machine-local mutations require an explicit request or an active project workflow that clearly authorizes that mutation. Upgrades, removals, default-target/context changes, authentication changes, and broad environment changes must not be performed merely as an incidental prerequisite.
+
+When one command spans local environment, project, and external-system surfaces, require authorization for each mutated surface separately and verify the resulting state when technically practical.
 
 ## External-system gate
 

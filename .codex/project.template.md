@@ -40,8 +40,8 @@ If the project type, stack, or intended active profiles cannot be determined wit
 
 - Project key: `<PROJECT_KEY>`
 - Workspace: `<WORKSPACE_NAME>`
-- Project type: `<backend / frontend / fullstack / library / cli / embedded / firmware / infrastructure / documentation / mixed / other>`
-- Primary programming languages: `<Python / TypeScript / JavaScript / C / C++ / Go / Rust / Java / none / other>`
+- Project type: `<backend / frontend / fullstack / game / library / cli / embedded / firmware / infrastructure / documentation / mixed / other>`
+- Primary programming languages: `<Python / TypeScript / JavaScript / C# / C / C++ / Go / Rust / Java / none / other>`
 - Secondary programming languages: `<list or none>`
 
 ## Natural Language Profile
@@ -64,6 +64,12 @@ Selection examples:
 - `python-fastapi`
 - `python-cashews-cache`
 - `python-nats-kv-cache`
+- `csharp-core`
+- `csharp-style`
+- `unity-core`
+- `unity-editor`
+- `unity-testing`
+- `unity-cli`
 - `typescript-core`
 - `typescript-jest-testing`
 - `eslint-typescript`
@@ -109,8 +115,9 @@ List only additional rule files active in this project.
 - Optional core rules: `<source_code_hygiene.md / none / other>`
 - Git rules: `<git.md / none>`
 - Python/backend rules: `<python_fastapi.md / python_cashews_cache.md / python_nats_kv_cache.md / none>`
-- Formatting/linting rules: `<prettier_formatting.md / eslint_typescript.md / none>`
-- Language rules: `<typescript_core.md / typescript_jest_testing.md / none / other>`
+- Formatting/linting rules: `<csharp_style.md / prettier_formatting.md / eslint_typescript.md / none>`
+- Language rules: `<csharp_core.md / typescript_core.md / typescript_jest_testing.md / none / other>`
+- Game/engine rules: `<unity_core.md / unity_editor.md / unity_testing.md / unity_cli.md / none>`
 - Framework rules: `<vue3_typescript_vite.md / vue_svg_graphics.md / vue_router.md / pinia.md / vueuse.md / none / other>`
 - Node-RED rules: `<node_red_contrib.md / node_red_contrib_testing.md / none>`
 - Styling rules: `<css.md / css_animation.md / tailwind_css.md / scss_styling.md / none>`
@@ -125,8 +132,9 @@ List only reusable skills active in this project.
 
 - Code prose / language-policy skills: `<comment-language-audit / none>`
 - Python skills: `<python-core / python-testing / python-fastapi-expert / python-cashews-cache / python-nats-kv-cache / none / other>`
-- Language skills: `<typescript-core / typescript-jest-testing / none / other>`
-- Formatting/linting skills: `<prettier-formatting / eslint-typescript / none>`
+- Language skills: `<csharp-core / typescript-core / typescript-jest-testing / none / other>`
+- Formatting/linting skills: `<csharp-style / prettier-formatting / eslint-typescript / none>`
+- Game/engine skills: `<unity-core / unity-editor / unity-testing / unity-cli / none>`
 - Framework skills: `<vue3-typescript-vite-expert / vue-svg-graphics-expert / vue-router-expert / pinia-expert / vueuse-expert / none>`
 - Node-RED skills: `<node-red-contrib-expert / node-red-contrib-testing / none>`
 - Styling skills: `<css-expert / css-animation-expert / tailwind-expert / scss-expert / none>`
@@ -159,7 +167,97 @@ Use only project-declared commands.
 - Artifact check: `<command or none>`
 - Packed-package validation: `<command or none>`
 - Preview/start app for browser tests: `<command or none>`
+- Unity CLI discovery/status: `<command or none>`
+- Unity EditMode tests: `<command or none>`
+- Unity PlayMode tests: `<command or none>`
+- Unity build: `<command or none>`
 - Other validation: `<command or none>`
+
+## C# Profile
+
+Keep only when C# is active.
+
+- C# enabled: `<yes/no>`
+- Effective C# language version source: `<Unity Editor / project file / build configuration / project-specific / none>`
+- Effective C# language version: `<version / project-specific / none>`
+- Runtime/API surface: `<.NET / Unity API Compatibility Level / project-specific / none>`
+- Nullable context source: `<.editorconfig / project file / project-specific / disabled / none>`
+- Unsafe code policy: `<allowed / forbidden / assembly-specific / project-specific / none>`
+- Active C# base rule/skill: `<csharp_core.md + csharp-core / none>`
+
+## C# Style Profile
+
+Keep only when C# style policy is active.
+
+- C# style enabled: `<yes/no>`
+- EditorConfig source: `<path(s) / none>`
+- Naming policy source: `<.editorconfig / CODEX_PROJECT.md / established source style / none>`
+- Formatting policy source: `<.editorconfig / IDE/tooling / project-specific / none>`
+- Style diagnostic severity policy: `<project-specific / suggestions by default / none>`
+- Formatter scope policy: `<changed files only / targeted globs / full repository / project-specific>`
+- Serialized/reflection/framework rename policy: `<preserve contracts / project-specific / none>`
+- Active C# style rule/skill: `<csharp_style.md + csharp-style / none>`
+
+## Unity 6.3 Profile
+
+Keep only when Unity is active. The portable profile is version-bounded to Unity 6000.3.x; verify another major/minor line separately.
+
+- Unity enabled: `<yes/no>`
+- Unity Editor version source: `<ProjectSettings/ProjectVersion.txt / project-specific / none>`
+- Unity Editor version: `<6000.3.x / exact version / none>`
+- Priority verified baseline: `<6000.3.24f1 / project-specific / none>`
+- Package manifest/lock sources: `<Packages/manifest.json + Packages/packages-lock.json / project-specific / none>`
+- Target platforms: `<list / project-specific / none>`
+- Scripting backend by target: `<Mono / IL2CPP / project-specific / none>`
+- API Compatibility Level: `<value / project-specific / none>`
+- Assembly Definition policy: `<runtime/editor/test/feature boundaries / project-specific / none>`
+- Enter Play Mode domain reload policy: `<enabled / disabled / project-specific / none>`
+- Enter Play Mode scene reload policy: `<enabled / disabled / project-specific / none>`
+- Serialization/migration policy: `<project-specific / none>`
+- Async policy: `<Awaitable / Task / coroutine / Jobs / project-specific / none>`
+- Active Unity core rule/skill: `<unity_core.md + unity-core / none>`
+
+## Unity Editor Profile
+
+Keep only when Unity Editor tooling is active.
+
+- Unity Editor tooling enabled: `<yes/no>`
+- Editor assembly/folder policy: `<.asmdef / Editor folders / project-specific / none>`
+- Inspector/property UI policy: `<SerializedObject/SerializedProperty / project-specific / none>`
+- Undo/prefab/asset persistence policy: `<project-specific / none>`
+- Editor UI stack: `<UI Toolkit / IMGUI / mixed / project-specific / none>`
+- Active Unity Editor rule/skill: `<unity_editor.md + unity-editor / none>`
+
+## Unity Testing Profile
+
+Keep only when Unity tests are active.
+
+- Unity testing enabled: `<yes/no>`
+- Unity Test Framework package/version source: `<Packages/packages-lock.json / project-specific / none>`
+- EditMode test assemblies/paths: `<paths / project-specific / none>`
+- PlayMode test assemblies/paths: `<paths / project-specific / none>`
+- Test isolation policy: `<temporary scenes/assets/state cleanup / project-specific / none>`
+- Coverage policy: `<enabled + source/config / disabled / project-specific / none>`
+- Active Unity testing rule/skill: `<unity_testing.md + unity-testing / none>`
+
+## Official Unity CLI Profile
+
+Keep only when the official Unity CLI is active. This profile does not apply to unrelated third-party tools named unity-cli.
+
+- Unity CLI enabled: `<yes/no>`
+- CLI implementation: `<official Unity CLI / none>`
+- CLI executable: `<unity / project-specific / none>`
+- CLI version source: `<unity version --format json / project-specific / none>`
+- CLI version: `<1.0.0-beta.10 / exact installed version / none>`
+- CLI version policy: `<exact/pinned / project-specific>`
+- CLI command discovery: `<unity commands --format json / project-specific / none>`
+- Vendor skill discovery: `<unity skill show --format json / disabled / none>`
+- Editor/Pipeline command discovery: `<unity list / project-specific / none>`
+- Project CLI configuration: `<ProjectSettings/UnityCliConfig.json / none>`
+- CLI context policy: `<read-only unless explicitly authorized / project-specific>`
+- Eval policy: `<fallback-only / forbidden / project-specific>`
+- Self-update/install/module/plugin/MCP mutation policy: `<explicit local-environment authorization only / project-specific>`
+- Active Unity CLI rule/skill: `<unity_cli.md + unity-cli / none>`
 
 ## Python Profile
 

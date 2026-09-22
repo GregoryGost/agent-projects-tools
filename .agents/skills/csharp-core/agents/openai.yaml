@@ -1,0 +1,4 @@
+interface:
+  display_name: "C# Core"
+  short_description: "Portable C# coding and review guidance"
+  default_prompt: "Use $csharp-core for framework-neutral C# implementation, version compatibility, contracts, async/resource ownership, refactoring, and code review."

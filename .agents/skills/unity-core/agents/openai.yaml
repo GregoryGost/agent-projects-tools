@@ -1,0 +1,4 @@
+interface:
+  display_name: "Unity 6.3 Core"
+  short_description: "Unity 6000.3 runtime C# guidance"
+  default_prompt: "Use $unity-core for Unity 6.3 runtime C# lifecycle, serialization, UnityEngine.Object semantics, Awaitable/async, assemblies, and performance-aware review."
