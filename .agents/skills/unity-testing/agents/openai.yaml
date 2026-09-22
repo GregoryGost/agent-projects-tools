@@ -1,0 +1,4 @@
+interface:
+  display_name: "Unity Testing"
+  short_description: "Unity 6.3 EditMode and PlayMode testing"
+  default_prompt: "Use $unity-testing for Unity 6.3 Test Framework work: EditMode/PlayMode boundary selection, engine lifecycle tests, asset/scene isolation, cleanup, CLI/CI execution, and review."

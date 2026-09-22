@@ -1,0 +1,4 @@
+interface:
+  display_name: "Unity CLI"
+  short_description: "Official Unity CLI beta.10 automation and validation"
+  default_prompt: "Use $unity-cli for official Unity CLI 1.0.0-beta.10 discovery, Editor/Pipeline commands, test/build automation, eval safety, contexts, and request-routed side effects."

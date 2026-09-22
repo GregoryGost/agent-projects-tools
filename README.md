@@ -79,6 +79,9 @@
 | Маршрутизация и общие правила | `request_routing.md`, `material_dependencies.md`, `source_code_hygiene.md`, `git.md` |
 | Актуальная техническая документация | `context7_documentation.md` для опционального Context7 MCP retrieval |
 | Язык code-adjacent prose | `comment-language-audit` |
+| C# core и style | `csharp_core.md`, `csharp-core`, `csharp_style.md`, `csharp-style` для version-aware C#, `.editorconfig`-first naming/formatting и безопасных style-изменений |
+| Unity 6.3 | `unity_core.md`, `unity-core`, `unity_editor.md`, `unity-editor`, `unity_testing.md`, `unity-testing` для Unity 6000.3.x runtime/Editor/test boundaries |
+| Official Unity CLI | `unity_cli.md`, `unity-cli` для официального Unity CLI; priority baseline `1.0.0-beta.10`, live command/schema discovery и routed side effects |
 | Python core и тестирование | `python-core`, `python-testing`, `python-service-e2e-testing` |
 | Python backend | `python-fastapi-expert`, `python-cashews-cache`, `python-sqlalchemy-core`, `python-sqlalchemy-sqlite`, `python-sqlalchemy-mysql`, `python-httpx-client`, `python-backend-security` |
 | Python distributed cache | `python_nats_kv_cache.md`, `python-nats-kv-cache` для NATS JetStream Key/Value |
@@ -102,6 +105,23 @@
 - для version-sensitive поведения проверяются корректные library/source/version и не допускается молчаливая подмена на `latest`;
 - при недоступности или недостаточном покрытии Context7 используются curated official sources или прямая официальная документация;
 - security, Jira Data Center и Obsidian сохраняют собственные source-of-truth и workflow boundaries.
+
+## Профили C# и Unity 6.3
+
+Базовый набор разделяет язык, style, engine semantics, Editor tooling, testing и automation вместо одного монолитного Unity skill.
+
+- `csharp_core.md + csharp-core` — framework-neutral C# с обязательным определением фактической language/runtime boundary до выбора синтаксиса и API.
+- `csharp_style.md + csharp-style` — `.editorconfig`-first naming/formatting/IDE style policy. Existing project configuration имеет приоритет над переносимыми defaults; Unity serialized/reflected/framework contracts нельзя ломать косметическим rename.
+- `unity_core.md + unity-core` — version-bounded профиль Unity 6.3 / `6000.3.x` с priority baseline `6000.3.24f1`: serialization, `UnityEngine.Object` semantics, lifecycle, Enter Play Mode/domain reload, `Awaitable`/thread affinity, assemblies и evidence-based performance.
+- `unity_editor.md + unity-editor` — Editor-only overlay: `SerializedObject`/`SerializedProperty`, Undo, prefab/scene/asset authoring, AssetDatabase/importers и Editor UI/lifecycle.
+- `unity_testing.md + unity-testing` — Unity Test Framework boundary selection, EditMode/PlayMode, engine-lifecycle tests, isolated scenes/assets/state cleanup и project-declared CLI/CI execution.
+- `unity_cli.md + unity-cli` — независимый automation/validation overlay для официального Unity CLI. Priority baseline — `1.0.0-beta.10`; commands/options и Editor/Pipeline schemas должны определяться через live machine-readable discovery, а не по памяти.
+
+Hard dependencies существуют только между repository materials. Unity Editor/CLI/package/module/runtime versions являются runtime/tool requirements и проверяются owning profile по project/runtime evidence; они не активируют rules или skills.
+
+`unity-cli` не является hard dependency Unity runtime/Editor/testing. Проекты без CLI остаются валидными и используют свои Editor/batch/CI workflows. Vendor skills из Unity CLI/Pipeline/plugins являются optional supplemental material.
+
+Unity CLI может одной командой затрагивать проект, локальную development environment и remote/cloud state. Поэтому `request_routing.md` содержит отдельный `local-environment-only` gate, а операция классифицируется по реальному side effect, не по имени CLI-команды.
 
 ## Профиль TypeScript Node-RED contrib
 
@@ -217,7 +237,7 @@ Obsidian-related rules и skills требуют MCP-only подхода:
 2. **Ясная область применения** — должно быть понятно, для какого агента, языка, framework, external system и сценария предназначен материал.
 3. **Явные внешние зависимости** — требования к приложениям, плагинам, MCP-серверам, языкам, frameworks и библиотекам описываются рядом с rule или skill.
 4. **Явные зависимости между материалами** — зависимый entrypoint содержит точные имена обязательных skills и пути обязательных rules; подробная методика проверки хранится в `material_dependencies.md`.
-5. **Разделение dependency types** — hard dependencies и optional coordination должны быть разнесены по отдельным разделам и не использовать одинаковую безусловную формулировку.
+5. **Разделение dependency types** — hard dependencies и optional coordination должны быть разнесены по отдельным разделам и не использовать одинаковую безусловную формулировку. Runtime/tool requirements (например, Editor, CLI, SDK, package или module version) не считаются material dependencies и проверяются owning profile отдельно.
 6. **Минимум неявных предположений** — источник истины для конкретного проекта — его `CODEX_PROJECT.md` и repository metadata.
 7. **Актуальность** — устаревшие rules, skills и references следует обновлять или удалять.
 8. **Краткий routing description** — поле `description` в frontmatter кратко формулирует условия активации и отличительные ключевые слова. Полный перечень возможностей, workflow и ограничений остаётся в теле `SKILL.md`.

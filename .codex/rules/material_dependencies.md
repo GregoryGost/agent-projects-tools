@@ -25,6 +25,23 @@ Do not treat conditional coordination as a hard dependency, including wording su
 
 For new or substantially updated skills, use a `Required Dependencies` section containing exact skill names and full rule paths. Rules should use `Required skills` and exact skill names; required rule paths must be stated explicitly.
 
+## Material versus runtime/tool dependencies
+
+This validator covers dependencies between repository materials: rules and skills.
+
+Do not treat an executable, SDK, runtime, framework, engine, Editor, package, plugin, compiler, platform module, service, or version requirement as a material dependency merely because an active artifact needs it at runtime or during validation.
+
+Examples of non-material requirements include:
+
+- a Unity Editor version;
+- a Unity CLI version;
+- a Unity package or Editor module;
+- a compiler/runtime version;
+- a platform SDK;
+- a connected local application or service.
+
+The owning specialized profile/rule/skill must declare and validate runtime/tool requirements against project or runtime evidence. A runtime/tool requirement never activates a rule or skill and does not satisfy a missing material dependency.
+
 ## Validator availability
 
 When an active artifact declares at least one hard dependency:
@@ -100,6 +117,7 @@ When adding, changing, or reviewing a rule or skill dependency declaration, appl
 - [ ] The validator file is present when hard dependencies exist.
 - [ ] Every hard dependency is declared explicitly in the entrypoint.
 - [ ] Optional coordination is not misclassified as required.
+- [ ] Runtime/tool requirements are not misclassified as material dependencies.
 - [ ] Exact rule paths and skill names resolve to existing artifacts.
 - [ ] Every required artifact is active and not set to `none`.
 - [ ] The full transitive closure was validated.

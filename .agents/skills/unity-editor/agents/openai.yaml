@@ -1,0 +1,4 @@
+interface:
+  display_name: "Unity Editor"
+  short_description: "Unity 6.3 Editor scripting and asset authoring"
+  default_prompt: "Use $unity-editor for Unity 6.3 custom inspectors, SerializedObject/SerializedProperty, Undo, prefabs/scenes, AssetDatabase/importers, Editor windows, and safe authoring automation."

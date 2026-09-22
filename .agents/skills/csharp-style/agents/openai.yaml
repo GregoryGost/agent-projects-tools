@@ -1,0 +1,4 @@
+interface:
+  display_name: "C# Style"
+  short_description: "C# EditorConfig, naming and formatting policy"
+  default_prompt: "Use $csharp-style for C# .editorconfig, naming, formatting, IDE style rules, scoped cleanup, and Unity-safe style changes."
