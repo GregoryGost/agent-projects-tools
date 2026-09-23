@@ -81,7 +81,7 @@
 | Язык code-adjacent prose | `comment-language-audit` |
 | C# core и style | `csharp_core.md`, `csharp-core`, `csharp_style.md`, `csharp-style` для version-aware C#, `.editorconfig`-first naming/formatting и безопасных style-изменений |
 | Unity 6.3 | `unity_core.md`, `unity-core`, `unity_editor.md`, `unity-editor`, `unity_testing.md`, `unity-testing` для Unity 6000.3.x runtime/Editor/test boundaries |
-| Official Unity CLI | `unity_cli.md`, `unity-cli` для официального Unity CLI; priority baseline `1.0.0-beta.10`, live command/schema discovery и routed side effects |
+| Official Unity CLI | `unity_cli.md`, `unity-cli` для официального Unity CLI; priority baseline `1.0.0-beta.10`, `unity mcp`/live Editor + Pipeline command discovery, batch/CI fallback и routed side effects |
 | Python core и тестирование | `python-core`, `python-testing`, `python-service-e2e-testing` |
 | Python backend | `python-fastapi-expert`, `python-cashews-cache`, `python-sqlalchemy-core`, `python-sqlalchemy-sqlite`, `python-sqlalchemy-mysql`, `python-httpx-client`, `python-backend-security` |
 | Python distributed cache | `python_nats_kv_cache.md`, `python-nats-kv-cache` для NATS JetStream Key/Value |
@@ -114,12 +114,14 @@
 - `csharp_style.md + csharp-style` — `.editorconfig`-first naming/formatting/IDE style policy. Existing project configuration имеет приоритет над переносимыми defaults; Unity serialized/reflected/framework contracts нельзя ломать косметическим rename.
 - `unity_core.md + unity-core` — version-bounded профиль Unity 6.3 / `6000.3.x` с priority baseline `6000.3.24f1`: serialization, `UnityEngine.Object` semantics, lifecycle, Enter Play Mode/domain reload, `Awaitable`/thread affinity, assemblies и evidence-based performance.
 - `unity_editor.md + unity-editor` — Editor-only overlay: `SerializedObject`/`SerializedProperty`, Undo, prefab/scene/asset authoring, AssetDatabase/importers и Editor UI/lifecycle.
-- `unity_testing.md + unity-testing` — Unity Test Framework boundary selection, EditMode/PlayMode, engine-lifecycle tests, isolated scenes/assets/state cleanup и project-declared CLI/CI execution.
-- `unity_cli.md + unity-cli` — независимый automation/validation overlay для официального Unity CLI. Priority baseline — `1.0.0-beta.10`; commands/options и Editor/Pipeline schemas должны определяться через live machine-readable discovery, а не по памяти.
+- `unity_testing.md + unity-testing` — Unity Test Framework boundary selection, EditMode/PlayMode, engine-lifecycle tests, isolated scenes/assets/state cleanup; при активном `unity-cli` открытый reachable Editor валидируется через live MCP/Pipeline, а batch `unity test` остаётся для CI/headless/no-live-Editor workflows.
+- `unity_cli.md + unity-cli` — независимый automation/validation overlay для официального Unity CLI. Priority baseline — `1.0.0-beta.10`; для agent-driven работы с уже открытым Editor приоритетен встроенный `unity mcp` (или эквивалентный `unity command`), а commands/options и Editor/Pipeline schemas определяются через live machine-readable discovery, а не по памяти.
 
 Hard dependencies существуют только между repository materials. Unity Editor/CLI/package/module/runtime versions являются runtime/tool requirements и проверяются owning profile по project/runtime evidence; они не активируют rules или skills.
 
 `unity-cli` не является hard dependency Unity runtime/Editor/testing. Проекты без CLI остаются валидными и используют свои Editor/batch/CI workflows. Vendor skills из Unity CLI/Pipeline/plugins являются optional supplemental material.
+
+`unity mcp` не вводит отдельную модель автоматизации: он экспортирует команды подключённого Editor/Pipeline как MCP tools. Поэтому live MCP и `unity command` используют одну политику target/schema/side effects; `unity mcp configure` рассматривается отдельно как изменение локальной конфигурации agent client.
 
 Unity CLI может одной командой затрагивать проект, локальную development environment и remote/cloud state. Поэтому `request_routing.md` содержит отдельный `local-environment-only` gate, а операция классифицируется по реальному side effect, не по имени CLI-команды.
 
