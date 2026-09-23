@@ -23,15 +23,30 @@ Do not assume domain/scene reload policy. A suite should either:
 
 ## Unity CLI
 
-When `unity-cli` is active, inspect the installed CLI command schema rather than memorizing flags.
+When `unity-cli` is active, inspect the installed CLI and connected Editor command schemas rather than memorizing flags.
 
-For the verified `1.0.0-beta.10` line, the official CLI includes project-aware test workflows and affected/watch capabilities. Use:
+### Open reachable Editor
+
+Prefer the warm live-Editor path:
+
+- use a discovered MCP tool when the agent is connected through official `unity mcp`;
+- otherwise use the equivalent `unity command`;
+- for tests, use `run_tests` and `test_status` only when the current Pipeline catalog exposes them;
+- keep the target project explicit when multiple Editors can run.
+
+This avoids starting a second Editor solely to validate a project that is already open.
+
+### Batch/headless/CI
+
+Use project-aware top-level `unity test` workflows for CI, intentionally headless validation, or when no suitable live Editor exists. For the verified `1.0.0-beta.10` line, affected/watch capabilities are available; use:
 
 - normal/focused/affected test runs according to project policy;
 - reports/coverage only when configured;
 - `watch test` only when the user or project workflow explicitly asks for a long-running watcher.
 
-The Unity CLI is optional. A Unity project remains testable through the Editor/batch workflow without activating the CLI profile.
+Do not silently fall back from a failed live connection to batch execution against the same open project. Diagnose Safe Mode, ambiguous targeting, sandbox/localhost access, or Editor readiness first.
+
+The Unity CLI is optional. A Unity project remains testable through its Editor/batch workflow without activating the CLI profile.
 
 ## Failure triage
 

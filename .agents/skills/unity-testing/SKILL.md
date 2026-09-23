@@ -27,8 +27,9 @@ The mutual `unity_testing.md ↔ unity-testing` pair is intentional.
 3. Identify the narrowest engine boundary required by the behavior.
 4. Keep pure logic outside PlayMode when possible.
 5. Design deterministic setup, assertion, timeout, and cleanup behavior.
-6. Use project-declared Unity CLI/batch/CI commands when available.
-7. Re-run failures in isolation before changing production behavior.
+6. If `unity-cli` is active, choose live MCP/Pipeline execution for an already open reachable Editor and batch `unity test` for CI/headless/no-live-Editor workflows.
+7. Use only the discovered/project-declared test command schema.
+8. Re-run failures in isolation before changing production behavior.
 
 Load references:
 
@@ -36,6 +37,12 @@ Load references:
 - `references/isolation-and-cli.md`.
 - `references/review-checklist.md`.
 - `references/official-sources.md`.
+
+## Execution policy
+
+An open Unity Editor is not a reason to close it for validation. When the official `unity-cli` profile is active and the Editor is reachable, prefer its live Pipeline/MCP test surface. Use top-level `unity test` when the workflow is intentionally batch/headless/CI or no suitable live Editor exists.
+
+Do not silently switch between live and batch paths after a failure because they differ in Editor lifecycle and can observe different state.
 
 ## Guardrails
 
