@@ -22,7 +22,7 @@ Before changing tests:
 1. Confirm the exact Unity 6000.3 patch.
 2. Read `Packages/manifest.json` and `Packages/packages-lock.json` to determine the Unity Test Framework package/version actually used by the project.
 3. Inspect test assemblies, `.asmdef` constraints, EditMode/PlayMode layout, existing fixtures, setup/teardown, and project test commands.
-4. Use project-declared CLI/batch commands when present; do not invent command names or assume `dotnet test` can run Unity-specific tests.
+4. Determine whether the intended project already has a reachable Editor. When `unity-cli` is active, prefer its live Pipeline/MCP path for an open Editor and project-declared batch/CI commands otherwise; do not invent command names or assume `dotnet test` can run Unity-specific tests.
 
 ## Boundary selection
 
@@ -74,7 +74,15 @@ Do not use PlayMode merely because production code lives in a Unity project.
 
 ## Unity CLI coordination
 
-When `unity-cli` is active, its native test/report/coverage commands are a preferred automation surface when they match project policy. The CLI remains optional and is not a hard dependency of this testing profile.
+When `unity-cli` is active, select the execution path from Editor state and project policy:
+
+- open + reachable intended Editor: prefer the live connected-Editor surface, using a discovered Unity MCP tool or `unity command`; use `run_tests`/`test_status` only when the current Pipeline catalog exposes them;
+- no suitable live Editor, CI, or explicitly headless workflow: use the project-declared top-level `unity test`/batch workflow;
+- live Editor reported but inaccessible: diagnose the connection/Safe Mode/sandbox boundary instead of silently starting a second Editor against the same project.
+
+The live path and batch path execute the same test intent through different Editor lifecycles; they are not interchangeable when open-Editor state matters.
+
+The CLI remains optional and is not a hard dependency of this testing profile.
 
 ## Review checklist
 
@@ -84,4 +92,6 @@ When `unity-cli` is active, its native test/report/coverage commands are a prefe
 - [ ] Test assets/scenes/global state are isolated and cleaned up.
 - [ ] No arbitrary sleeps replace deterministic conditions.
 - [ ] Tests are repeatable across the configured Play Mode reload policy.
+- [ ] Open-Editor validation used the live MCP/Pipeline path when available and appropriate.
+- [ ] Batch `unity test` was reserved for CI/headless/no-live-Editor or an explicit project workflow.
 - [ ] Project-declared test/coverage commands were used.
