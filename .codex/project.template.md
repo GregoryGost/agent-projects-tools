@@ -252,7 +252,12 @@ Keep only when the official Unity CLI is active. This profile does not apply to 
 - CLI version policy: `<exact/pinned / project-specific>`
 - CLI command discovery: `<unity commands --format json / project-specific / none>`
 - Vendor skill discovery: `<unity skill show --format json / disabled / none>`
-- Editor/Pipeline command discovery: `<unity list / project-specific / none>`
+- Live Editor status discovery: `<unity status --format json / project-specific / none>`
+- Editor/Pipeline command discovery: `<unity list --format json / project-specific / none>`
+- Interactive Editor execution: `<official Unity MCP preferred / unity command / project-specific / none>`
+- MCP client/scope: `<codex project-local / other client / global / preconfigured / none>`
+- Open-Editor test execution: `<discovered run_tests + test_status via MCP/Pipeline / project-specific / none>`
+- Batch/CI test execution: `<unity test / project-specific / none>`
 - Project CLI configuration: `<ProjectSettings/UnityCliConfig.json / none>`
 - CLI context policy: `<read-only unless explicitly authorized / project-specific>`
 - Eval policy: `<fallback-only / forbidden / project-specific>`
