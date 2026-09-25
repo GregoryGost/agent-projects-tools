@@ -30,6 +30,14 @@ Use this mode in a project that consumes rules, skills, and the project profile 
 9. Apply only materials that match the task, are active through an allowed signal, and have valid required dependencies.
 10. Report conflicting activation signals instead of guessing. Optional activation entries cannot disable `request_routing.md`.
 
+## Active Material Execution Invariants
+
+- Resolve applicable rules and skills only from activation signals allowed by this bootstrap and `CODEX_PROJECT.md`.
+- Read every applicable rule or skill entrypoint before relying on it. A remembered workflow, previous tool result, prior conversation, or generic capability is not a substitute for the current active entrypoint.
+- Validate declared hard dependencies before applying the dependent artifact.
+- An active rule or skill may narrow request routing, allowed surfaces, side effects, or output format, but cannot broaden authorization from the current user message.
+- Before a mutation, the candidate action must satisfy both request routing and every applicable active material. A prohibition from either boundary wins.
+
 ## Template Repository Mode
 
 Use this mode when working in the `agent-projects-tools` source repository itself.
