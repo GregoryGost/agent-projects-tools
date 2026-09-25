@@ -1,0 +1,65 @@
+name: Versioning
+
+on:
+  pull_request:
+    branches:
+      - master
+    types:
+      - closed
+
+permissions:
+  contents: write
+
+jobs:
+  version:
+    if: github.event.pull_request.merged == true
+    name: Create version tag
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Resolve version type
+        id: version
+        shell: bash
+        env:
+          LABELS: ${{ toJSON(github.event.pull_request.labels.*.name) }}
+        run: |
+          set -euo pipefail
+
+          version_labels="$(jq -c '[.[] | select(startswith("version:"))]' <<< "$LABELS")"
+          count="$(jq 'length' <<< "$version_labels")"
+
+          if [ "$count" -ne 1 ]; then
+            echo "::error::Exactly one version label is required."
+            exit 1
+          fi
+
+          version_label="$(jq -r '.[0]' <<< "$version_labels")"
+
+          case "$version_label" in
+            version:major)
+              echo "type=major" >> "$GITHUB_OUTPUT"
+              ;;
+            version:minor)
+              echo "type=minor" >> "$GITHUB_OUTPUT"
+              ;;
+            version:patch)
+              echo "type=patch" >> "$GITHUB_OUTPUT"
+              ;;
+            version:none)
+              echo "type=none" >> "$GITHUB_OUTPUT"
+              ;;
+            *)
+              echo "::error::Unsupported version label: $version_label"
+              exit 1
+              ;;
+          esac
+
+      - name: Create version tag
+        if: steps.version.outputs.type != 'none'
+        uses: GregoryGost/version-tagger@de7fcb126d3c0bb955d5d14fb7e5659c0fbf39b3 # v1.1.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          version: '1.1.0'
+          prefix: 'v'
+          uselasttag: true
+          releasetype: ${{ steps.version.outputs.type }}
