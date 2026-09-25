@@ -63,7 +63,6 @@
 7. Перенесите только остальные нужные файлы из `.codex/rules/` и целиком соответствующие пакеты из `.agents/skills/`.
 8. Не подключайте `.codex/project.template.md` как rule после создания проектного `CODEX_PROJECT.md`.
 
-`CODEX_PROJECT.md` описывает возможности проекта, активные материалы и project-specific policy, но сам по себе не разрешает side effects. Максимальная область разрешённых действий определяется текущим сообщением пользователя через `request_routing.md`; активные rules/skills могут только сузить эту область, но не расширить её. Перед mutation кандидатное действие должно удовлетворять и request-routing gate, и всем применимым активным материалам.
 9. Не активируйте language-, framework-, database-, cache-, HTTP-client-, styling-, testing- или external-system-материалы без activation signal, разрешённого их entrypoint и `AGENTS.md`. Прямое упоминание технологии не является активацией, если entrypoint требует project profile.
 10. Для `cashews` используйте `python_cashews_cache.md + python-cashews-cache` и специализированный Python cashews cache profile.
 11. Для `python-nats-kv-cache` сохраните специализированный NATS KV cache profile: версии `nats-py` и `nats-server`, JetStream/account/domain, bucket ownership/configuration, key/codec/CAS/invalidation/outage/batch policies и exact `python_nats_kv_cache.md + python-nats-kv-cache` pair.
@@ -72,6 +71,8 @@
 14. Для параметризуемой SVG-графики во Vue активируйте `vue3-typescript-vite`, профиль `vue-svg-graphics` и exact `vue_svg_graphics.md + vue-svg-graphics-expert` pair. CSS, CSS animation, Tailwind, UI validation и testing остаются отдельными опциональными overlays.
 15. Для custom/contrib nodes Node-RED используйте TypeScript-стандарт: одновременно активируйте `typescript-core`, `node-red-contrib`, exact `typescript_core.md + typescript-core` и `node_red_contrib.md + node-red-contrib-expert` pairs. Runtime source хранится в `.ts`, Node-RED загружает сгенерированный `.js`; project-owned postbuild или явно эквивалентный workflow собирает/валидирует Node-RED artifacts после компиляции, а канонический `.agents/skills/node-red-contrib-expert/scripts/node-red-postbuild.mjs` используется только как переносимый источник для проектной копии. Node-RED runtime/component tests подключаются отдельным `node-red-contrib-testing` profile, а Jest/browser/separate-process E2E остаются независимыми overlays.
 16. Для Blender 5.2 используйте профильные пары `blender-core`, `blender-modeling`, `blender-materials-texturing`, `blender-rigging-animation`, `blender-mcp` и `blender-unity` только по фактической области задачи. `blender-core` является базой предметных Blender-профилей; официальный `blender-mcp` остаётся независимым automation overlay, а `blender-unity` задаёт Blender-side контракт подготовки ассетов для Unity без переноса Unity-owned importer/runtime state в Blender.
+
+`CODEX_PROJECT.md` описывает возможности проекта, активные материалы и project-specific policy, но сам по себе не разрешает side effects. Максимальная область разрешённых действий определяется текущим сообщением пользователя через `request_routing.md`; активные rules/skills могут только сузить эту область, но не расширить её. Перед mutation каждое планируемое действие должно удовлетворять и request-routing gate, и всем применимым активным материалам.
 
 ## Фактическое покрытие
 
