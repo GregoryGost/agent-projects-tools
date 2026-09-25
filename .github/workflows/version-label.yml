@@ -1,0 +1,47 @@
+name: Version label
+
+on:
+  pull_request:
+    branches:
+      - master
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - labeled
+      - unlabeled
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate version label
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Validate version label
+        shell: bash
+        env:
+          LABELS: ${{ toJSON(github.event.pull_request.labels.*.name) }}
+        run: |
+          set -euo pipefail
+
+          version_labels="$(jq -c '[.[] | select(startswith("version:"))]' <<< "$LABELS")"
+          count="$(jq 'length' <<< "$version_labels")"
+
+          if [ "$count" -ne 1 ]; then
+            echo "::error::Exactly one version label is required: version:major, version:minor, version:patch, or version:none."
+            exit 1
+          fi
+
+          version_label="$(jq -r '.[0]' <<< "$version_labels")"
+
+          case "$version_label" in
+            version:major|version:minor|version:patch|version:none)
+              ;;
+            *)
+              echo "::error::Unsupported version label: $version_label"
+              exit 1
+              ;;
+          esac
