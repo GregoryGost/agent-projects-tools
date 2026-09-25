@@ -92,8 +92,12 @@ remains ambiguous, ask before acting.
 ## Authorization and narrowing precedence
 
 The current user message defines the maximum authorized side-effect scope for
-that turn. Prior turns, prior approvals, previous implementation work,
-remembered workflows, or the apparent end goal must not broaden that scope.
+that turn. Prior conversation may be used only to resolve an explicit referent
+in the current message, such as `do that` or `yes` to a previously proposed
+bounded action. It must not preserve the previous request mode, carry forward a
+broader scope, or authorize unrelated side effects. Previous implementation
+work, remembered workflows, or the apparent end goal must not broaden the
+resolved scope.
 
 Active rules and skills may refine or narrow the selected request mode, allowed
 surfaces, side effects, or required output format. They must never grant
