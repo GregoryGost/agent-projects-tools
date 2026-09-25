@@ -30,6 +30,19 @@ When selected materials declare hard dependencies, copy `.codex/rules/material_d
 
 Version-specific profiles are valid only when their specialized section declares a supported version and the exact active rule/skill pair. A task mention does not bypass profile activation or version boundaries.
 
+## Execution Contract
+
+Request authorization is controlled by `.codex/rules/request_routing.md`.
+`CODEX_PROJECT.md` declares project capabilities, active materials, and
+project-specific policy; it does not itself authorize side effects.
+
+Active rules and skills may further narrow request modes, surfaces, mutations,
+or output contracts. They cannot broaden the scope authorized by the current
+user request.
+
+Applicable active materials must be resolved through the activation model, their
+entrypoints read, and their hard dependencies validated before they are applied.
+
 ## Project Discovery Rule
 
 When `CODEX_PROJECT.md` is missing, infer the project profile from repository files first: manifests, package manager files, lockfiles, framework configs, source tree, test configs, build configs, and documentation.
