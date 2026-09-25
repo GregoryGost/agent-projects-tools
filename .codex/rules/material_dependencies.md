@@ -62,6 +62,10 @@ Dependency validation is required, but .codex/rules/material_dependencies.md is 
 
 ## Validation workflow
 
+Complete dependency validation before the first task-specific action whose
+behavior depends on the artifact. Validation performed after using the artifact
+does not retroactively authorize that use.
+
 Before applying a dependent artifact:
 
 1. Confirm that the artifact itself is active through a signal allowed by `AGENTS.md` and `CODEX_PROJECT.md`.
