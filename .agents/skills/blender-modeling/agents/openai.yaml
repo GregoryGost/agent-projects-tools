@@ -1,0 +1,4 @@
+interface:
+  display_name: "Blender Modeling"
+  short_description: "Blender 5.2 mesh, topology, modifiers and UV guidance"
+  default_prompt: "Use $blender-modeling for Blender 5.2 mesh modeling, topology, modifiers, normals, UVs, origins/transforms, high-low workflows, LOD source geometry, and modeling validation."

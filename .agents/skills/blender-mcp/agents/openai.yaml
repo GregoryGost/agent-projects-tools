@@ -1,0 +1,4 @@
+interface:
+  display_name: "Blender MCP"
+  short_description: "Official Blender Lab MCP live Editor automation"
+  default_prompt: "Use $blender-mcp for official Blender Lab MCP 1.0.3 live-Editor inspection, docs/screenshots, bounded bpy execution, routing/security, and CLI/headless fallback."

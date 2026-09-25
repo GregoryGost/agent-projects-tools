@@ -69,6 +69,7 @@
 13. Для `jira-data-center` сохраните специализированный Jira Data Center profile: exact rule/skill pair, declared `8.22.x` или точную `8.22.z`, instance/environment и источники configuration. Runtime version проверяется через `/rest/api/2/serverInfo`; другая major/minor версия требует отдельных проверенных материалов.
 14. Для параметризуемой SVG-графики во Vue активируйте `vue3-typescript-vite`, профиль `vue-svg-graphics` и exact `vue_svg_graphics.md + vue-svg-graphics-expert` pair. CSS, CSS animation, Tailwind, UI validation и testing остаются отдельными опциональными overlays.
 15. Для custom/contrib nodes Node-RED используйте TypeScript-стандарт: одновременно активируйте `typescript-core`, `node-red-contrib`, exact `typescript_core.md + typescript-core` и `node_red_contrib.md + node-red-contrib-expert` pairs. Runtime source хранится в `.ts`, Node-RED загружает сгенерированный `.js`; project-owned postbuild или явно эквивалентный workflow собирает/валидирует Node-RED artifacts после компиляции, а канонический `.agents/skills/node-red-contrib-expert/scripts/node-red-postbuild.mjs` используется только как переносимый источник для проектной копии. Node-RED runtime/component tests подключаются отдельным `node-red-contrib-testing` profile, а Jest/browser/separate-process E2E остаются независимыми overlays.
+16. Для Blender 5.2 используйте профильные пары `blender-core`, `blender-modeling`, `blender-materials-texturing`, `blender-rigging-animation`, `blender-mcp` и `blender-unity` только по фактической области задачи. `blender-core` является базой предметных Blender-профилей; официальный `blender-mcp` остаётся независимым automation overlay, а `blender-unity` задаёт Blender-side контракт подготовки ассетов для Unity без переноса Unity-owned importer/runtime state в Blender.
 
 ## Фактическое покрытие
 
@@ -82,6 +83,9 @@
 | C# core и style | `csharp_core.md`, `csharp-core`, `csharp_style.md`, `csharp-style` для version-aware C#, `.editorconfig`-first naming/formatting и безопасных style-изменений |
 | Unity 6.3 | `unity_core.md`, `unity-core`, `unity_editor.md`, `unity-editor`, `unity_testing.md`, `unity-testing` для Unity 6000.3.x runtime/Editor/test boundaries |
 | Official Unity CLI | `unity_cli.md`, `unity-cli` для официального Unity CLI; priority baseline `1.0.0-beta.10`, `unity mcp`/live Editor + Pipeline command discovery, batch/CI fallback и routed side effects |
+| Blender 5.2 | `blender_core.md`, `blender-core`, `blender_modeling.md`, `blender-modeling`, `blender_materials_texturing.md`, `blender-materials-texturing`, `blender_rigging_animation.md`, `blender-rigging-animation` для Blender 5.2.x data model и asset authoring |
+| Official Blender Lab MCP | `blender_mcp.md`, `blender-mcp` для официального Blender Lab MCP; priority baseline `1.0.3`, live Editor first, scene/docs/screenshot inspection, bounded `bpy` execution и headless fallback |
+| Blender → Unity | `blender_unity.md`, `blender-unity` для Blender 5.2.x → Unity 6000.3.x asset boundary: FBX, scale/axes, mesh/UV/normals, textures/material data, rigs/animation, blend shapes, LOD и import validation |
 | Python core и тестирование | `python-core`, `python-testing`, `python-service-e2e-testing` |
 | Python backend | `python-fastapi-expert`, `python-cashews-cache`, `python-sqlalchemy-core`, `python-sqlalchemy-sqlite`, `python-sqlalchemy-mysql`, `python-httpx-client`, `python-backend-security` |
 | Python distributed cache | `python_nats_kv_cache.md`, `python-nats-kv-cache` для NATS JetStream Key/Value |
@@ -124,6 +128,23 @@ Hard dependencies существуют только между repository materi
 `unity mcp` не вводит отдельную модель автоматизации: он экспортирует команды подключённого Editor/Pipeline как MCP tools. Поэтому live MCP и `unity command` используют одну политику target/schema/side effects; `unity mcp configure` рассматривается отдельно как изменение локальной конфигурации agent client.
 
 Unity CLI может одной командой затрагивать проект, локальную development environment и remote/cloud state. Поэтому `request_routing.md` содержит отдельный `local-environment-only` gate, а операция классифицируется по реальному side effect, не по имени CLI-команды.
+
+## Профили Blender 5.2 и Blender → Unity
+
+Blender-набор разделён по самостоятельным authoring и automation boundaries вместо одного монолитного skill.
+
+- `blender_core.md + blender-core` — version-bounded база Blender 5.2.x с priority baseline `5.2.2 LTS`: data-block ownership, `bpy`, context/modes, BMesh, transforms, evaluated depsgraph, Undo, save/file state. Для обычной работы в открытом Blender отдельный `pip install bpy` не требуется: `bpy` принадлежит embedded Python Blender.
+- `blender_modeling.md + blender-modeling` — mesh/topology/modifiers, normals/smoothing, UV geometry, origins/transforms, high/low и source LOD workflows. Профиль требует `blender-core`.
+- `blender_materials_texturing.md + blender-materials-texturing` — Images, Shader Nodes/lookdev, texture painting, baking, color spaces, normal maps, masks и channel packing. Профиль требует `blender-core`.
+- `blender_rigging_animation.md + blender-rigging-animation` — Armatures, skinning/weights, constraints, IK/FK, Shape Keys, drivers, Blender 5.2 Actions/Slots, NLA и animation baking. Профиль требует `blender-core`.
+- `blender_mcp.md + blender-mcp` — независимый automation overlay для официального Blender Lab MCP. Priority baseline — `1.0.3`; для уже открытого файла используется live Editor first, dedicated summary/docs/screenshot tools применяются для inspection, а сложное authoring выполняется ограниченными `execute_blender_code` вызовами через `bpy`/BMesh. Upstream `WeakSandboxForLLM` не рассматривается как security boundary.
+- `blender_unity.md + blender-unity` — Blender-side integration overlay для Blender 5.2.x → Unity 6.3 / `6000.3.x`, priority baseline `5.2.2 LTS → 6000.3.24f1`: FBX/interchange, physical scale, axis conversion, meshes/normals/UV, texture/material semantics, rigs/animation/Blend Shapes, LOD и proportional import validation. Профиль требует `blender-core`, но `unity-editor`/`unity-cli` остаются optional coordination и отвечают только за Unity-owned state.
+
+Hard dependencies существуют между repository materials, а Blender executable, embedded Python, official MCP server/add-on и Unity Editor являются runtime/tool requirements. Они проверяются owning profile по project/runtime evidence и не активируют rules/skills автоматически.
+
+Предметные Blender-профили не требуют друг друга без необходимости. Например, modeling-only задача может активировать `blender-core + blender-modeling`, а material/bake задача — `blender-core + blender-materials-texturing`. `blender-mcp` добавляется только когда агент действительно управляет Blender через официальный MCP.
+
+Unity-specific данные остаются на своей стороне границы: Blender отвечает за source authoring/export preparation, Unity — за ModelImporter/TextureImporter, runtime Materials/Shaders, Avatar/AnimationClip settings, Prefabs, colliders и `LODGroup`.
 
 ## Профиль TypeScript Node-RED contrib
 

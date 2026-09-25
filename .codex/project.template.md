@@ -70,6 +70,12 @@ Selection examples:
 - `unity-editor`
 - `unity-testing`
 - `unity-cli`
+- `blender-core`
+- `blender-modeling`
+- `blender-materials-texturing`
+- `blender-rigging-animation`
+- `blender-mcp`
+- `blender-unity`
 - `typescript-core`
 - `typescript-jest-testing`
 - `eslint-typescript`
@@ -118,6 +124,7 @@ List only additional rule files active in this project.
 - Formatting/linting rules: `<csharp_style.md / prettier_formatting.md / eslint_typescript.md / none>`
 - Language rules: `<csharp_core.md / typescript_core.md / typescript_jest_testing.md / none / other>`
 - Game/engine rules: `<unity_core.md / unity_editor.md / unity_testing.md / unity_cli.md / none>`
+- DCC/asset rules: `<blender_core.md / blender_modeling.md / blender_materials_texturing.md / blender_rigging_animation.md / blender_mcp.md / blender_unity.md / none>`
 - Framework rules: `<vue3_typescript_vite.md / vue_svg_graphics.md / vue_router.md / pinia.md / vueuse.md / none / other>`
 - Node-RED rules: `<node_red_contrib.md / node_red_contrib_testing.md / none>`
 - Styling rules: `<css.md / css_animation.md / tailwind_css.md / scss_styling.md / none>`
@@ -135,6 +142,7 @@ List only reusable skills active in this project.
 - Language skills: `<csharp-core / typescript-core / typescript-jest-testing / none / other>`
 - Formatting/linting skills: `<csharp-style / prettier-formatting / eslint-typescript / none>`
 - Game/engine skills: `<unity-core / unity-editor / unity-testing / unity-cli / none>`
+- DCC/asset skills: `<blender-core / blender-modeling / blender-materials-texturing / blender-rigging-animation / blender-mcp / blender-unity / none>`
 - Framework skills: `<vue3-typescript-vite-expert / vue-svg-graphics-expert / vue-router-expert / pinia-expert / vueuse-expert / none>`
 - Node-RED skills: `<node-red-contrib-expert / node-red-contrib-testing / none>`
 - Styling skills: `<css-expert / css-animation-expert / tailwind-expert / scss-expert / none>`
@@ -171,6 +179,11 @@ Use only project-declared commands.
 - Unity EditMode tests: `<command or none>`
 - Unity PlayMode tests: `<command or none>`
 - Unity build: `<command or none>`
+- Blender version/status validation: `<command/workflow or none>`
+- Blender asset validation: `<command/workflow or none>`
+- Blender export validation: `<command/workflow or none>`
+- Blender MCP live validation: `<workflow or none>`
+- Blender → Unity import validation: `<workflow or none>`
 - Other validation: `<command or none>`
 
 ## C# Profile
@@ -263,6 +276,139 @@ Keep only when the official Unity CLI is active. This profile does not apply to 
 - Eval policy: `<fallback-only / forbidden / project-specific>`
 - Self-update/install/module/plugin/MCP mutation policy: `<explicit local-environment authorization only / project-specific>`
 - Active Unity CLI rule/skill: `<unity_cli.md + unity-cli / none>`
+
+## Blender 5.2 Core Profile
+
+Keep only when Blender is active. The portable profile is version-bounded to Blender 5.2.x; verify another major/minor line separately.
+
+- Blender enabled: `<yes/no>`
+- Blender version source: `<live bpy.app.version_string / installed executable / project documentation / project-specific / none>`
+- Blender version: `<5.2.x / exact version / none>`
+- Priority verified baseline: `<5.2.2 LTS / project-specific / none>`
+- Blender executable source: `<PATH / explicit local path / project-specific / none>`
+- Embedded Python version source: `<sys.version_info in Blender / project-specific / none>`
+- Standalone `bpy` package policy: `<not required for Editor/MCP workflow / project-specific / none>`
+- Blender source asset roots: `<paths / project-specific / none>`
+- Scene/unit policy: `<meters / Blender units + explicit scale / project-specific / none>`
+- Data ownership policy: `<local/shared/library-linked / project-specific / none>`
+- Save/overwrite policy: `<explicit target only / project-specific / none>`
+- Active Blender core rule/skill: `<blender_core.md + blender-core / none>`
+
+## Blender Modeling Profile
+
+Keep only when `blender-modeling` is active. This profile requires the active Blender core pair.
+
+- Blender modeling enabled: `<yes/no>`
+- Modeling asset categories: `<environment / props / characters / vehicles / modular kits / mixed / project-specific / none>`
+- Topology policy: `<project-specific / none>`
+- Modifier/evaluated-geometry policy: `<non-destructive source + export evaluation / apply selectively / project-specific / none>`
+- Transform/origin/pivot policy: `<project-specific / none>`
+- Normals/smoothing policy: `<project-specific / none>`
+- UV map naming/ownership policy: `<project-specific / none>`
+- UV seam/overlap/packing policy: `<project-specific / none>`
+- Texel-density policy: `<value/source / project-specific / none>`
+- High/low/cage/collision naming policy: `<project-specific / none>`
+- Source LOD policy: `<authored / generated later / mixed / project-specific / none>`
+- Geometry Nodes export policy: `<realize/evaluate / source-only / project-specific / none>`
+- Active Blender modeling rule/skill: `<blender_modeling.md + blender-modeling / none>`
+
+## Blender Materials And Texturing Profile
+
+Keep only when `blender-materials-texturing` is active. This profile requires the active Blender core pair.
+
+- Blender materials/texturing enabled: `<yes/no>`
+- Blender lookdev render engine: `<Cycles / Eevee / mixed / project-specific / none>`
+- Material authoring baseline: `<Principled BSDF / project-specific node groups / mixed / none>`
+- Texture source/output roots: `<paths / project-specific / none>`
+- Color-management policy: `<project-specific / none>`
+- Color texture space policy: `<sRGB/managed / project-specific / none>`
+- Data texture space policy: `<Non-Color / project-specific / none>`
+- Texture format/bit-depth policy: `<project-specific / none>`
+- Texture resolution policy: `<project-specific / none>`
+- Normal-map convention: `<OpenGL / DirectX / importer conversion / project-specific / none>`
+- Channel-packing convention: `<R/G/B/A mapping / project-specific / none>`
+- Baking engine/passes policy: `<Cycles + declared passes / project-specific / none>`
+- Bake cage/ray/margin policy: `<project-specific / none>`
+- Packed versus external image policy: `<external project assets / packed source / mixed / project-specific / none>`
+- Active Blender materials/texturing rule/skill: `<blender_materials_texturing.md + blender-materials-texturing / none>`
+
+## Blender Rigging And Animation Profile
+
+Keep only when `blender-rigging-animation` is active. This profile requires the active Blender core pair.
+
+- Blender rigging/animation enabled: `<yes/no>`
+- Rig categories: `<characters / creatures / props / mechanical / mixed / project-specific / none>`
+- Authoring rig versus export/deform rig policy: `<same rig / separate export rig / project-specific / none>`
+- Bone naming/orientation policy: `<project-specific / none>`
+- Runtime deform-bone policy: `<project-specific / none>`
+- Skin influence/weight policy: `<project-specific / none>`
+- Constraint/IK/FK/driver policy: `<authoring-only + bake runtime motion / project-specific / none>`
+- Shape Key policy: `<enabled + topology frozen / disabled / project-specific / none>`
+- Action/Action Slot naming policy: `<project-specific / none>`
+- NLA usage policy: `<project-specific / none>`
+- Animation FPS source: `<scene / project-specific / none>`
+- Clip/action packaging policy: `<multiple actions / separate export files / mixed / project-specific / none>`
+- Root-motion authoring policy: `<project-specific / none>`
+- Active Blender rigging/animation rule/skill: `<blender_rigging_animation.md + blender-rigging-animation / none>`
+
+## Official Blender Lab MCP Profile
+
+Keep only when the official Blender Lab MCP is active. This profile does not apply to third-party projects with similar `blender-mcp` names.
+
+- Blender MCP enabled: `<yes/no>`
+- MCP implementation: `<official Blender Lab MCP / none>`
+- MCP version/source: `<1.0.3 / exact tag or pinned revision / project-specific / none>`
+- Priority verified baseline: `<1.0.3 + Blender 5.2.2 LTS / project-specific / none>`
+- MCP server source/install scope: `<project-local ignored runtime / user-local / managed tool / project-specific / none>`
+- MCP client/scope: `<Codex project-local / other client / global / preconfigured / none>`
+- MCP transport: `<stdio / project-specific / none>`
+- Blender add-on host/port source: `<localhost:9876 / local config / project-specific / none>`
+- Bridge network policy: `<loopback-only / project-specific / none>`
+- Live Editor target policy: `<current intended Blender session / explicit file/session selection / project-specific / none>`
+- Live Editor preference: `<live first / project-specific / none>`
+- Dedicated inspection/docs/screenshot tool policy: `<prefer before code execution / project-specific / none>`
+- `execute_blender_code` policy: `<bounded authoring + structured result + validation / forbidden / project-specific>`
+- Weak-sandbox security policy: `<not a security boundary / project-specific / none>`
+- Background/CLI fallback policy: `<explicit headless/batch only / project-specific / none>`
+- MCP/add-on install/upgrade/config policy: `<explicit local-environment authorization only / project-specific>`
+- Active Blender MCP rule/skill: `<blender_mcp.md + blender-mcp / none>`
+
+## Blender → Unity Asset Pipeline Profile
+
+Keep only when `blender-unity` is active. This profile covers Blender-side asset preparation for Unity 6.3 / `6000.3.x`; Unity-owned import/runtime state remains under Unity profiles.
+
+- Blender → Unity enabled: `<yes/no>`
+- Blender version source: `<Blender core profile / runtime / none>`
+- Unity Editor version source: `<ProjectSettings/ProjectVersion.txt / project-specific / none>`
+- Unity Editor version: `<6000.3.x / exact version / none>`
+- Priority verified baseline: `<Blender 5.2.2 LTS + Unity 6000.3.24f1 / project-specific / none>`
+- Unity render pipeline: `<Built-in / URP / HDRP / custom / project-specific / none>`
+- Target platforms: `<list / project-specific / none>`
+- Blender source format: `<.blend / project-specific / none>`
+- Model interchange format: `<FBX / project-specific / none>`
+- Physical scale policy: `<1 meter = 1 Unity unit / project-specific / none>`
+- Axis conversion policy: `<FBX exporter + Unity importer / project-specific / none>`
+- FBX preset/source: `<project preset / documented settings / project-specific / none>`
+- FBX `bake_space_transform` policy: `<disabled unless specifically validated / project-specific / none>`
+- Modifier export policy: `<evaluated/apply selectively + Shape Key compatibility / project-specific / none>`
+- Normals/tangents policy: `<import / calculate / mixed / project-specific / none>`
+- Unity UV ownership policy: `<UV0 textures / UV1 lightmap / importer-generated / project-specific / none>`
+- Texture transfer policy: `<external Unity assets / project-specific / none>`
+- Roughness → Smoothness policy: `<invert/pack according to active shader / project-specific / none>`
+- Unity normal-map convention/import policy: `<project-specific / none>`
+- Unity material/shader ownership: `<Unity Materials + Shader Graph/HLSL / project-specific / none>`
+- Unity rig type: `<Generic / Humanoid / Legacy / project-specific / none>`
+- Animation packaging: `<same FBX / Model@clip FBX / mixed / project-specific / none>`
+- Unity root-motion policy: `<project-specific / none>`
+- Blend Shape import policy: `<enabled / disabled / project-specific / none>`
+- LOD naming policy: `<_LOD0/_LOD1/... / project-specific / none>`
+- LOD transition/budget source: `<project/performance profile / project-specific / none>`
+- Unity import validation workflow: `<live unity-cli/MCP / Editor/manual / batch / project-specific / none>`
+- Round-trip diagnostic policy: `<only for exporter/data-loss diagnostics / project-specific / none>`
+- Required Blender base rule/skill: `<blender_core.md + blender-core / none>`
+- Active Blender → Unity rule/skill: `<blender_unity.md + blender-unity / none>`
+- Optional active Blender authoring overlays: `<blender-modeling / blender-materials-texturing / blender-rigging-animation / blender-mcp / none>`
+- Optional active Unity overlays: `<unity-editor / unity-cli / none>`
 
 ## Python Profile
 

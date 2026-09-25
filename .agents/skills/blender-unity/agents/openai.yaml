@@ -1,0 +1,4 @@
+interface:
+  display_name: "Blender → Unity"
+  short_description: "Blender 5.2 to Unity 6.3 asset pipeline"
+  default_prompt: "Use $blender-unity for Blender 5.2 to Unity 6.3 FBX/asset preparation, scale/axes, meshes/UV/normals, textures/material data, rigs/animation, blend shapes, LOD, and import validation."
