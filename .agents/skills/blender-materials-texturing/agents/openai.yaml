@@ -1,0 +1,4 @@
+interface:
+  display_name: "Blender Materials & Texturing"
+  short_description: "Blender 5.2 lookdev, textures, baking and color-space guidance"
+  default_prompt: "Use $blender-materials-texturing for Blender 5.2 materials/lookdev, images, color spaces, texture painting, baking, normal maps, masks, and channel packing."

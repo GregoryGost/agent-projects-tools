@@ -36,6 +36,9 @@ Examples of non-material requirements include:
 - a Unity Editor version;
 - a Unity CLI version;
 - a Unity package or Editor module;
+- a Blender Editor version;
+- the official Blender MCP server/add-on version;
+- Blender's embedded Python or `bpy` runtime;
 - a compiler/runtime version;
 - a platform SDK;
 - a connected local application or service.

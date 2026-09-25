@@ -1,0 +1,4 @@
+interface:
+  display_name: "Blender Rigging & Animation"
+  short_description: "Blender 5.2 rigging, Actions/Slots and animation guidance"
+  default_prompt: "Use $blender-rigging-animation for Blender 5.2 armatures, skinning, constraints, IK/FK, Shape Keys, drivers, Actions/Slots, NLA, baking, and animation review."

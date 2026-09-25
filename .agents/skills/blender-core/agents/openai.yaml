@@ -1,0 +1,4 @@
+interface:
+  display_name: "Blender 5.2 Core"
+  short_description: "Blender bpy data model, context, modes and Undo"
+  default_prompt: "Use $blender-core for Blender 5.2 bpy/data-block semantics, context and modes, BMesh, transforms, evaluated data, Undo, file state, and Blender-side review."
