@@ -89,6 +89,28 @@ does not authorize repository changes. Use a combined gate only for side
 effects explicitly requested by the user. If the required target or side effect
 remains ambiguous, ask before acting.
 
+## Authorization and narrowing precedence
+
+The current user message defines the maximum authorized side-effect scope for
+that turn. Prior turns, prior approvals, previous implementation work,
+remembered workflows, or the apparent end goal must not broaden that scope.
+
+Active rules and skills may refine or narrow the selected request mode, allowed
+surfaces, side effects, or required output format. They must never grant
+authorization that is absent from the current request.
+
+When an applicable active rule or skill maps a request form to a specific mode,
+strict output contract, or narrower side-effect boundary, that restriction is
+controlling. Do not combine it with a broader inferred mode.
+
+A request to prepare text, inspect, analyse, review, explain, report status, or
+answer a question is read-only unless the current message explicitly authorizes
+a mutation on the target surface.
+
+For a combined request, decompose the requested operations and resolve the mode,
+surface, and side-effect gate for each operation independently. Authorization
+for one operation or surface does not imply authorization for another.
+
 ## Surface and side-effect gate
 
 After selecting the mode, identify all allowed and forbidden surfaces before the
@@ -123,6 +145,34 @@ For the selected mode, explicitly account for:
 
 If a candidate command or edit would touch a forbidden surface, replace it with
 a project-safe action or do not run it.
+
+## Mutation checkpoint
+
+Before each mutating operation, validate the candidate action against the
+already resolved current-message authorization, selected mode, allowed surfaces,
+applicable active rules and skills, and their validated hard dependencies.
+
+This checkpoint verifies the candidate action against already loaded constraints;
+it does not require rereading unchanged rule and skill entrypoints before every
+low-level write.
+
+Resolve the gate again when:
+
+- a new user message changes or may change the mode;
+- the target surface changes;
+- a previously irrelevant rule or skill becomes applicable;
+- activation or dependency state changes.
+
+If the target, action, scope, or interaction between applicable instructions
+remains ambiguous, do not perform the mutation. Permitted read-only inspection
+may continue when it can resolve the ambiguity; otherwise ask the user for the
+missing target, action, or scope.
+
+Do not perform an additional mutation merely because it would be helpful,
+convenient, or necessary for a broader inferred goal.
+
+Before the final response, verify that every performed mutation remained within
+the resolved gate and report only side effects that actually occurred.
 
 ## Local development-tool gate
 
