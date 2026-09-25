@@ -268,6 +268,23 @@ Obsidian-related rules и skills требуют MCP-only подхода:
 8. **Краткий routing description** — поле `description` в frontmatter кратко формулирует условия активации и отличительные ключевые слова. Полный перечень возможностей, workflow и ограничений остаётся в теле `SKILL.md`.
 9. **Синхронизация README** — изменения структуры, путей, dependency graph и фактического покрытия должны отражаться в README в том же PR.
 
+## Версионирование
+
+Репозиторий использует [Semantic Versioning](https://semver.org/) и Git tags вида `vX.Y.Z` как источник истины для версии. Базовая версия схемы — `v1.1.0`.
+
+Каждый pull request в `master` должен иметь ровно один version label:
+
+- `version:patch` — обратно совместимое исправление существующего rule, skill, profile или документации, влияющей на их корректное использование;
+- `version:minor` — новый rule, skill, profile или обратно совместимое расширение существующего контракта;
+- `version:major` — несовместимое изменение структуры, activation contract, имени или доступности существующего rule/skill/profile;
+- `version:none` — изменения инфраструктуры или обслуживания репозитория, которые не меняют распространяемый контракт материалов.
+
+Workflow `.github/workflows/version-label.yml` проверяет наличие допустимого единственного version label. Check `Validate version label` должен быть обязательным для merge в защищённую ветку `master`.
+
+После merge PR workflow `.github/workflows/versioning.yml` создаёт следующий Git tag через `GregoryGost/version-tagger`. Текущая версия берётся из последнего Git tag; fallback `1.1.0` передаётся явно, так как репозиторий не содержит `package.json`. Для `version:none` новый tag не создаётся.
+
+GitHub Releases автоматически не создаются: версией репозитория является Git tag.
+
 ## Участие в разработке
 
 Для изменения репозитория:
