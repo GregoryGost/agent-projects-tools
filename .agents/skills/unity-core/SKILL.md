@@ -1,6 +1,6 @@
 ---
 name: unity-core
-description: "Use for Unity 6.3 runtime C# architecture, lifecycle, serialization, Unity object semantics, async/Awaitable, assemblies, and performance review."
+description: "Use for Unity 6.3 runtime C# architecture, lifecycle, serialization, Unity object semantics, async/Awaitable, diagnostics, assemblies, and performance review."
 ---
 
 # Unity Core
@@ -28,14 +28,16 @@ The mutual `unity_core.md ↔ unity-core` pair is intentional; both artifacts mu
 2. Read `ProjectSettings/ProjectVersion.txt` and confirm `6000.3.x`.
 3. Inspect relevant package versions, Player/runtime settings, target platforms/backends, Enter Play Mode settings, assemblies, source, and tests.
 4. Identify Unity-managed contracts: serialized fields, object references, callbacks, events, scenes/assets, async/thread boundaries, and runtime ownership.
-5. Keep framework-neutral domain logic independent of `UnityEngine` when that reduces coupling and improves testability.
-6. Make the smallest change consistent with existing architecture.
-7. Validate compilation, Console state, focused tests, and runtime behavior through project-declared workflows.
+5. For non-trivial state, decision, integration, or failure paths, identify the concrete debugging question and the narrowest useful diagnostic signal; do not add logs mechanically.
+6. Keep framework-neutral domain logic independent of `UnityEngine` when that reduces coupling and improves testability.
+7. Make the smallest change consistent with existing architecture.
+8. Validate compilation, Console state, focused tests, and runtime behavior through project-declared workflows.
 
 Load references as needed:
 
 - `references/lifecycle-and-serialization.md`.
 - `references/async-performance-and-architecture.md`.
+- `references/diagnostics-and-observability.md`.
 - `references/review-checklist.md`.
 - `references/official-sources.md`.
 
@@ -46,6 +48,7 @@ Load references as needed:
 - Keep runtime and Editor concerns separated.
 - Keep version-sensitive behavior tied to `6000.3` docs and exact patch evidence.
 - Prefer measurement over folklore for performance decisions.
+- Keep diagnostics intentional, bounded, attributable, and appropriate to the debugging question.
 - Use project package versions instead of assuming package APIs from the Editor version alone.
 
 ## Guardrails
@@ -54,5 +57,6 @@ Load references as needed:
 - No unsafe serialized-field rename.
 - No blanket `Update`, LINQ, coroutine, `Task`, or `Awaitable` bans.
 - No background-thread Unity API calls.
+- No uncontrolled high-frequency logging or speculative diagnostic infrastructure.
 - No accidental persistent mutation of ScriptableObject assets for transient runtime state.
 - No use of generated `.csproj`/`.sln` as durable Unity configuration.

@@ -59,3 +59,21 @@ Physics tests that depend on the fixed update/physics engine should run against 
 ## Editor serialization
 
 Use EditMode tests for custom inspectors, SerializedObject workflows, importers, asset migration, and Editor-only utilities. Create/copy isolated assets and remove them in teardown.
+
+## Expected diagnostic logs
+
+Unity tests can fail on unexpected Error, Assert, or Exception messages. When the behavior under test intentionally emits such a message, declare it with the active Test Framework's `LogAssert` API before exercising the path.
+
+Example when the error emission is intentional:
+
+```csharp
+LogAssert.Expect(LogType.Error, "Save failed because no writable slot is available.");
+
+saveController.Save();
+
+Assert.That(saveController.State, Is.EqualTo(SaveState.Failed));
+```
+
+The state assertion remains the behavioral proof; the log expectation only declares that the error output is expected.
+
+Do not add `LogAssert.Expect` for ordinary informational/debug messages merely to increase coverage. Doing so unnecessarily couples tests to diagnostic wording. Do not broadly ignore failing logs to make a suite green; investigate unexpected Error/Assert/Exception output instead.

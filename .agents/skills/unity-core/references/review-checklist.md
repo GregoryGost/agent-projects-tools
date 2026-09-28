@@ -40,6 +40,18 @@
 - [ ] Hot-path allocations/lookups are intentional.
 - [ ] Readability/correctness was not sacrificed for speculative optimization.
 
+## Diagnostics
+
+- [ ] Non-trivial failure, decision, integration, or state-transition paths are diagnosable where resulting state alone would be insufficient.
+- [ ] Every persistent diagnostic signal answers a concrete debugging question; instrumentation was not added mechanically.
+- [ ] Meaningful changes/transitions are preferred over repeated state polling, and decision reasons are captured where useful.
+- [ ] High-frequency paths contain no uncontrolled textual logging, expensive disabled-message construction, or speculative instrumentation.
+- [ ] Recurring timing/allocation questions use profiler instrumentation where appropriate.
+- [ ] Exception/result ownership is preserved; the same failure is not redundantly logged at multiple layers.
+- [ ] Runtime diagnostics do not acquire `UnityEditor` dependencies; Editor-only visualization remains in the Editor boundary.
+- [ ] Breadcrumb/snapshot storage, when used, is bounded and has explicit ownership/reset/build behavior.
+- [ ] Diagnostic categories and strings contain product/domain terminology, not task/ticket/implementation-history markers.
+
 ## Validation
 
 - [ ] Compilation/Console state was checked.

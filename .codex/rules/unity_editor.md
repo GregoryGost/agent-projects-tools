@@ -59,6 +59,15 @@ Before changing Editor tooling:
 - UI Toolkit and IMGUI are project/version choices; do not migrate an established Editor UI stack without scope.
 - Clean up Editor callbacks, scheduled items, event handlers, previews, and temporary resources.
 
+## Diagnostic visualization
+
+- Prefer a bounded visual diagnostic when spatial relationships, paths, ranges, trigger volumes, spawn regions, navigation, or complex state are substantially clearer visually than as text logs.
+- `UnityEngine.Gizmos` and `OnDrawGizmos*` may live with runtime components when appropriate, but keep their work bounded and avoid turning authoring visualization into runtime business logic.
+- `UnityEditor.Handles`, custom diagnostic inspectors, `EditorWindow`, and other Editor APIs must remain in Editor-only folders/assemblies.
+- Do not add `UnityEditor` dependencies to runtime assemblies merely to improve diagnostics; place the Editor adapter behind the existing runtime/Editor boundary.
+- Do not persist temporary diagnostic state into production scenes/assets unless that state is an intentional project contract.
+- Clean up diagnostic Editor callbacks, scheduled work, previews, and temporary resources like any other Editor tooling.
+
 ## Scene and prefab editing
 
 - Prefer opening/loading/working through Unity Editor APIs rather than textual scene/prefab mutation.
@@ -80,4 +89,5 @@ Before changing Editor tooling:
 - [ ] Asset/import operations are bounded and lifecycle-safe.
 - [ ] Scene/prefab changes are intentional and saved explicitly.
 - [ ] Editor callbacks/resources are cleaned up.
+- [ ] Diagnostic visualization respects runtime/Editor boundaries and does not persist temporary debug state unintentionally.
 - [ ] Relevant Editor tests/validation were run.

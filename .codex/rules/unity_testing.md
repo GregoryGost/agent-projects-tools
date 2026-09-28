@@ -65,6 +65,13 @@ Do not use PlayMode merely because production code lives in a Unity project.
 - If a test intentionally validates migration of a real serialized asset, isolate/copy the fixture according to project policy.
 - Avoid assertions that depend on unstable Unity-generated IDs unless IDs are the contract.
 
+## Diagnostic logs in tests
+
+- When a test intentionally exercises a path that emits an Error, Assert, Exception, or another log that the active Unity Test Framework treats as a test failure, declare the expected message through the project-supported `LogAssert` workflow.
+- Do not assert informational/debug log text merely to increase coverage. Treat message wording as a test contract only when the message itself is required behavior.
+- Do not broadly suppress unexpected failing logs merely to make a test pass. Unexpected Error/Assert/Exception output remains diagnostic evidence that should be investigated.
+- Keep production behavior assertions separate from diagnostic-output assertions where possible; a successful `LogAssert` expectation does not prove the underlying gameplay/runtime state is correct.
+
 ## Coverage and affected tests
 
 - Use project-declared coverage workflow only when coverage is active.
@@ -92,6 +99,8 @@ The CLI remains optional and is not a hard dependency of this testing profile.
 - [ ] Test assets/scenes/global state are isolated and cleaned up.
 - [ ] No arbitrary sleeps replace deterministic conditions.
 - [ ] Tests are repeatable across the configured Play Mode reload policy.
+- [ ] Expected failing logs are declared only when the exercised path is intentionally expected to emit them; informational log text is not treated as a contract without reason.
+- [ ] No broad log suppression hides unexpected Error/Assert/Exception output.
 - [ ] Open-Editor validation used the live MCP/Pipeline path when available and appropriate.
 - [ ] Batch `unity test` was reserved for CI/headless/no-live-Editor or an explicit project workflow.
 - [ ] Project-declared test/coverage commands were used.

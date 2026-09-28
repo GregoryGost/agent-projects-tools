@@ -28,6 +28,15 @@ Use project evidence first, then documentation for the exact Unity line.
 - Awaitable API: https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Awaitable.html
 - Profiler manual: https://docs.unity3d.com/6000.3/Documentation/Manual/Profiler.html
 
+## Diagnostics
+
+- Debug.Log: https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Debug.Log.html
+- Logger: https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Logger.html
+- Application.SetStackTraceLogType: https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Application.SetStackTraceLogType.html
+- ProfilerMarker: https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Unity.Profiling.ProfilerMarker.html
+- Gizmos: https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Gizmos.html
+- Unity Logging package (deprecated for Unity 6.3): https://docs.unity3d.com/Packages/com.unity.logging@1.3/manual/index.html
+
 ## Assemblies and analyzers
 
 - Organizing scripts into assemblies: https://docs.unity3d.com/6000.3/Documentation/Manual/assembly-definition-files.html

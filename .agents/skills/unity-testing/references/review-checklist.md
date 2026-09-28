@@ -7,6 +7,9 @@
 - [ ] Temporary assets/scenes/objects are cleaned up.
 - [ ] Static/global/Editor state is restored.
 - [ ] Timing assertions use deterministic conditions and bounded waits.
+- [ ] Intentional Error/Assert/Exception output is declared with the project-supported `LogAssert` workflow where required.
+- [ ] Informational/debug log wording is not asserted without being part of the required behavior.
+- [ ] Unexpected failing logs are not hidden by broad suppression.
 - [ ] Production visibility was not widened only for tests.
 - [ ] Test runner/CLI commands come from project configuration/tool discovery.
 - [ ] Failures were rechecked in isolation.

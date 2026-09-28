@@ -73,3 +73,22 @@ Preferred:
 - save the intended asset/scene explicitly.
 
 Textual serialization edits are exceptional and require strong evidence that Unity's API path cannot express the change safely.
+
+## Diagnostic visualization
+
+Prefer visual diagnostics over repeated Console output when the problem is spatial or difficult to reconstruct from text.
+
+Runtime-component example using `UnityEngine.Gizmos`:
+
+```csharp
+private void OnDrawGizmosSelected()
+{
+    Gizmos.DrawWireSphere(transform.position, detectionRadius);
+}
+```
+
+Keep the computation bounded; do not perform expensive searches, allocations, or gameplay mutations from the draw callback.
+
+If diagnostics require `UnityEditor.Handles`, a custom inspector, or an `EditorWindow`, put that adapter in an Editor-only folder/assembly. Do not wrap substantial Editor tooling inside runtime code with `#if UNITY_EDITOR` merely to avoid a proper assembly boundary.
+
+Temporary visual-debug state should normally remain transient. Do not modify canonical scenes, prefabs, or assets simply to remember a debugging session unless persistence is an intentional authoring feature.
