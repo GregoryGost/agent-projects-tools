@@ -3,6 +3,7 @@
 Determine the Test Framework package version from the project lockfile before applying package-specific APIs.
 
 - Unity Test Framework manual: https://docs.unity3d.com/Packages/com.unity.test-framework@latest
+- LogAssert API: https://docs.unity3d.com/Packages/com.unity.test-framework@latest/api/UnityEngine.TestTools.LogAssert.html
 - Unity 6.3 command line arguments: https://docs.unity3d.com/6000.3/Documentation/Manual/EditorCommandLineArguments.html
 - Unity 6.3 assembly definitions: https://docs.unity3d.com/6000.3/Documentation/Manual/assembly-definition-files.html
 - Unity CLI test documentation: https://docs.unity.com/en-us/unity-cli
