@@ -86,6 +86,21 @@ Domain reload is normally enabled in Unity 6000.3, but projects can disable it f
 - Avoid large numbers of empty or trivial per-frame callbacks when a centralized/event-driven approach materially improves scale.
 - Performance guidance must preserve correctness and readability.
 
+## Diagnostics and observability
+
+- When new or materially changed runtime behavior has non-trivial state, external/async integration, decision logic, or failure modes that would be difficult to reconstruct from resulting state alone, preserve sufficient diagnostic observability.
+- Do not add diagnostics mechanically. Identify the debugging question first and choose the cheapest useful signal: log/event, counter, timing/profiler marker, snapshot, bounded breadcrumb history, or visual diagnostic.
+- Prefer meaningful changes and transitions over repeated polling. For decision/state-machine behavior, capture the reason when it materially helps explain why a transition occurred or was rejected.
+- Reuse existing project logging/diagnostics categories and infrastructure. Do not introduce a logging or telemetry framework merely because a feature could be instrumented.
+- `Log`, `Warning`, `Error`, `Exception`, and `Assert` express diagnostic severity; they do not override project exception/result ownership or recovery semantics. Do not catch solely to log and rethrow when the same failure is already reported at an owning boundary.
+- When a relevant `UnityEngine.Object` exists, pass it as logging context where practical. Include stable object/entity identity and frame/time only when they materially improve correlation.
+- Detailed diagnostics must be bounded, configurable, or development/investigation-only. Do not equate `UNITY_EDITOR` with "diagnostics enabled"; follow project build-symbol and release-diagnostics policy.
+- Do not emit uncontrolled textual logs from `Update`, `FixedUpdate`, `LateUpdate`, rendering, animation, physics, polling, tight-loop, or per-entity hot paths. Diagnostic instrumentation shares the same performance and allocation budget as product code.
+- For recurring timing and performance questions, prefer Unity Profiler/profiler instrumentation over recurring textual logs.
+- For spatial or complex state, prefer a suitable debug visualization when it communicates the state more directly than text. Editor-only visualization must remain behind the `unity-editor` assembly/folder boundary.
+- A bounded breadcrumb history is optional for genuinely sequence-dependent failures. Its ownership, capacity, reset/session lifetime, and build policy must be explicit; do not introduce an unowned global/static diagnostic store.
+- Diagnostic categories, event names, reasons, identifiers, and runtime strings must use product/domain terminology rather than ticket IDs, task identifiers, implementation phases, temporary debug labels, or review markers.
+- Remote telemetry, crash upload, or persistent diagnostic collection is a separate design decision from local diagnostics and must follow project privacy, consent, security, and retention policy.
 ## ScriptableObject and data
 
 - Use `ScriptableObject` intentionally for shared serialized data/assets, configuration, and authoring workflows.
@@ -116,5 +131,7 @@ Domain reload is normally enabled in Unity 6000.3, but projects can disable it f
 - [ ] Callback/event/static state lifecycle is explicit.
 - [ ] Async/thread-affinity behavior is safe.
 - [ ] Performance changes are evidence-based.
+- [ ] Non-trivial failure/decision paths are diagnosable without uncontrolled logging or speculative instrumentation.
+- [ ] Diagnostic severity, exception/result ownership, build policy, and runtime/Editor boundaries remain consistent.
 - [ ] Assembly and platform/backend constraints were considered.
 - [ ] Project-declared Unity validation was run or the gap was reported.
