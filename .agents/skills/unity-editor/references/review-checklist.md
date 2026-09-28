@@ -10,4 +10,6 @@
 - [ ] Importer/AssetDatabase operations avoid invalid callback contexts and excessive global work.
 - [ ] Scene/prefab automation preserves unrelated user state.
 - [ ] Editor callbacks/resources/listeners are cleaned up.
+- [ ] Spatial/complex diagnostics use visual tooling where clearer than noisy text, without introducing runtime `UnityEditor` dependencies.
+- [ ] Temporary diagnostic state is not persisted into production assets/scenes unintentionally.
 - [ ] EditMode/Editor tests or equivalent validation cover the changed tooling.
