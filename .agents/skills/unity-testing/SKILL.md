@@ -26,7 +26,7 @@ The mutual `unity_testing.md ↔ unity-testing` pair is intentional.
 2. Inspect test assembly definitions and existing EditMode/PlayMode conventions.
 3. Identify the narrowest engine boundary required by the behavior.
 4. Keep pure logic outside PlayMode when possible.
-5. Design deterministic setup, assertion, timeout, and cleanup behavior.
+5. Design deterministic setup, assertion, timeout, cleanup, and expected-log behavior. Use `LogAssert` only for messages the exercised path is intentionally expected to emit, not as a substitute for state assertions.
 6. If `unity-cli` is active, choose live MCP/Pipeline execution for an already open reachable Editor and batch `unity test` for CI/headless/no-live-Editor workflows.
 7. Use only the discovered/project-declared test command schema.
 8. Re-run failures in isolation before changing production behavior.
@@ -51,4 +51,5 @@ Do not silently switch between live and batch paths after a failure because they
 - No mutation of canonical scenes/prefabs as shared test state.
 - No arbitrary frame/time sleeps when a condition can be observed.
 - No leaked GameObjects, scenes, assets, subscriptions, static state, or Editor state.
+- No broad suppression of unexpected Error/Assert/Exception output, and no unnecessary assertions on informational diagnostic wording.
 - No persistent test watcher without explicit project policy/request.
