@@ -38,6 +38,14 @@ Use this mode in a project that consumes rules, skills, and the project profile 
 - An active rule or skill may narrow the selected request mode, allowed surfaces, side effects, or output format, but cannot broaden authorization from the current user message.
 - Before a mutation, the candidate action must satisfy both request routing and every applicable active material. A prohibition from either boundary wins.
 
+## Subagents For Code Changes
+
+- For authorized work changing executable application or test code, the primary agent may delegate bounded exploration, versioned documentation research, architecture, implementation, difficult diagnosis, or independent review when useful. Do not delegate documentation-only, comment-only, docstring-only, instruction-only or unrelated tasks; mixed-task delegation serves only authorized code changes.
+- In target projects use roles, model/effort assignments and the two-architect procedure declared in CODEX_PROJECT.md and corresponding .codex/agents/*.toml. Agent-file presence alone does not authorize delegation or activate rules or skills. Never silently substitute an unavailable role, model or reasoning effort.
+- The primary agent first applies request_routing.md, then sends each agent the original user scope, verified context, ownership constraints and expected result. Every agent independently enforces the same gate, reads applicable active materials and checks dependencies; delegation cannot authorize additional effects.
+- Research, architecture, debugging and review assignments are read-only instructions, not separate technical sandboxes. Implementation agents may modify only explicitly owned code/test files. Avoid concurrent edits to the same files; the primary agent integrates, validates and owns final decisions.
+- When architecture is necessary, have architect_stability and architect_evolution design independently, exchange evidence-based objections through the parent and explicitly endorse one exact solution. Escalate unresolved factual disputes to deep_debugger and relay findings to both; do not invent agreement.
+
 ## Template Repository Mode
 
 Use this mode when working in the `agent-projects-tools` source repository itself.
@@ -46,7 +54,7 @@ Use this mode when working in the `agent-projects-tools` source repository itsel
 2. Do not create `CODEX_PROJECT.md`; its absence is intentional in this template repository.
 3. Read `README.md`, `.codex/project.template.md`, and the rules, skills, metadata, and references directly relevant to the requested repository change.
 4. Apply `.codex/rules/material_dependencies.md` when adding, changing, or reviewing dependency declarations.
-5. Treat `.codex/project.template.md`, `.codex/rules/`, and `.agents/skills/` as source artifacts being maintained, not as an active application stack.
+5. Treat `.codex/project.template.md`, `.codex/rules/`, `.codex/agents/`, and `.agents/skills/` as source artifacts being maintained, not as an active application stack.
 6. Check affected cross-references, profile identifiers, rule names, skill names, hard dependencies, metadata, and README coverage before completing a change.
 
 Keep `AGENTS.md` small. Detailed workflows belong in `.codex/rules/`, `.agents/skills/`, or skill `references/`.
