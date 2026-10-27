@@ -65,6 +65,54 @@ If the project type, stack, or intended active profiles cannot be determined wit
 - Test/comment natural language policy: `<language rule>`
 - Keep identifiers, library names, protocol names, command names, paths, package names, and other proper names in English or original language: `<yes/no>`
 
+## Agent Roles And Model Selection (Optional)
+
+Keep only when the target project enables Codex subagents for authorized changes to executable application or test code. This project policy does not itself authorize side effects, activate rules/skills, or change the primary session model. Copy only needed .codex/agents/*.toml definitions, which contain the role-specific model/effort and instructions.
+
+- Subagents enabled: <yes / no>
+- Delegation scope: authorized executable application/test-code changes only (not documentation-only, comment-only, docstring-only or instruction-only tasks).
+- Primary agent model/effort: gpt-6.1-sol / xhigh (select in the client or target .codex/config.toml; this entry alone does not configure the running session).
+- Selected role files: <explicit .codex/agents/*.toml paths / none>.
+- Model availability: confirm with the active Codex client/account; report unavailable models and effort levels instead of substituting silently.
+
+| Role | Custom agent file | Model | Effort |
+| --- | --- | --- | --- |
+| Architecture: stability | .codex/agents/architect_stability.toml | gpt-6.1-sol | xhigh |
+| Architecture: evolution | .codex/agents/architect_evolution.toml | gpt-6.1-sol | xhigh |
+| Codebase research | .codex/agents/code_explorer.toml | gpt-6-luna | high |
+| Documentation/API research | .codex/agents/docs_researcher.toml | gpt-6-luna | high |
+| Complex implementation | .codex/agents/complex_implementer.toml | gpt-6.1-sol | high |
+| Small fixes / boilerplate | .codex/agents/simple_implementer.toml | gpt-6-luna | high |
+| Independent test engineering | .codex/agents/test_engineer.toml | gpt-6.1-sol | high |
+| Independent code review | .codex/agents/code_reviewer.toml | gpt-6.1-sol | high |
+| Difficult bugs / design disputes | .codex/agents/deep_debugger.toml | gpt-6-astra | xhigh |
+
+### Delegation And Ownership
+
+- Spawn only roles relevant to the request. For each role provide original user scope, verified evidence, project constraints, explicit file ownership if it may edit, acceptance criteria, allowed checks and expected handoff. A fresh context requires a self-contained assignment.
+- Subagents independently apply request_routing.md, applicable active rule/skill entrypoints, declared hard dependencies and the relevant project tests. Read-only specialists do not edit files; implementers may edit only explicitly assigned application code/tests; test_engineer may edit only explicitly assigned test files and execute authorized, safe test commands. Assign nonoverlapping file ownership before delegation, and avoid concurrent edits to the same files.
+- The parent reviews implementation evidence, integrates results and performs final validation. If a selected model, effort or tool is unavailable, report the limitation and do not silently downgrade.
+
+### Two-Architect Workflow
+
+1. For a genuine architectural choice, give architect_stability and architect_evolution the same verified constraints independently; neither sees the other's first design.
+2. Relay proposals and critiques through the parent. Each architect must challenge assumptions, check counterexamples, revise when warranted and respond to every material objection.
+3. Only explicit endorsement by BOTH architects of the same precisely stated final design counts as consensus. Limit to three substantive critique/revision rounds before escalation; do not continue arguments without new evidence.
+4. On a factual conflict, invoke deep_debugger to investigate and return findings to both architects for a final reassessment. Where missing user requirements block a decision, report the gap instead of fabricating agreement.
+5. The primary agent checks the recommendation against the user request, source evidence and all applicable project policies before implementation.
+
+### Implementer–Tester Acceptance Loop
+
+Use when an authorized executable application/test-code task delegates both an implementer (complex_implementer or simple_implementer) and the independent test_engineer. This iterative acceptance workflow is separate from two-architect design consensus and from read-only code_reviewer. The primary agent coordinates handoffs and decides whether the task can be considered complete.
+
+1. **Same requirements, independent criteria.** Give the implementer and test_engineer the original user requirements, acceptance criteria, verified baseline, approved side effects, test environment and disjoint file ownership. Have the tester form a requirements-based test hypothesis matrix independently of implementation claims; a tester is not constrained to the cases the implementer anticipated.
+2. **Implementation.** The implementer edits only assigned application code and any test files not assigned to the tester. When test_engineer owns tests, the implementer must not modify those files or rewrite expected outcomes. Hand the resulting code revision, changed paths, implementation invariants and actually executed safe checks to the parent.
+3. **Independent test design and execution.** The tester constructs and applies relevant positive, negative, boundary, invalid-input, failure/recovery, regression and state-transition hypotheses. Add concurrency, cancellation, authorization, data consistency, property-based, integration or end-to-end checks only where the active stack, specific risk and authorization justify them. Use isolated test doubles/fixtures, not production services or uncontrolled shared environments.
+4. **Evidence-based defect report.** For every failing hypothesis, the tester records the expected result and its source, actual result, exact reproduction/test/fixture, relevant paths and artifacts, and a distinction between implementation defect, invalid test, environmental failure or unresolved requirement. The tester does not patch application code to make the test pass or change a valid assertion to match the implementation.
+5. **Correction and retest.** The parent forwards confirmed implementation failures to the implementer; the implementer corrects its owned code and returns the new revision. The tester reruns the relevant failure, earlier passing regression cases and other impacted scenarios. If the test itself was wrong, the tester corrects only its owned test with an evidence-based rationale and reruns it. Repeat the sequence until the acceptance gate is met or a genuine blocker is reported; do not hide or relabel failures.
+6. **Independent acceptance.** The tester can explicitly accept only when the planned authorized risk-relevant positive and negative checks, relevant regressions and agreed acceptance criteria pass, with no unexplained failing tests or outstanding confirmed defects. The report must identify what was actually executed, what was not testable and residual risks. If a required environment, permission, requirement or reproducible fix is missing, return a clear blocked/not-accepted state rather than claim success.
+7. **Escalation and completion.** If rounds stop producing new evidence or the root cause remains ambiguous, the parent may consult deep_debugger or the architects. Do not spin indefinitely or silently lower coverage. The parent owns final integration, optional independent code_reviewer scrutiny, and the completion decision; tester acceptance does not authorize new side effects or substitute for mandated project checks.
+
 ## Active Stack Profiles
 
 List only profiles active in this repository.
