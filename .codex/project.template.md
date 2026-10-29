@@ -67,7 +67,7 @@ If the project type, stack, or intended active profiles cannot be determined wit
 
 ## Agent Roles And Model Selection (Optional)
 
-Keep only when the target project enables Codex subagents for authorized changes to executable application or test code. This project policy does not itself authorize side effects, activate rules/skills, or change the primary session model. Copy only needed .codex/agents/*.toml definitions, which contain the role-specific model/effort and instructions.
+Keep only when the target project enables Codex subagents for authorized changes to executable application or test code. This project policy does not itself authorize side effects, activate rules/skills, or change the primary session model. Copy only needed .codex/agents/*.toml definitions, which contain the role-specific model/effort and instructions. ALSO copy `.codex/rules/subagent_coordination.md` with `AGENTS.md` and the selected role files: it is mandatory bootstrap support for those roles, not an optional rule.
 
 - Subagents enabled: <yes / no>
 - Delegation scope: authorized executable application/test-code changes only (not documentation-only, comment-only, docstring-only or instruction-only tasks).
