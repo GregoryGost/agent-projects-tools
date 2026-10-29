@@ -74,6 +74,9 @@ Keep only when the target project enables Codex subagents for authorized changes
 - Primary agent model/effort: gpt-6.1-sol / xhigh (select in the client or target .codex/config.toml; this entry alone does not configure the running session).
 - Selected role files: <explicit .codex/agents/*.toml paths / none>.
 - Model availability: confirm with the active Codex client/account; report unavailable models and effort levels instead of substituting silently.
+- Fresh thread policy: EVERY delegated assignment uses a new no-history `spawn_agent` (`fork_turns: "none"` for verified MultiAgentV2); never `followup_task`.
+- Subagent handoff persistence: <in-session-only / local-ephemeral> (default `in-session-only`; `local-ephemeral` also requires current-task permission to write local handoff artifacts).
+- Handoff root when authorized: `.agent-handoffs/` (ignored by Git; no automatic commits).
 
 | Role | Custom agent file | Model | Effort |
 | --- | --- | --- | --- |
@@ -89,10 +92,17 @@ Keep only when the target project enables Codex subagents for authorized changes
 
 ### Delegation And Ownership
 
+- `.codex/rules/subagent_coordination.md` is mandatory when subagents are enabled for authorized code/test changes, even if not listed in Active Rules. Load it before delegation; a missing copy blocks delegation. Send a bounded task packet with current verified predecessor reports, not the parent chat. Only the primary may optionally publish completed handoff files.
 - Before delegating a scoped code-change workflow, the primary decides whether architecture is needed, records the Architecture Gate state and dependencies, determines required test/review roles based on risk and the active project policy, and verifies allowed side effects. Spawn only relevant agents. The gate applies to the PRIMARY as well as all downstream agents.
 - Every assignment contains original user requirements, authorized scope, verified baseline, applicable project rules/skills, selected model/effort, file ownership, safe commands and expected result. When architects are selected, downstream assignments additionally require the current approved Architecture Handoff. No role file or subagent delegation can widen request_routing.md permissions.
 - Read-only codebase/docs research and neutral diagnosis may support architects while the gate is closed. No downstream implementation plan, test scenario matrix, prototype, code/test change or acceptance can be initiated before APPROVED for the affected scope.
 - Implementation and test file ownership must be disjoint where agents work concurrently. Read-only role instructions are not independent technical sandboxes; stop conflicting writers and verify workspace state.
+
+### Completed Subagent Reports And Optional Local Handoffs
+
+- The primary receives each role's existing REQUIRED REPORT, verifies scope, evidence, architecture version and code/test snapshot, and passes only current relevant predecessor reports to downstream fresh agents.
+- Use in-session reports by default. With `Subagent handoff persistence: local-ephemeral` explicitly selected AND the current request/routing gate permitting such local writes, the primary alone publishes versioned completed-stage reports and a task-local `index.md` in `.agent-handoffs/<task_scope_id>/`. Do not imply permission to create other task notes, Obsidian entries, worktrees or Git commits.
+- Reports and indexes are secondary evidence, not an authority: old/stale reports cannot satisfy Architecture Gate, independent tester acceptance or review. Follow `.codex/rules/subagent_coordination.md` for publication, provenance, safety and compaction recovery.
 
 ### Architecture Gate — Primary-Agent Orchestration
 
@@ -149,7 +159,7 @@ This loop begins after a verified NOT_REQUIRED or APPROVED decision for the scop
 
 ### Agent Thread And Workspace Lifecycle
 
-- Respect the active client's limit for open subagent threads. Wait for required work, reuse only a suitable agent thread with refreshed scope/version, or close completed threads when the client supports it. Closing threads never proves task acceptance; preserve their evidence first. Unavailable model/effort or thread capacity is a reported blocker, not permission for silent role substitution.
+- Respect the active client's limit for open subagent threads. Wait for results or close completed threads where supported; start EVERY new assignment in a newly spawned, no-history thread. Never reuse prior threads or use `followup_task` for corrections, critique rounds or reviews. Closing threads never proves task acceptance; preserve their evidence first. Unavailable model/effort or thread capacity is a reported blocker, not permission for silent role substitution.
 - Codex subagents share their parent's environment and permissions. Across separate Codex sessions, verify file/test/fixture/branch and background-command ownership; prefer separately authorized worktrees or explicit single-writer coordination. Never create a worktree automatically. If safe independence cannot be established, prevent overlapping writes.
 - After compaction/resumption revalidate the current authorized task, explicit gate state, applicable handoff only for APPROVED, scope, active threads, stable snapshot (if any) and permissions. A stale subagent response is not authoritative; when verification fails, continue only authorized read-only inspection until reconciled.
 
