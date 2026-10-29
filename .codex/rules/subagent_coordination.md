@@ -12,7 +12,8 @@
 1. For EVERY new delegated assignment (including the next critique round, code correction, independent re-test or review), spawn a NEW thread. With verified MultiAgentV2, use `spawn_agent` and explicit `fork_turns: "none"`. Omission defaults to inherited history in the verified implementation; `"all"` and numeric forks are not clean.
 2. Do not use `followup_task`, resume, or reuse a finished thread to assign more work. `send_message` may clarify, steer or stop an ALREADY ACTIVE assignment, but may not start an additional assignment or serve as an independent second approval.
 3. For a verified older Codex schema, use its actual no-fork option (e.g. `fork_context: false` only where supported); never send that legacy property to MultiAgentV2. If the installed client cannot prove an explicit clean spawn, stop delegation and report it. The primary may continue only work independently permitted by routing and gates, not silently substitute a role.
-4. Respect the client thread limit by waiting/closing completed threads when supported. Nested delegation obeys the same rules. This is a behavioral policy, not a new sandbox; optional tool hooks are additional non-exhaustive guardrails.
+4. Confirm the spawn returned a distinct new thread for the expected role. Before accepting its result or allowing dependent work, verify that its response identifies the assigned `task_scope_id`, stage and relevant baseline/decision version; an unrelated/generic response or mismatched scope is NOT a valid handoff. If it may already have performed writes, inspect and quarantine affected partial changes, verify quiescence and resolve the mismatch before any further dependent mutation.
+5. Respect the client thread limit by waiting/closing completed threads when supported. Nested delegation obeys the same rules. This is a behavioral policy, not a new sandbox; optional tool hooks are additional non-exhaustive guardrails.
 
 ## Bounded assignment packet
 
