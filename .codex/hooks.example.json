@@ -7,7 +7,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 /ABSOLUTE/PATH/TO/PROJECT/.codex/hooks/require_fresh_subagent.py",
+            "command": "python3 \"/ABSOLUTE/PATH/TO/PROJECT/.codex/hooks/require_fresh_subagent.py\"",
             "commandWindows": "py -3 \"C:\\ABSOLUTE\\PATH\\TO\\PROJECT\\.codex\\hooks\\require_fresh_subagent.py\"",
             "timeout": 10
           }
