@@ -1,1 +1,2 @@
-#
+# Task-scoped local handoffs must never be committed.
+.agent-handoffs/
