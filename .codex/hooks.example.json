@@ -1,0 +1,18 @@
+{
+  "description": "OPTIONAL example only. Copy to .codex/hooks.json and replace absolute paths; Codex does not load this example automatically.",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "^(spawn_agent|followup_task|Agent)$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"/ABSOLUTE/PATH/TO/PROJECT/.codex/hooks/require_fresh_subagent.py\"",
+            "commandWindows": "py -3 \"C:\\ABSOLUTE\\PATH\\TO\\PROJECT\\.codex\\hooks\\require_fresh_subagent.py\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}
