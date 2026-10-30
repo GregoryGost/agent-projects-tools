@@ -39,17 +39,17 @@ Load references when needed:
 
 For bug fixes, add a regression test that fails before the fix and passes after it. Never delete, weaken, skip, xfail, or mark code `no cover` merely to make checks pass.
 
-
 ## Optional Terminal Debugging
 
 For an unresolved reproducible Python test failure, use standard-library `pdb` or pytest's built-in `--pdb`/`--trace` only within an already authorized, isolated diagnostic run. Confirm the actual project interpreter, test command, concrete test node ID, fixtures, and possible writes or network calls before launch. A debugging flag does not authorize otherwise prohibited tests or tool installation.
 
 ```bash
+python -m pdb -m package.module
 python -m pytest -x --pdb tests/unit/path/test_file.py::test_behavior
 python -m pytest --trace tests/unit/path/test_file.py::test_behavior
 ```
 
-`--pdb` opens the debugger after a test failure; `--trace` pauses before executing each selected test. Use one focused test in a single process. With active `pytest-xdist`, follow the project's serial-rerun policy (for example `-n 0`); interactive PDB is not supported in distributed workers.
+The standalone `pdb` example debugs an executable Python module. `--pdb` opens the debugger after a test failure; `--trace` pauses before executing each selected test. Use one focused test in a single process. With active `pytest-xdist`, explicitly disable distribution (for example `python -m pytest -n 0 -x --pdb tests/unit/path/test_file.py::test_behavior`); interactive PDB is not supported in distributed workers.
 
 When the terminal supports persistent stdin/TTY, send ordinary `pdb` commands (`b`, `n`, `s`, `p`, `where`, `c`, `q`) without modifying source to add temporary `breakpoint()` or print statements. If later stdin cannot be sent, use a bounded pre-supplied command script or documented `pdb -c` commands only when the execution tool supports them; otherwise use normal tracebacks and report that interactive diagnosis was unavailable. Bound execution, clean up debugged processes, and avoid expressions that mutate state or expose secrets. Breakpoints change timing and cannot by themselves establish race behavior.
 
