@@ -10,9 +10,8 @@ Use Go standard-library `testing` and project-declared tools. Tests prove behavi
 ## Required Dependencies
 
 - `go-core`
-- `.codex/rules/go_testing.md`
 
-The mutual rule/skill dependency is intentional; both must be independently active.
+Use `.codex/rules/go_testing.md` only when it is independently active; its required skill pair is validated under `material_dependencies.md`.
 
 ## Workflow
 

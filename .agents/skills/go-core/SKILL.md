@@ -7,11 +7,9 @@ description: "Use for Go language implementation, code review, package design, m
 
 Use for portable Go code. This skill owns Go language and standard-library practices only. HTTP framework, persistence and test-specific policies belong in separately active overlays.
 
-## Required Dependencies
+## Coordination
 
-- `.codex/rules/go_core.md`
-
-This mutual rule/skill dependency is intentional. Both artifacts must be independently active and validated under `material_dependencies.md`.
+Apply `.codex/rules/go_core.md` when that rule is independently active. Rule activation and required skill validation are controlled by the project profile and `material_dependencies.md`; this skill does not activate a rule by itself.
 
 ## Discovery and compatibility
 

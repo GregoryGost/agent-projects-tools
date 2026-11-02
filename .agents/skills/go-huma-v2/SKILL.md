@@ -10,9 +10,8 @@ Own the Huma v2 HTTP/API layer. Do not replace backend logic or data models with
 ## Required Dependencies
 
 - `go-core`
-- `.codex/rules/go_huma_v2.md`
 
-The mutual rule/skill dependency is intentional and must be independently active.
+Use `.codex/rules/go_huma_v2.md` only when independently active; its required skills are validated under `material_dependencies.md`.
 
 ## Verify before implementation
 
