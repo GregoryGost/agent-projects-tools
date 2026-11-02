@@ -1,14 +1,39 @@
-# Official Go references
+# Authoritative Go sources and precedence
 
-- Go documentation: https://go.dev/doc/
+## Evidence hierarchy
+
+1. **Language and semantic correctness:** version-matched Go specification and release notes; `go.mod` language level, actual toolchain and target build constraints.
+2. **Standard-library behavior:** version-matched `pkg.go.dev` docs and package implementation/contract. Newer examples may not compile against the target.
+3. **Go module/toolchain mechanics:** module reference and current Go command docs.
+4. **Idiomatic design:** Google Go Style Guide, Go Code Review Comments and Effective Go; treat stylistic guidance as conditional, below project-specific conventions and correctness requirements.
+5. **Blogs/tutorials:** explanatory context; validate version-sensitive claims against (1)–(3) before adopting.
+
+## Official links
+
 - Language specification: https://go.dev/ref/spec
-- Modules reference: https://go.dev/ref/mod
-- Effective Go: https://go.dev/doc/effective_go
-- Code review comments: https://go.dev/wiki/CodeReviewComments
-- Context package: https://pkg.go.dev/context
-- Errors package: https://pkg.go.dev/errors
+- Memory model: https://go.dev/ref/mem
+- Release notes index: https://go.dev/doc/devel/release
+- Go 1.27 release notes (generic methods, json/v2): https://go.dev/doc/go1.27
+- Go 1.26 release notes: https://go.dev/doc/go1.26
+- Go 1.25 release notes (synctest, WaitGroup.Go): https://go.dev/doc/go1.25
+- Go 1.23 release notes (iterators): https://go.dev/doc/go1.23
+- Go 1.22 release notes (loop variables): https://go.dev/doc/go1.22
+- Generic methods Go 1.27: https://go.dev/blog/generic-methods
+- Go modules: https://go.dev/ref/mod
+- Module layout: https://go.dev/doc/modules/layout
 - Go command: https://pkg.go.dev/cmd/go
-- Go `go.mod` directives: https://go.dev/doc/modules/gomod-ref
+- Standard library API index: https://pkg.go.dev/std
+- Errors: https://pkg.go.dev/errors
+- Context: https://pkg.go.dev/context
+- Sync: https://pkg.go.dev/sync
+- Go race detector: https://go.dev/doc/articles/race_detector
+- Go code review comments: https://go.dev/wiki/CodeReviewComments
+- Effective Go (older, not a complete modern Go style guide): https://go.dev/doc/effective_go
+- Google Go Style Guide: https://google.github.io/styleguide/go/guide
+- Google Go Style Decisions: https://google.github.io/styleguide/go/decisions
+- Google Go Best Practices: https://google.github.io/styleguide/go/best-practices
 
-Check documentation against the selected installed compiler and module requirements; pages may describe newer Go features.
+**Documentation drift:** at the time these materials were prepared, parts of the Go FAQ still asserted that methods with their own type parameters are unsupported. This conflicts with Go 1.27 release notes. For a Go 1.27 module, prioritize the release notes and current specification; do not propagate older FAQ assertions.
+
+Official guidance is not necessarily a universal linter-enforced rule. The target project's version, API stability and local conventions govern implementation decisions.
 
