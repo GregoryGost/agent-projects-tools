@@ -180,6 +180,11 @@ List only profiles active in this repository.
 
 Selection examples:
 
+- `go-core`
+- `go-testing`
+- `go-huma-v2`
+- `go-gorm`
+- `go-gorm-sqlite-goose`
 - `python-core`
 - `python-testing`
 - `python-service-e2e-testing`
@@ -242,6 +247,7 @@ List only additional rule files active in this project.
 
 - Optional core rules: `<source_code_hygiene.md / none / other>`
 - Git rules: `<git.md / none>`
+- Go rules: `<go_core.md / go_testing.md / go_huma_v2.md / go_gorm.md / go_gorm_sqlite_goose.md / none>`
 - Python/backend rules: `<python_fastapi.md / python_cashews_cache.md / python_nats_kv_cache.md / none>`
 - Formatting/linting rules: `<csharp_style.md / prettier_formatting.md / eslint_typescript.md / none>`
 - Language rules: `<csharp_core.md / typescript_core.md / typescript_jest_testing.md / none / other>`
@@ -260,6 +266,7 @@ List only additional rule files active in this project.
 List only reusable skills active in this project.
 
 - Code prose / language-policy skills: `<comment-language-audit / none>`
+- Go skills: `<go-core / go-testing / go-huma-v2 / go-gorm / go-gorm-sqlite-goose / none>`
 - Python skills: `<python-core / python-testing / python-fastapi-expert / python-cashews-cache / python-nats-kv-cache / none / other>`
 - Language skills: `<csharp-core / typescript-core / typescript-jest-testing / none / other>`
 - Formatting/linting skills: `<csharp-style / prettier-formatting / eslint-typescript / none>`
@@ -287,6 +294,11 @@ Use only project-declared commands.
 - Format check: `<command or none>`
 - Lint: `<command or none>`
 - Type check / static analysis: `<command or none>`
+- Go module/toolchain verification: `<commands or none>`
+- Go vet/static checks: `<commands or none>`
+- Go race tests: `<command or none>`
+- Go fuzz tests (bounded): `<command or none>`
+- Goose migration validation/test: `<command or none>`
 - Unit tests: `<command or none>`
 - Integration tests: `<command or none>`
 - Parallel tests / pytest-xdist: `<command or none>`
@@ -532,6 +544,92 @@ Keep only when `blender-unity` is active. This profile covers Blender-side asset
 - Optional active Blender authoring overlays: `<blender-modeling / blender-materials-texturing / blender-rigging-animation / blender-mcp / none>`
 - Optional active Unity overlays: `<unity-editor / unity-cli / none>`
 
+
+## Go Profile
+
+Keep only when Go is active. The base Go pair is framework-neutral.
+
+- Go enabled: `<yes/no>`
+- Go module/workspace source: `<go.mod / go.work / module directories / none>`
+- Effective Go language version: `<go.mod go directive + runtime verification / none>`
+- Toolchain policy: `<go.mod toolchain / pinned CI toolchain / project-specific / none>`
+- Target OS/architectures: `<matrix / none>`
+- CGO policy: `<enabled / disabled / conditional by platform / none>`
+- Dependency integrity/change policy: `<go.mod + go.sum / vendor / project-specific / none>`
+- Formatter/linter source: `<gofmt + go vet / golangci-lint config / other / none>`
+- Active Go rule/skill: `<go_core.md + go-core / none>`
+
+## Go Testing Profile
+
+Keep only when Go testing is selected.
+
+- Go testing enabled: `<yes/no>`
+- Test runner: `<go test / project-specific / none>`
+- Unit test package/path policy: `<paths / project-specific / none>`
+- Integration test boundary: `<real database / local service / test containers / project-specific / none>`
+- E2E boundary: `<real HTTP / process / worker / none / project-specific>`
+- HTTP test boundary: `<httptest recorder / httptest server / project-specific / none>`
+- Race detector support and command: `<supported toolchain/platform + command / none>`
+- Parallel/shuffle policy: `<isolation and command / none>`
+- Coverage output and policy: `<temp/artifact path, threshold or none>`
+- Fuzz budget and targets: `<bounded command/targets / none>`
+- Test data and environment isolation: `<t.TempDir / file DB / ports / secrets / project-specific>`
+- Active Go testing rule/skill: `<go_testing.md + go-testing / none>`
+
+## Go Huma v2 Profile
+
+Keep only when the selected module is `github.com/danielgtaylor/huma/v2`. Verify the pinned module's Go minimum (current public Huma documentation requires Go 1.26+). Huma v1 and v2 are not interchangeable.
+
+- Huma v2 enabled: `<yes/no>`
+- Huma module version source: `<go.mod + go.sum / none>`
+- Huma-compatible Go toolchain evidence: `<module requirements + CI/runtime / none>`
+- Router and adapter: `<http.ServeMux + humago / chi + humachi / other supported adapter / none>`
+- App composition and route registration entrypoint: `<path / none>`
+- API version/prefix and operation ID policy: `<policy / none>`
+- Schema and request/response DTO policy: `<typed API structs, tags, validation/optional fields / none>`
+- HTTP error and auth policy: `<domain mapping, RFC 9457/custom, middleware / none>`
+- OpenAPI and docs exposure policy: `<paths/public/private/disabled + contract check / none>`
+- Test policy for Huma HTTP/OpenAPI: `<humatest / httptest / project-specific / none>`
+- Active Huma rule/skill: `<go_huma_v2.md + go-huma-v2 / none>`
+
+## Go GORM Profile
+
+Keep only when GORM is the active ORM. Backend-specific migrations require their own profile.
+
+- GORM enabled: `<yes/no>`
+- GORM version source: `<go.mod + go.sum / none>`
+- GORM API style: `<Traditional / Generics (requires compatible version) / mixed with rationale / none>`
+- Repository/model location and ownership: `<paths / none>`
+- GORM transaction owner: `<service unit of work / project-specific / none>`
+- Error translation: `<repository/domain errors + optional TranslateError / none>`
+- Database-specific overlay: `<go-gorm-sqlite-goose / other / none>`
+- Active GORM rule/skill: `<go_gorm.md + go-gorm / none>`
+
+## Go SQLite + GORM + Goose Profile
+
+Keep only for the **exact combined stack** SQLite + GORM + Goose v3. Do not enable merely because Go or GORM exists. This profile requires the active Go base and GORM base pairs; optional Go testing and Huma profiles remain independent.
+
+- Go SQLite GORM Goose enabled: `<yes/no>`
+- Database toolkit/ORM: `<GORM / none>`
+- Database backend: `<SQLite / none>`
+- Migration owner/tool: `<Goose v3 as sole production schema owner / none>`
+- GORM SQLite dialect/module version source: `<gorm.io/driver/sqlite + go.mod / alternate approved / none>`
+- Runtime SQLite driver/CGO and version evidence: `<mattn/go-sqlite3 + CGO / approved pure-Go alternative + version / none>`
+- Goose CLI or library: `<CLI / library + Provider / none>`
+- Goose module/tool version source: `<go.mod / pinned go tool / pinned CLI binary / none>`
+- Goose SQLite driver/version evidence: `<verified CLI sqlite3 driver / declared library driver / none>`
+- SQLite feature parity across runtime/migration drivers: `<sqlite_version(), compile options, tested features / none>`
+- Migration path and versioning policy: `<path + timestamp/sequential / none>`
+- Migration execution owner/timing: `<single deploy job / declared single-owner startup / none>`
+- Applied migration immutability and recovery: `<policy / none>`
+- Production backup, rollback and destructive migration policy: `<policy / none>`
+- SQLite DSN, file location and connection setup owner: `<source / none>`
+- Foreign-key enforcement on every connection: `<driver/connection init + runtime verification / none>`
+- Busy timeout, journal mode/WAL, pooling: `<values/policy and verification / none>`
+- SQLite runtime write/worker/process policy: `<short transactions + ownership + deployment assumptions / none>`
+- Integration-test DB and migration command: `<temporary file-backed DB, actual Goose runner / none>`
+- Active SQLite/GORM/Goose rule/skill: `<go_gorm_sqlite_goose.md + go-gorm-sqlite-goose / none>`
+
 ## Python Profile
 
 Keep only when Python is active.
@@ -653,19 +751,19 @@ The specialized section activates the NATS KV cache rule/skill pair only when it
 
 Keep only when the project has a database.
 
-This generic profile does not require a rule/skill pair. Select only existing materials for the active toolkit and database backend. When the project uses code/test subagents, select `database_architect` explicitly under Agent Roles if required; the generic database profile does not automatically enable specialist delegation. Current repository SQLAlchemy coverage is skills-only: `python-sqlalchemy-core` for backend-neutral SQLAlchemy behavior, `python-sqlalchemy-sqlite` for SQLite-specific behavior, and `python-sqlalchemy-mysql` for MySQL through `aiomysql`. Both database-specific skills require `python-sqlalchemy-core` as their base skill.
+This generic profile does not require a rule/skill pair. Select only existing materials for the active toolkit and database backend. When the project uses code/test subagents, select `database_architect` explicitly under Agent Roles if required; the generic database profile does not automatically enable specialist delegation. Current repository SQLAlchemy coverage is skills-only: `python-sqlalchemy-core` for backend-neutral SQLAlchemy behavior, `python-sqlalchemy-sqlite` for SQLite-specific behavior, and `python-sqlalchemy-mysql` for MySQL through `aiomysql`. Both database-specific skills require `python-sqlalchemy-core` as their base skill. Go database coverage is separately provided by the `go_gorm.md + go-gorm` base pair and an optional `go_gorm_sqlite_goose.md + go-gorm-sqlite-goose` overlay for SQLite + Goose v3. Do not activate Python database skills for Go.
 
 - Database enabled: `<yes/no>`
-- Database toolkit/ORM: `<SQLAlchemy / Prisma / Django ORM / raw SQL / none / other>`
+- Database toolkit/ORM: `<SQLAlchemy / GORM / Prisma / Django ORM / raw SQL / none / other>`
 - Active database: `<SQLite / PostgreSQL / MySQL / none / other>`
 - Database server family: `<SQLite / MySQL / MariaDB / PostgreSQL / project-specific / none>`
 - Database server version: `<exact version / supported version constraint / project-specific / none>`
-- Database driver: `<aiosqlite / aiomysql / asyncpg / psycopg / mysqlclient / none / other>`
+- Database driver: `<aiosqlite / aiomysql / asyncpg / psycopg / mysqlclient / mattn/go-sqlite3 / modernc.org/sqlite / none / other>`
 - Database pool library: `<aiosqlitepool / SQLAlchemy pool / none / other>`
-- Migration tool: `<Alembic / raw SQL / Prisma migrations / project-specific / none>`
+- Migration tool: `<Alembic / Goose v3 / raw SQL / Prisma migrations / project-specific / none>`
 - Migration policy: `<policy / none>`
-- Active database toolkit skill: `<python-sqlalchemy-core / none / other>`
-- Active database-specific skill: `<python-sqlalchemy-sqlite / python-sqlalchemy-mysql / none / other>`
+- Active database toolkit skill: `<python-sqlalchemy-core / go-gorm / none / other>`
+- Active database-specific skill: `<python-sqlalchemy-sqlite / python-sqlalchemy-mysql / go-gorm-sqlite-goose / none / other>`
 - Dependency versions source: `<pyproject.toml / package.json / go.mod / project-specific / none>`
 
 ### SQLAlchemy MySQL Through aiomysql

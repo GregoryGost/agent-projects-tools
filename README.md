@@ -173,6 +173,8 @@ max_concurrent_threads_per_session = 4
 | Blender 5.2 | `blender_core.md`, `blender-core`, `blender_modeling.md`, `blender-modeling`, `blender_materials_texturing.md`, `blender-materials-texturing`, `blender_rigging_animation.md`, `blender-rigging-animation` для Blender 5.2.x data model и asset authoring |
 | Official Blender Lab MCP | `blender_mcp.md`, `blender-mcp` для официального Blender Lab MCP; priority baseline `1.0.3`, live Editor first, scene/docs/screenshot inspection, bounded `bpy` execution и headless fallback |
 | Blender → Unity | `blender_unity.md`, `blender-unity` для Blender 5.2.x → Unity 6000.3.x asset boundary: FBX, scale/axes, mesh/UV/normals, textures/material data, rigs/animation, blend shapes, LOD и import validation |
+| Go: язык, тесты, Huma v2 | `go_core.md`, `go-core`; `go_testing.md`, `go-testing`; `go_huma_v2.md`, `go-huma-v2` для modules/toolchains, `testing`/`httptest`/race/fuzz и типизированных HTTP API с OpenAPI 3.1 |
+| Go: GORM и SQLite/Goose | `go_gorm.md`, `go-gorm` для backend-neutral ORM; `go_gorm_sqlite_goose.md`, `go-gorm-sqlite-goose` для SQLite-драйверов, PRAGMA, блокировок и миграций Goose v3 |
 | Python core и тестирование | `python-core`, `python-testing`, `python-service-e2e-testing` |
 | Python backend | `python-fastapi-expert`, `python-cashews-cache`, `python-sqlalchemy-core`, `python-sqlalchemy-sqlite`, `python-sqlalchemy-mysql`, `python-httpx-client`, `python-backend-security` |
 | Python distributed cache | `python_nats_kv_cache.md`, `python-nats-kv-cache` для NATS JetStream Key/Value |
@@ -301,6 +303,22 @@ Skill `python-sqlalchemy-mysql` предназначен для SQLAlchemy 2.x �
 - Python runtime, отсутствующий в upstream classifiers или CI `aiomysql`, требует project-level compatibility tests вместо неподтверждённого утверждения о совместимости.
 
 Good/bad patterns, review checklist и официальные SQLAlchemy, `aiomysql` и MySQL sources находятся в `.agents/skills/python-sqlalchemy-mysql/references/`.
+
+## Профили Go, Huma v2 и GORM + Goose
+
+Добавлены независимые слои с активацией только через `CODEX_PROJECT.md`:
+
+- `go_core.md + go-core` — базовый Go: версии компилятора и модулей, интерфейсы, ошибки, контексты, конкуренция, жизненный цикл ресурсов, форматирование и review.
+- `go_testing.md + go-testing` — стандартный пакет `testing`, table-driven тесты, `httptest`, интеграционное/E2E-тестирование, `-race`, coverage, fuzzing и изоляция окружения.
+- `go_huma_v2.md + go-huma-v2` — Huma v2, проверка минимальной версии Go, router adapters, типизированные операции, входные/выходные контракты, обработка ошибок, OpenAPI 3.1/JSON Schema и контрактные тесты. Huma v2 не требует обязательного ORM.
+- `go_gorm.md + go-gorm` — базовые правила GORM для репозиториев, транзакций, параметризованных запросов, ошибок, моделей и запросов; не привязан к SQLite.
+- `go_gorm_sqlite_goose.md + go-gorm-sqlite-goose` — **условный** профиль для выбранной связки SQLite + GORM + Goose v3. Его выбор не происходит автоматически при активации Go/Huma/GORM.
+
+При использовании Goose **единственный источник истины для production-схемы — версионируемые миграции Goose**. `AutoMigrate` GORM не должен конкурировать с ними в startup, HTTP handlers или рабочих процессах. Для SQLite проверяются включение foreign keys на каждом соединении, busy timeout, опциональный WAL, транзакционные границы, конкуренция записи и миграции на заполненной БД. Важно учитывать, что обычный GORM SQLite-драйвер использует CGO, а актуальная документация CLI Goose описывает иной SQLite-драйвер; совместимость и доступные функции должны проверяться на конкретных версиях.
+
+Чтобы использовать этот набор в целевом проекте, перечислите выбранные идентификаторы в `Active Stack Profiles`, точные пары в `Active Rules` и `Active Skills`, заполните соответствующие Go-профили из `.codex/project.template.md` и скопируйте `.codex/rules/material_dependencies.md` для проверки зависимостей. Неизвестные версии Go, Huma, GORM, SQLite и Goose нельзя подставлять по умолчанию. Отсутствие выбранного ORM не препятствует использованию Go или Huma.
+
+Официальные источники: [Go](https://go.dev/doc/), [Huma](https://huma.rocks/), [GORM](https://gorm.io/docs/), [Goose](https://pressly.github.io/goose/), [SQLite](https://www.sqlite.org/docs.html).
 
 ## Профиль Vue SVG graphics
 
