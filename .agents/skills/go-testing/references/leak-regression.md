@@ -19,24 +19,24 @@ The test belongs to the same `jobs` package as `Start` in `go-core/references/me
 package jobs
 
 import (
-    "context"
-    "testing"
-    "time"
+	"context"
+	"testing"
+	"time"
 )
 
 func TestStartStops(t *testing.T) {
-    ctx, cancel := context.WithCancel(context.Background())
-    events := make(chan int)
-    done := Start(ctx, events)
-    t.Cleanup(func() { cancel() })
+	ctx, cancel := context.WithCancel(context.Background())
+	events := make(chan int)
+	done := Start(ctx, events)
+	t.Cleanup(func() { cancel() })
 
-    cancel()
-    select {
-    case <-done:
-        // Worker shutdown acknowledged.
-    case <-time.After(2 * time.Second):
-        t.Fatal("worker did not terminate after cancellation")
-    }
+	cancel()
+	select {
+	case <-done:
+		// Worker shutdown acknowledged.
+	case <-time.After(2 * time.Second):
+		t.Fatal("worker did not terminate after cancellation")
+	}
 }
 ```
 

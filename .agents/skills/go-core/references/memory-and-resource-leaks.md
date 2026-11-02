@@ -43,11 +43,11 @@ BAD — returns without a contract to stop a reader if the input channel remains
 package jobs
 
 func StartBad(events <-chan int) {
-    go func() {
-        for range events {
-            // Process events.
-        }
-    }()
+	go func() {
+		for range events {
+			// Process events.
+		}
+	}()
 }
 ```
 
@@ -59,21 +59,21 @@ package jobs
 import "context"
 
 func Start(ctx context.Context, events <-chan int) <-chan struct{} {
-    done := make(chan struct{})
-    go func() {
-        defer close(done)
-        for {
-            select {
-            case <-ctx.Done():
-                return
-            case _, ok := <-events:
-                if !ok {
-                    return
-                }
-            }
-        }
-    }()
-    return done
+	done := make(chan struct{})
+	go func() {
+		defer close(done)
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case _, ok := <-events:
+				if !ok {
+					return
+				}
+			}
+		}
+	}()
+	return done
 }
 ```
 
@@ -87,10 +87,10 @@ BAD — a tiny returned prefix may keep the entire original backing array reacha
 package payload
 
 func Prefix(input []byte) []byte {
-    if len(input) > 16 {
-        input = input[:16]
-    }
-    return input
+	if len(input) > 16 {
+		input = input[:16]
+	}
+	return input
 }
 ```
 
@@ -100,10 +100,10 @@ GOOD — copy only when the contract requires an independent small result:
 package payload
 
 func Prefix(input []byte) []byte {
-    if len(input) > 16 {
-        input = input[:16]
-    }
-    return append([]byte(nil), input...)
+	if len(input) > 16 {
+		input = input[:16]
+	}
+	return append([]byte(nil), input...)
 }
 ```
 
@@ -119,19 +119,23 @@ BAD — early return leaves `Rows` open and can hold a pooled connection:
 package repository
 
 import (
-    "context"
-    "database/sql"
+	"context"
+	"database/sql"
 )
 
 func FirstBad(ctx context.Context, db *sql.DB) (int, error) {
-    rows, err := db.QueryContext(ctx, "SELECT 1 UNION ALL SELECT 2")
-    if err != nil { return 0, err }
-    if rows.Next() {
-        var n int
-        if err := rows.Scan(&n); err != nil { return 0, err }
-        return n, nil
-    }
-    return 0, rows.Err()
+	rows, err := db.QueryContext(ctx, "SELECT 1 UNION ALL SELECT 2")
+	if err != nil {
+		return 0, err
+	}
+	if rows.Next() {
+		var n int
+		if err := rows.Scan(&n); err != nil {
+			return 0, err
+		}
+		return n, nil
+	}
+	return 0, rows.Err()
 }
 ```
 
@@ -141,22 +145,30 @@ GOOD — close on every return path and check iteration errors:
 package repository
 
 import (
-    "context"
-    "database/sql"
+	"context"
+	"database/sql"
 )
 
 func First(ctx context.Context, db *sql.DB) (int, error) {
-    rows, err := db.QueryContext(ctx, "SELECT 1 UNION ALL SELECT 2")
-    if err != nil { return 0, err }
-    defer rows.Close()
-    if !rows.Next() {
-        if err := rows.Err(); err != nil { return 0, err }
-        return 0, sql.ErrNoRows
-    }
-    var n int
-    if err := rows.Scan(&n); err != nil { return 0, err }
-    if err := rows.Err(); err != nil { return 0, err }
-    return n, nil
+	rows, err := db.QueryContext(ctx, "SELECT 1 UNION ALL SELECT 2")
+	if err != nil {
+		return 0, err
+	}
+	defer rows.Close()
+	if !rows.Next() {
+		if err := rows.Err(); err != nil {
+			return 0, err
+		}
+		return 0, sql.ErrNoRows
+	}
+	var n int
+	if err := rows.Scan(&n); err != nil {
+		return 0, err
+	}
+	if err := rows.Err(); err != nil {
+		return 0, err
+	}
+	return n, nil
 }
 ```
 
