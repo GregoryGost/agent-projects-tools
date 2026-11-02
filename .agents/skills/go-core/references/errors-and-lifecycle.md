@@ -109,7 +109,7 @@ func Ping(client *http.Client, url string) error {
 
 **GOOD — close every successful response; avoid unbounded draining** (Go 1.0+):
 
-§§§go
+```go
 package client
 
 import (
@@ -126,7 +126,7 @@ func Ping(client *http.Client, url string) error {
     }
     return nil
 }
-§§§
+```
 
 Closing the response body is mandatory even when the status is unexpected. Reusing a connection may benefit from consuming a response body, but unlimited draining of an untrusted body is not a safe default; define byte limits and timeouts instead. For files/transactions, check deferred flush/close/commit errors when the result depends on them, and preserve the primary error if cleanup also fails.
 
