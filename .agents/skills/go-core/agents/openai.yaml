@@ -1,0 +1,5 @@
+interface:
+  display_name: "Go Core"
+  short_description: "Go modules, errors, concurrency and portable architecture"
+  default_prompt: "Use $go-core for version-aware, framework-neutral Go implementation and review. Read the project profile and actual go.mod first."
+
