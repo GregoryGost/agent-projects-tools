@@ -11,7 +11,7 @@ Use when a change starts/backgrounds workers, holds buffers, opens connections/s
 5. Reproduce unbounded growth with bounded repeated workloads and compare *like-for-like* profiles or resource stats when the bug actually concerns memory/resource retention. Avoid arbitrary fixed heap deltas, elapsed-time promises and global GC manipulation in production.
 6. Keep integration tests disposable: temporary files/DBs, isolated HTTP servers and approved local dependencies; no access to user/production processes or live pprof endpoints without explicit authorization.
 
-## GOOD — cancellation + deterministic completion (Go 1.7+)
+## GOOD — cancellation + deterministic completion (Go 1.14+; context itself requires Go 1.7+)
 
 The test belongs to the same `jobs` package as `Start` in `go-core/references/memory-and-resource-leaks.md`. It is **not** standalone without that implementation.
 
