@@ -42,6 +42,13 @@ Before modifying data access or migrations, verify:
 - Keep transactions short and use database constraints to guard concurrent correctness. A per-process writer queue is optional, not universally required; if selected, document multi-process consequences and durability.
 - Never use an in-memory SQLite database to prove file locking, WAL, multi-connection behavior or migration safety.
 
+## Connection/resource lifetime and native memory
+
+- The composition root owns the long-lived GORM connection pool (accessed via the underlying `*sql.DB`); do not close that pool per request, and do not create a new pool per query without an explicit policy.
+- For GORM `Rows()`/raw `database/sql` iteration, ensure `*sql.Rows.Close()` on every early return and check `Rows.Err()`. Close explicitly acquired `*sql.Conn` and statements; close/rollback transactions according to the owner contract. Treat unexpected persistent `db.Stats().InUse` growth as a symptom to investigate, not proof without workload context; healthy pools may retain idle connections.
+- Monitor Go heap/`runtime/metrics` separately from OS RSS and file descriptors. The usual CGO SQLite driver may allocate native memory not represented in Go heap profiles. Diagnose engine/native allocation and OS memory before claiming a Go heap leak. A SQLite `-wal` sidecar file is not itself a heap leak.
+- Profile, sample or change memory/connection settings only with project authorization; use `go-core/references/memory-and-resource-leaks.md` when independently active for the general evidence workflow.
+
 ## Queries, data and failure semantics
 
 - Parameterize SQL through GORM and use explicit predicate scope, ordering, pagination and indexes.
@@ -55,6 +62,7 @@ Before modifying data access or migrations, verify:
 - Create a private file-backed temporary DB. Run the **actual Goose migration runner** and assert version history and schema before creating GORM models/queries.
 - Check actual `PRAGMA foreign_keys`, `busy_timeout` and journal mode through multiple new connections under the configured pool.
 - Verify FKs, unique/check constraints, meaningful rollback, concurrent writes/lock failure policy, data-preserving schema changes and query behavior.
+- Where affected, exercise repeated GORM queries with disposable SQLite DBs and verify `Rows`/transaction closure, expected pool `InUse` behavior after completion, no unbounded goroutines and explicit owner shutdown. Do not assert zero idle connections or exact native RSS values.
 - For CGO vs pure-Go dual drivers, exercise both migration and runtime connections and verify compatible SQLite features/versions.
 - Run the project-declared test commands and report unexecuted physical/production migration checks separately. No actual production mutation is authorized by this skill.
 

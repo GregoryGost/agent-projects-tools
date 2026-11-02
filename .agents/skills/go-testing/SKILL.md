@@ -32,6 +32,7 @@ Use `.codex/rules/go_testing.md` only when it is independently active; its requi
 ## Fixtures and determinism
 
 - Use `t.TempDir` and `t.Cleanup`; close response bodies, servers, DB pools and background workers.
+- For ownership-sensitive changes, test cancellation/stop plus completion and cleanup on success, errors and repeated lifecycle; use `references/leak-regression.md`. A stable Go runtime goroutine count is not a general-purpose pass/fail oracle.
 - Use `t.Setenv` only in serial tests; it is unsafe with `t.Parallel` in the same test or ancestor.
 - Avoid real sleeps, fixed ports and shared mutable test globals; use bounded readiness checks and deterministic clocks where appropriate.
 - For Go 1.25+ modules, consider stable `testing/synctest.Test` and `synctest.Wait` to test scheduler/time-dependent behavior in an isolated bubble. Inspect API restrictions and avoid it where external real I/O or goroutine lifetimes do not fit that model; do not silently raise the module's minimum Go version.
@@ -48,7 +49,7 @@ Use `.codex/rules/go_testing.md` only when it is independently active; its requi
 
 ## Race, coverage, fuzz and benchmark
 
-- Run the project-selected `go test ./...` and optionally `go test -race ./...` where the compiler/platform/CGO allow it.
+- Run the project-selected `go test ./...` and optionally `go test -race ./...` where the compiler/platform/CGO allow it. `-race` does **not** detect retained Go heap, leaked goroutines or open OS/SQL resources.
 - Use `-count=1` to avoid test cache for reproducibility investigations and `-shuffle=on` to expose test-order coupling when fixtures are independent.
 - Use `go test -coverprofile=<declared output> ./...` when coverage is requested/configured; avoid dumping extra artifacts in the repository root.
 - Use bounded `go test -fuzz=FuzzName -fuzztime=<budget>` for appropriate pure functions, retaining valid regression corpus cases.
@@ -58,5 +59,5 @@ Use `.codex/rules/go_testing.md` only when it is independently active; its requi
 
 Apply `go-huma-v2` for independently active Huma contract tests. Apply `go-gorm` and `go-gorm-sqlite-goose` for independently active DB and migrations tests.
 
-Load `references/test-boundaries-and-patterns.md` for detailed examples and `references/official-sources.md` for official tools.
+Load `references/test-boundaries-and-patterns.md` for general examples, `references/leak-regression.md` for lifecycle/memory regression testing when relevant, and `references/official-sources.md` for official tools.
 

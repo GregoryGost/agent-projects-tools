@@ -557,6 +557,7 @@ Keep only when Go is active. The base Go pair is framework-neutral.
 - CGO policy: `<enabled / disabled / conditional by platform / none>`
 - Dependency integrity/change policy: `<go.mod + go.sum / vendor / project-specific / none>`
 - Formatter/linter source: `<gofmt + go vet / golangci-lint config / other / none>`
+- Runtime diagnostics and memory ownership policy (optional): `<protected pprof / runtime metrics / OS+CGO monitoring / project-specific / none>`
 - Idiomatic design and review sources: `<project conventions + versioned Go spec/release notes + go-core references / project-specific / none>`
 - Active Go rule/skill: `<go_core.md + go-core / none>`
 
@@ -575,6 +576,7 @@ Keep only when Go testing is selected.
 - Coverage output and policy: `<temp/artifact path, threshold or none>`
 - Fuzz budget and targets: `<bounded command/targets / none>`
 - Test data and environment isolation: `<t.TempDir / file DB / ports / secrets / project-specific>`
+- Leak/lifecycle regression policy (optional): `<cancellation/cleanup/repeated lifecycle / approved goleak / none>`
 - Active Go testing rule/skill: `<go_testing.md + go-testing / none>`
 
 ## Go Huma v2 Profile

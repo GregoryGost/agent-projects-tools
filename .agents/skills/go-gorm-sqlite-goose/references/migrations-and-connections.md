@@ -40,6 +40,12 @@ Remember: `PRAGMA foreign_keys=ON` is a no-op if attempted inside an already ope
 
 Before altering a populated table, list columns, constraints, indexes, triggers, dependent views and FK references. For unsupported direct alterations, use the documented SQLite rebuild procedure with explicit field mapping and data checks. Preserve data and use `PRAGMA foreign_key_check`, representational tests and planned backup/recovery. Do not assume rename/drop behavior of ancient SQLite versions matches current docs.
 
+## Connection lifetime and CGO memory
+
+- When GORM returns a `*sql.Rows` (for example through `Rows()`), the caller must close it even on early returns; check iteration errors and transaction cleanup. GORM's underlying `*sql.DB` belongs to the composition root, not each repository method.
+- Use `db.Stats()` to investigate growing `InUse`/waits under repeated queries at comparable workload; intentionally idle pooled connections are not a leak by themselves. Tests should use a temporary file-backed SQLite database.
+- SQLite's default CGO driver can allocate native memory; Go heap metrics and heap profiles do not report all native allocations. Correlate process RSS, file descriptors and runtime metrics with driver-specific evidence before diagnosing a leak or changing pool limits.
+
 ## Driver boundary
 
 A default GORM SQLite binary and a Goose CLI binary can embed distinct SQLite versions and extensions. Goose CLI documentation currently lists `sqlite3` driven by `modernc.org/sqlite`; the GORM SQLite default is CGO-based `mattn/go-sqlite3`. Verify actual binaries, runtime `sqlite_version()` and feature-sensitive migrations; avoid asserting universal driver parity.

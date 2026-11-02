@@ -26,6 +26,7 @@ Read `CODEX_PROJECT.md`, `go.mod`, GORM SQLite dialect/driver, Goose v3 version 
 - Treat `foreign_keys` and `busy_timeout` as connection-local. Enable/enforce with the configured driver or connection initializer for every connection, including the migration connection. `PRAGMA foreign_keys` changes inside a transaction do not take effect.
 - WAL is an optional declared policy, not a cure for write contention; SQLite permits one active writer. Keep write transactions short; establish lock/retry behavior and worker/process assumptions.
 - Do not force `MaxOpenConns(1)` universally; size pools from concurrency semantics and test the chosen settings.
+- Ensure GORM `Rows()`/`database/sql` rows, acquired connections and transactions are closed or rolled back at their owned boundary; keep the underlying `*sql.DB` shared for its declared lifespan. Investigate `db.Stats().InUse` and CGO/native memory separately from Go heap; growth alone is not proof of a leak.
 - Use file-based temporary databases for connection, WAL, lock, migration and FK tests.
 - Test integrity, query/index plans where relevant, rollback and error translation through real GORM + SQLite connections.
 - Additional testing specifics and examples belong in the corresponding skill references, not in the rule.

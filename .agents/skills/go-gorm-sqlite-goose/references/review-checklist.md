@@ -21,6 +21,8 @@
 - [ ] `foreign_keys` and `busy_timeout` configured and verified per connection.
 - [ ] WAL policy and checkpoint/backup/sidecar behavior understood if enabled.
 - [ ] Single-writer contention assumptions, pool and retries bounded.
+- [ ] GORM/`database/sql` pool owner identified; returned `*sql.Rows`/`*sql.Conn`, statements and transactions released on all exit paths.
+- [ ] Diagnostic distinction between `db.Stats().InUse`, idle pool connections, Go heap, native CGO SQLite memory and process RSS preserved.
 - [ ] No unbounded or external I/O inside write transactions.
 - [ ] Data representation, constraints, indexes and ordering explicit.
 
@@ -30,5 +32,6 @@
 - [ ] Real GORM integration tests for queries, rollback, FK and unique constraints.
 - [ ] Multiple-connection and concurrent-write cases covered where relevant.
 - [ ] Migrator/runtime engines checked for compatibility.
+- [ ] Repeated-query lifecycle and cleanup regression verified when connection ownership changes; no speculative absolute memory threshold.
 - [ ] No production `goose up/down/reset/redo` or irreversible DB operation performed without separate authorization.
 
