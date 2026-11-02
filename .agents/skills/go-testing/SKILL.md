@@ -34,6 +34,7 @@ Use `.codex/rules/go_testing.md` only when it is independently active; its requi
 - Use `t.TempDir` and `t.Cleanup`; close response bodies, servers, DB pools and background workers.
 - Use `t.Setenv` only in serial tests; it is unsafe with `t.Parallel` in the same test or ancestor.
 - Avoid real sleeps, fixed ports and shared mutable test globals; use bounded readiness checks and deterministic clocks where appropriate.
+- For Go 1.25+ modules, consider stable `testing/synctest.Test` and `synctest.Wait` to test scheduler/time-dependent behavior in an isolated bubble. Inspect API restrictions and avoid it where external real I/O or goroutine lifetimes do not fit that model; do not silently raise the module's minimum Go version.
 - `t.Parallel` requires process/global/DB/port isolation. Confirm it before enabling `-shuffle=on` or parallel CI.
 - Never rely on map iteration, test order, local timezone or installed external services without explicit fixture policy.
 

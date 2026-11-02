@@ -173,7 +173,7 @@ max_concurrent_threads_per_session = 4
 | Blender 5.2 | `blender_core.md`, `blender-core`, `blender_modeling.md`, `blender-modeling`, `blender_materials_texturing.md`, `blender-materials-texturing`, `blender_rigging_animation.md`, `blender-rigging-animation` для Blender 5.2.x data model и asset authoring |
 | Official Blender Lab MCP | `blender_mcp.md`, `blender-mcp` для официального Blender Lab MCP; priority baseline `1.0.3`, live Editor first, scene/docs/screenshot inspection, bounded `bpy` execution и headless fallback |
 | Blender → Unity | `blender_unity.md`, `blender-unity` для Blender 5.2.x → Unity 6000.3.x asset boundary: FBX, scale/axes, mesh/UV/normals, textures/material data, rigs/animation, blend shapes, LOD и import validation |
-| Go: язык, тесты, Huma v2 | `go_core.md`, `go-core`; `go_testing.md`, `go-testing`; `go_huma_v2.md`, `go-huma-v2` для modules/toolchains, `testing`/`httptest`/race/fuzz и типизированных HTTP API с OpenAPI 3.1 |
+| Go: язык, тесты, Huma v2 | `go_core.md`, `go-core` (идиоматичный Go, ООП, интерфейсы, пакеты, конкурентность, современные возможности и Good/Bad); `go_testing.md`, `go-testing` (unit, `httptest`, race/fuzz); `go_huma_v2.md`, `go-huma-v2` (типизированные HTTP API, OpenAPI 3.1) |
 | Go: GORM и SQLite/Goose | `go_gorm.md`, `go-gorm` для backend-neutral ORM; `go_gorm_sqlite_goose.md`, `go-gorm-sqlite-goose` для SQLite-драйверов, PRAGMA, блокировок и миграций Goose v3 |
 | Python core и тестирование | `python-core`, `python-testing`, `python-service-e2e-testing` |
 | Python backend | `python-fastapi-expert`, `python-cashews-cache`, `python-sqlalchemy-core`, `python-sqlalchemy-sqlite`, `python-sqlalchemy-mysql`, `python-httpx-client`, `python-backend-security` |
@@ -308,11 +308,13 @@ Good/bad patterns, review checklist и официальные SQLAlchemy, `aiomy
 
 Добавлены независимые слои с активацией только через `CODEX_PROJECT.md`:
 
-- `go_core.md + go-core` — базовый Go: версии компилятора и модулей, интерфейсы, ошибки, контексты, конкуренция, жизненный цикл ресурсов, форматирование и review.
-- `go_testing.md + go-testing` — стандартный пакет `testing`, table-driven тесты, `httptest`, интеграционное/E2E-тестирование, `-race`, coverage, fuzzing и изоляция окружения.
+- `go_core.md + go-core` — экспертный уровень идиоматичного Go без отдельного `go-expert`: структуры и методы, ООП через композицию, интерфейсы и method sets, zero-value, конструкторы, API/packages, ошибки и контекст, память и конкурентность, производительность, современные версии Go и критический code review. Предметные ссылки выбираются по задаче из `go-core/references/`, с полноценными Good/Bad-примерами, условиями применимости и критериями проверки.
+- `go_testing.md + go-testing` — стандартный пакет `testing`, table-driven тесты, `httptest`, интеграционное/E2E-тестирование, `-race`, coverage, fuzzing, `testing/synctest` для Go 1.25+ и изоляция окружения.
 - `go_huma_v2.md + go-huma-v2` — Huma v2, проверка минимальной версии Go, router adapters, типизированные операции, входные/выходные контракты, обработка ошибок, OpenAPI 3.1/JSON Schema и контрактные тесты. Huma v2 не требует обязательного ORM.
 - `go_gorm.md + go-gorm` — базовые правила GORM для репозиториев, транзакций, параметризованных запросов, ошибок, моделей и запросов; не привязан к SQLite.
 - `go_gorm_sqlite_goose.md + go-gorm-sqlite-goose` — **условный** профиль для выбранной связки SQLite + GORM + Goose v3. Его выбор не происходит автоматически при активации Go/Huma/GORM.
+
+Рекомендации `go-core` разделяются на ошибки корректности/безопасности/совместимости и контекстно-зависимые предпочтения архитектуры/стиля. Для версии Go 1.27 учитывается поддержка generic methods конкретных типов, при этом в интерфейсах generic methods по-прежнему не разрешены. Старые материалы, включая некоторые разделы Go FAQ, не должны подменять release notes и спецификацию конкретной версии.
 
 При использовании Goose **единственный источник истины для production-схемы — версионируемые миграции Goose**. `AutoMigrate` GORM не должен конкурировать с ними в startup, HTTP handlers или рабочих процессах. Для SQLite проверяются включение foreign keys на каждом соединении, busy timeout, опциональный WAL, транзакционные границы, конкуренция записи и миграции на заполненной БД. Важно учитывать, что обычный GORM SQLite-драйвер использует CGO, а актуальная документация CLI Goose описывает иной SQLite-драйвер; совместимость и доступные функции должны проверяться на конкретных версиях.
 

@@ -34,12 +34,11 @@ These are *illustrative*, not mandatory directory names. `internal/` is a Go-enf
 package users
 
 type User struct {
-    ID string
-    Admin bool
+    DisplayName string
 }
 ```
 
-This is fine for pure transfer records. It is inappropriate if `Admin` changes must pass authorization policy.
+This is fine for pure transfer records. It is inappropriate if the display name must be non-empty for a domain entity.
 
 **GOOD — use an explicit operation when the invariant matters**:
 
@@ -49,25 +48,30 @@ package users
 import "errors"
 
 type User struct {
-    id    string
-    admin bool
+    id          string
+    displayName string
 }
 
-func NewUser(id string) (User, error) {
-    if id == "" { return User{}, errors.New("empty user id") }
-    return User{id: id}, nil
+func NewUser(id, displayName string) (User, error) {
+    if id == "" || displayName == "" {
+        return User{}, errors.New("id and display name required")
+    }
+    return User{id: id, displayName: displayName}, nil
 }
 
-func (u User) ID() string { return u.id }
+func (u User) ID() string          { return u.id }
+func (u User) DisplayName() string { return u.displayName }
 
-func (u *User) GrantAdmin(authorized bool) error {
-    if !authorized { return errors.New("not authorized") }
-    u.admin = true
+func (u *User) Rename(name string) error {
+    if name == "" {
+        return errors.New("display name required")
+    }
+    u.displayName = name
     return nil
 }
 ```
 
-The example illustrates an API boundary; real authorization must use trustworthy caller identity/policy, not a caller-controlled boolean.
+This example protects a simple domain invariant; actual transport validation and authorization remain separate responsibilities.
 
 ## 3. Make architecture proportional
 

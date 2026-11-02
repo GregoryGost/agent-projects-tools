@@ -78,26 +78,7 @@ func WithPort(port int) Option {
 }
 ```
 
-**GOOD — a typed configuration when callers benefit from explicit values**:
-
-```go
-package server
-
-type Config struct {
-    Port int
-}
-
-func New(config Config) (*Server, error) {
-    if config.Port < 1 || config.Port > 65535 {
-        return nil, ErrInvalidPort
-    }
-    return &Server{port: config.Port}, nil
-}
-
-type Server struct{ port int }
-```
-
-In this *minimal* example, `ErrInvalidPort` must be declared by the owning package; a complete independently compilable variant is:
+**GOOD — a typed configuration when callers benefit from explicit values** (Go 1.0+; independently compilable):
 
 ```go
 package server
@@ -106,8 +87,8 @@ import "errors"
 
 var ErrInvalidPort = errors.New("invalid port")
 
-type Config struct { Port int }
-type Server struct { port int }
+type Config struct{ Port int }
+type Server struct{ port int }
 
 func New(config Config) (*Server, error) {
     if config.Port < 1 || config.Port > 65535 {
@@ -117,7 +98,7 @@ func New(config Config) (*Server, error) {
 }
 ```
 
-The complete variant is authoritative; the preceding abbreviated snippet illustrates the API choice. Options are appropriate with many optional independent settings, stable defaults or backward-compatible extension needs. Avoid a rule that forces either style universally.
+Options are appropriate with many optional independent settings, stable defaults or backward-compatible extension needs. Avoid a rule that forces either style universally.
 
 ## 4. Slices, maps and ownership
 

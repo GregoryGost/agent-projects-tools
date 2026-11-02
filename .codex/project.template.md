@@ -557,6 +557,7 @@ Keep only when Go is active. The base Go pair is framework-neutral.
 - CGO policy: `<enabled / disabled / conditional by platform / none>`
 - Dependency integrity/change policy: `<go.mod + go.sum / vendor / project-specific / none>`
 - Formatter/linter source: `<gofmt + go vet / golangci-lint config / other / none>`
+- Idiomatic design and review sources: `<project conventions + versioned Go spec/release notes + go-core references / project-specific / none>`
 - Active Go rule/skill: `<go_core.md + go-core / none>`
 
 ## Go Testing Profile

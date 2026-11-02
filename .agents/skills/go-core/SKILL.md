@@ -1,61 +1,76 @@
 ---
 name: go-core
-description: "Use for Go language implementation, code review, package design, modules, interfaces, errors, context, concurrency, and toolchain compatibility."
+description: "Use for idiomatic Go architecture, object modeling, methods, interfaces, errors, context, concurrency, version-aware APIs, performance and critical code review."
 ---
 
-# Go Core
+# Go Core — Idiomatic Go Engineering
 
-Use for portable Go code. This skill owns Go language and standard-library practices only. HTTP framework, persistence and test-specific policies belong in separately active overlays.
+This is the **language-level expert skill** for Go. It covers correct, maintainable and idiomatic Go implementation and review, including modeling without class inheritance. It is not a separate `go-expert` role: deep guidance lives in focused `references/` and is activated through this existing skill.
 
-## Coordination
+HTTP/Huma, GORM/SQLite/Goose and testing framework specifics belong to separately active skills; this base skill must not duplicate or implicitly activate them.
 
-Apply `.codex/rules/go_core.md` when that rule is independently active. Rule activation and required skill validation are controlled by the project profile and `material_dependencies.md`; this skill does not activate a rule by itself.
+## Activation and coordination
 
-## Discovery and compatibility
+- Inspect `CODEX_PROJECT.md`, `go.mod`, `go.work` if present, source, build tags, CI and the declared active stack. Select only active rules and skills using `AGENTS.md` and `.codex/rules/material_dependencies.md`.
+- Use `.codex/rules/go_core.md` when it is independently active. This skill does not activate that rule or any optional overlay by itself.
+- When a target project selects only `go-core` without the rule, respect that active selection and do not silently create an undeclared dependency.
+- Obey project language, code-comment policy, existing conventions, dependency policy, mutation scope and approved validation commands.
 
-- Read `CODEX_PROJECT.md`, module/workspace metadata, build constraints, platform and CI matrices, package APIs, neighboring tests and formatter/linter commands.
-- Distinguish the `go` directive, optional `toolchain` directive, installed `go version`, and selected third-party module requirements. Confirm the effective feature boundary.
-- Prefer the module's declared dependency versions and build tags to latest upstream examples. Never run `go get -u`, `go mod tidy` or install tools as an incidental read-only step.
-- Work inside existing packages/layout. `cmd/`, `internal/` and `pkg/` are choices, not mandatory directory templates.
+## Required investigation before an expert judgment
 
-## Package and API design
+1. Identify the actual task: behavior change, refactor, API evolution, concurrency bug, performance question, compatibility review or idiomatic style review.
+2. Read the **complete relevant** packages, public contracts, consumers, existing tests and configuration. Use search only to locate evidence.
+3. Resolve `go.mod` language version, possible `toolchain` directive, installed compiler, platform/CGO/build matrix and module versions. Do not equate latest online documentation with available syntax.
+4. Reconstruct invariants, state ownership, error mapping, cancellation, goroutine/resource lifecycle, package boundaries and observable behavior.
+5. Compare at least one simpler design where material: concrete type versus interface; value versus pointer receiver; composition versus embedding; mutex versus channel; direct function versus generics.
+6. Try to disprove tentative findings against actual consumers, tests and official versioned sources; mark what is verified and what remains unknown.
+7. Implement only authorized changes; use repository-defined formatter/linter/build/test commands and report what ran.
 
-- Prefer small focused packages and explicit constructors when dependencies need ownership or lifecycle.
-- Use concrete types by default; define narrow consumer-owned interfaces for real substitution and test seams.
-- Return zero values plus errors on failure where appropriate. Preserve exported compatibility unless change is authorized.
-- Prefer type-safe explicit transformations; avoid `interface{}`/`any`, reflection and generics when they add no value.
-- Be careful with nil interfaces, typed nil values, pointer/value semantics and shared slice/map backing arrays.
-- Make JSON tags, time representations, optional/nullable values and external contracts intentional.
-- Respect the project's API compatibility expectations before changing public identifiers or serialized fields.
+## Reference routing — load only relevant material
 
-## Errors and resource lifetime
+| Scope | Read before design/review |
+| --- | --- |
+| Structs, OOP concepts, receivers, interfaces, typed nil, embedding | `references/oop-and-interfaces.md` |
+| Zero-value, constructors, options, dependency injection, slices, generics tradeoffs | `references/idiomatic-design.md` |
+| Packages, import direction, public APIs, compatibility, module layout | `references/packages-and-api-design.md` |
+| Error types, wrapping, context propagation, resource ownership, shutdown | `references/errors-and-lifecycle.md` |
+| Data races, synchronization, goroutine ownership, channels, performance | `references/concurrency-and-memory.md` |
+| New language/library features, deprecations and module-level behavior | `references/modern-go.md` |
+| General code review, refactor audit or multi-category request | `references/patterns-and-review.md` plus the matching focused references |
+| Any version-sensitive or disputed claim | `references/official-sources.md`; then check the actual official source |
 
-- Use `fmt.Errorf("operation: %w", err)` for useful causal context; use `errors.Is` or `errors.As` for classification.
-- Keep sentinel/typed errors stable at well-defined domain boundaries; convert database/transport errors there rather than leaking vendor types to consumers.
-- Do not log and return the same error at every layer; log once at the boundary that has operational context.
-- Close owned resources, check write/flush/close errors where correctness requires it, and preserve cleanup during partial initialization.
-- Keep shutdown idempotent and bounded; do not close borrowed channels or resources.
+Do not load every reference for a one-line change; do not skip the relevant reference merely because a general summary was already loaded.
 
-## Context, concurrency, performance
+## Engineering defaults, not absolutes
 
-- Accept `context.Context` as the first parameter when operations are cancelable; propagate it into network/database I/O.
-- A canceled context is not a substitute for joining goroutines or draining owned work.
-- Avoid unbounded goroutine fan-out, uncontrolled retries, leaked tickers, silent error channels and blocking operations inside critical sections.
-- Use `sync.Mutex`, channels, `errgroup` or actor ownership according to project policy and the smallest correct concurrency model; `errgroup` is an external dependency and cannot be added without permission.
-- Measure before optimizing; use benchmarks/profiles and realistic workload evidence rather than imagined bottlenecks.
-- Handle map iteration nondeterminism and error-prone shared fixtures explicitly.
+- Model data with named types, focused methods and explicit invariants. Prefer composition and explicit ownership; Go embedding is method/field promotion, not subclassing.
+- Prefer concrete types and narrow consumer-owned interfaces where they bring meaningful substitution. Existing framework interfaces and library boundary contracts are legitimate exceptions.
+- Use pointer receivers for mutable/non-copyable state; value receivers can be appropriate for small immutable value-like types. Verify method sets and interface satisfaction.
+- Make zero values useful where sensible; constructors are justified for validation, configuration, dependencies and resource ownership.
+- Avoid interfaces, generics, reflection, functional options, DI frameworks or extra layers with no current value, but do not ban them categorically.
+- Propagate `context.Context` into cancelable I/O; wrap and classify errors at deliberate boundaries; do not leak driver errors to transport or suppress failures.
+- Bound goroutine lifetimes and queue capacity, synchronize shared mutable state and separate correctness from performance guesses.
+- Keep package imports acyclic and exported contracts intentional. Do not introduce new dependencies, tools, language-version upgrades or source rewrites without the active project policy/user authorization.
+- `gofmt` is the standard baseline; apply additional local linting/testing tools only when already declared and permitted.
 
-## Formatting and verification
+## Review output contract
 
-- `gofmt` is the baseline formatter. Resolve extra formatter, linter and generated-code commands from project configuration.
-- For code changes, run or report declared format checks, `go vet`, build and relevant tests; respect CGO, race-detector and cross-platform limitations.
-- Do not invent commands or run migrations/infrastructure mutations as a consequence of language-level review.
+Classify each actionable finding as **CORRECTNESS**, **SECURITY**, **COMPATIBILITY**, **DESIGN** or **STYLE**. State:
+
+- exact source path/line or API surface;
+- observable failure/invariant/trust boundary;
+- Go version/module/build constraints where applicable;
+- evidence from complete code, test, vet, race analysis or a matching official source;
+- smallest safe remedy and any tradeoff or plausible counterexample;
+- verification actually performed, with unavailable checks called out.
+
+Do not present a preference (e.g. "always use interfaces"/"always use pointer receivers"/"always use channels") as universal correctness.
 
 ## Optional coordination
 
-- `go-testing` for independently activated test tasks.
-- `go-huma-v2` for active Huma v2 APIs.
-- `go-gorm` for active GORM persistence, plus `go-gorm-sqlite-goose` only for the declared SQLite + Goose stack.
+- `go-testing` for independently active Go tests and test engineering.
+- `go-huma-v2` for typed Huma HTTP contracts when that profile is active.
+- `go-gorm` for active GORM persistence, with `go-gorm-sqlite-goose` only when the exact SQLite/Goose stack is selected.
 
-Load `references/patterns-and-review.md` for implementation/review patterns and `references/official-sources.md` for language specifications and tool documentation.
+This skill remains framework-neutral and does not select DB, router, migration strategy or runtime toolchain for a target project.
 

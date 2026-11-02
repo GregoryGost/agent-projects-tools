@@ -54,42 +54,41 @@ Use a sentinel when callers need stable equality/`errors.Is` semantics. Typed er
 
 ## 3. Propagate context to I/O; don't store a request context
 
-**BAD — detaching database work from the request without a durability contract**:
+**BAD — detaching an outbound HTTP call from the caller** (CORRECTNESS for cancellation contracts):
 
 ```go
-package service
+package client
 
 import (
     "context"
-    "database/sql"
+    "net/http"
 )
 
-func Load(_ context.Context, db *sql.DB, id int64) error {
-    return db.QueryRowContext(context.Background(),
-        "SELECT 1 WHERE ? = ?", id, id).Err()
+func Fetch(_ context.Context, client *http.Client, url string) (*http.Response, error) {
+    req, err := http.NewRequestWithContext(context.Background(), http.MethodGet, url, nil)
+    if err != nil { return nil, err }
+    return client.Do(req)
 }
 ```
 
-This illustrates the cancellation bug; the sample query is not portable across SQL dialects, so use it only to compare context propagation, not as a database recipe.
-
-**GOOD — honor caller cancellation** (Go 1.8+ for `QueryRowContext`):
+**GOOD — honor the caller's cancellation** (Go 1.13+ for `NewRequestWithContext`):
 
 ```go
-package service
+package client
 
 import (
     "context"
-    "database/sql"
+    "net/http"
 )
 
-func Load(ctx context.Context, db *sql.DB, id int64) error {
-    var found int
-    return db.QueryRowContext(ctx,
-        "SELECT 1 WHERE id = ?", id).Scan(&found)
+func Fetch(ctx context.Context, client *http.Client, url string) (*http.Response, error) {
+    req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+    if err != nil { return nil, err }
+    return client.Do(req)
 }
 ```
 
-The example query assumes an SQL table with column `id` and `?` placeholders (such as SQLite); actual SQL, schema and error translation belong to the active DB skill. Never retain an HTTP request context in a long-lived service field. If work must outlive a request, define separate ownership, timeout, idempotency, retries, observability and durability; `context.WithoutCancel` is not automatically the correct solution.
+The caller **owns the returned response body** and must close it. An HTTP client must still have project-appropriate timeout, redirect and resource limits. Never retain an HTTP request context in a long-lived service field. If work must outlive a request, define separate ownership, timeout, idempotency, retries, observability and durability; `context.WithoutCancel` is not automatically the correct solution.
 
 ## 4. Own resources and check result errors
 
@@ -108,13 +107,13 @@ func Ping(client *http.Client, url string) error {
 }
 ```
 
-**GOOD — close every successful response** (Go 1.0+):
+**GOOD — close every successful response; avoid unbounded draining** (Go 1.0+):
 
-```go
+§§§go
 package client
 
 import (
-    "io"
+    "fmt"
     "net/http"
 )
 
@@ -122,19 +121,14 @@ func Ping(client *http.Client, url string) error {
     resp, err := client.Get(url)
     if err != nil { return err }
     defer resp.Body.Close()
-    _, err = io.Copy(io.Discard, resp.Body)
-    if err != nil { return err }
     if resp.StatusCode != http.StatusOK {
-        return &StatusError{Code: resp.StatusCode}
+        return fmt.Errorf("unexpected HTTP status: %d", resp.StatusCode)
     }
     return nil
 }
+§§§
 
-type StatusError struct{ Code int }
-func (e *StatusError) Error() string { return "unexpected HTTP status" }
-```
-
-This example assumes a bounded response body; a production client needs a policy for maximum bytes, timeouts, status handling and whether draining is worthwhile. Calling `io.Copy(io.Discard, ...)` without a size limit is inappropriate for untrusted unlimited responses. For files/transactions, check deferred flush/close/commit errors when the result depends on them, and preserve the primary error if cleanup also fails.
+Closing the response body is mandatory even when the status is unexpected. Reusing a connection may benefit from consuming a response body, but unlimited draining of an untrusted body is not a safe default; define byte limits and timeouts instead. For files/transactions, check deferred flush/close/commit errors when the result depends on them, and preserve the primary error if cleanup also fails.
 
 ## 5. Explicit shutdown boundaries
 
