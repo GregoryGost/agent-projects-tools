@@ -27,6 +27,14 @@
 - Context: https://pkg.go.dev/context
 - Sync: https://pkg.go.dev/sync
 - Go race detector: https://go.dev/doc/articles/race_detector
+- Diagnostics and profiling: https://go.dev/doc/diagnostics
+- GC and process memory accounting: https://go.dev/doc/gc-guide
+- Runtime memory and goroutine metrics: https://pkg.go.dev/runtime/metrics
+- Runtime heap / goroutine / goroutineleak profiles: https://pkg.go.dev/runtime/pprof
+- HTTP profiling endpoint security: https://pkg.go.dev/net/http/pprof
+- Goroutine leak profiler limits (Go 1.27): https://go.dev/blog/goroutine-leak-profiles
+- Go 1.23 timer behavior: https://go.dev/doc/go1.23
+- SQL resource ownership: https://pkg.go.dev/database/sql
 - Go code review comments: https://go.dev/wiki/CodeReviewComments
 - Effective Go (older, not a complete modern Go style guide): https://go.dev/doc/effective_go
 - Google Go Style Guide: https://google.github.io/styleguide/go/guide

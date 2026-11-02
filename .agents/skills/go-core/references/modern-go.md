@@ -16,6 +16,7 @@
 | `errors.AsType` and `new(expression)` | 1.26 | Use only when target source/compiler supports them. |
 | Generic concrete methods | 1.27 | Method may declare its own type parameters; interface methods still cannot and generic methods cannot implement interface methods. |
 | `encoding/json/v2` | 1.27 | Strict new API/semantics; review JSON compatibility, tags and external dependencies before adopting. |
+| `runtime/pprof` `goroutineleak` profile | 1.27 | Stable profiler for some permanently blocked goroutines; not all I/O stalls. Go 1.26 used an experimental build feature. |
 
 This table lists the **first Go version** for the stated capability, not a recommendation to upgrade or a complete security-support policy. The generic-function example below requires Go 1.18+; the generic-method example is intentionally Go 1.27+ only and cannot be checked with an older compiler.
 
@@ -65,6 +66,9 @@ func (b Box[T]) Map[U any](f func(T) U) Box[U] {
 This syntax does **not** allow generic methods inside an interface, nor generic method implementations of interface methods. The method example cannot be compiled by a pre-1.27 toolchain. Don't introduce it into projects that target older Go versions.
 
 ## 3. Modernization is a choice, not a blanket rewrite
+
+- `goroutineleak` is an optional Go 1.27 diagnostic, not a mandatory endpoint or proof that all goroutine leaks are absent. Restrict `net/http/pprof` to explicitly protected diagnostic access; see `memory-and-resource-leaks.md`.
+- Go 1.23 introduced collection of unreferenced timers/tickers when the main module and runtime select the new semantics. Go 1.27 removes the old `asynctimerchan` override. `Stop` can still matter for behavioral cancellation; do not flag every timer without `Stop` as a leak.
 
 - Prefer modern standard-library helpers when they make the contract clearer and fit the minimum Go version. Avoid rewriting clear loops to `iter` pipelines without justification.
 - `go fix` in modern versions may rewrite files; inspect the tool's version and proposed changes, and run it only when the current request authorizes source changes.

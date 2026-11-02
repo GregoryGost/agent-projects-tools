@@ -136,7 +136,13 @@ func (c *Catalog) IDs() []string { return slices.Clone(c.ids) }
 
 A `map` is also a reference-like data structure: unprotected concurrent access involving mutation is unsafe. Copy only where ownership requires isolation; repeated copying of large collections can be expensive, so verify it matches the contract and measure if critical.
 
-## 5. Performance guidance
+## 5. Memory and resource leaks
+
+- A data race, a permanently blocked goroutine and a retained heap object are different defects. A successful `-race` test cannot establish leak freedom.
+- Check who owns cancellation and joins, whether buffers/maps/queues have bounds, and whether a short slice or closure accidentally retains a large object.
+- When the task concerns memory growth, load `memory-and-resource-leaks.md` for heap/RSS/CGO distinctions, `pprof`, `runtime/metrics` and the Go 1.27 `goroutineleak` profile rather than relying on guessed thresholds.
+
+## 6. Performance guidance
 
 - Measure with benchmarks, `pprof`, `go tool trace` and allocation profiles before making performance claims.
 - Use `go test -bench=. -benchmem` with representative data and compare under comparable environments; no benchmark is inherently a correctness test.

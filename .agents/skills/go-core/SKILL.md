@@ -35,6 +35,7 @@ HTTP/Huma, GORM/SQLite/Goose and testing framework specifics belong to separatel
 | Packages, import direction, public APIs, compatibility, module layout | `references/packages-and-api-design.md` |
 | Error types, wrapping, context propagation, resource ownership, shutdown | `references/errors-and-lifecycle.md` |
 | Data races, synchronization, goroutine ownership, channels, performance | `references/concurrency-and-memory.md` |
+| Memory retention, goroutine/resource leaks, heap/RSS/CGO diagnostics, pprof | `references/memory-and-resource-leaks.md` |
 | New language/library features, deprecations and module-level behavior | `references/modern-go.md` |
 | General code review, refactor audit or multi-category request | `references/patterns-and-review.md` plus the matching focused references |
 | Any version-sensitive or disputed claim | `references/official-sources.md`; then check the actual official source |
@@ -50,6 +51,7 @@ Do not load every reference for a one-line change; do not skip the relevant refe
 - Avoid interfaces, generics, reflection, functional options, DI frameworks or extra layers with no current value, but do not ban them categorically.
 - Propagate `context.Context` into cancelable I/O; wrap and classify errors at deliberate boundaries; do not leak driver errors to transport or suppress failures.
 - Bound goroutine lifetimes and queue capacity, synchronize shared mutable state and separate correctness from performance guesses.
+- For long-running work and changes that affect resource ownership, check cancellation/join, cleanup on all exit paths, bounded retention and appropriate memory diagnostics. Distinguish live Go heap, native/CGO memory and process RSS; do not require profiling for unrelated small changes. See `references/memory-and-resource-leaks.md`.
 - Keep package imports acyclic and exported contracts intentional. Do not introduce new dependencies, tools, language-version upgrades or source rewrites without the active project policy/user authorization.
 - `gofmt` is the standard baseline; apply additional local linting/testing tools only when already declared and permitted.
 

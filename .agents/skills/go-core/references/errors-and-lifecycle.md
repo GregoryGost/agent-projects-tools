@@ -138,6 +138,10 @@ Closing the response body is mandatory even when the status is unexpected. Reusi
 - Define whether shutdown drains, rejects or abandons queued work; do not promise durability for an in-memory buffer without a replay mechanism.
 - Avoid holding database transactions during remote calls, sleeps or expensive processing.
 
+## Leak and ownership review
+
+On early returns, verify that owned `http.Response.Body`, `*sql.Rows`, `*sql.Conn`, transactions, files and background tasks are released or stopped. Application-owned pools are not closed per request; the caller owns response bodies. For retention, heap-versus-RSS analysis, CGO memory and goroutine leak profiling, use `memory-and-resource-leaks.md`. Do not label an unreferenced timer as a universal leak: Go 1.23+ changed collection semantics, subject to module/runtime version.
+
 ## Review prompts
 
 - Is the error identity preserved and translated at the correct boundary?

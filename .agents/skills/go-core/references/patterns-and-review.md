@@ -26,6 +26,7 @@ A guideline from the Google Go Style Guide is useful evidence for idiomatic styl
 8. Catch-all packages, unintended export and speculative multi-layer architecture: `packages-and-api-design.md`.
 9. New language/API syntax without checking `go.mod` and CI: `modern-go.md`.
 10. Using new generics/iterators mechanically rather than to reduce real complexity: `modern-go.md` and `idiomatic-design.md`.
+11. Unbounded caches/queues, dangling goroutines, unreleased connections, large slice views retaining backing arrays: `memory-and-resource-leaks.md`.
 
 ## Review workflow
 
@@ -51,6 +52,7 @@ A guideline from the Google Go Style Guide is useful evidence for idiomatic styl
 - [ ] Public API, invariants, ownership, cancellation and errors reviewed.
 - [ ] Interfaces and composition are proportionate to real callers.
 - [ ] Concurrent mutation synchronized; goroutine lifecycle bounded; resources cleaned.
+- [ ] For affected long-running/resource paths, retained heap, background work and native/CGO allocations are evaluated separately; leak findings supported by comparable evidence.
 - [ ] Suggestions labeled correctness/security/compatibility/design/style with proof.
 - [ ] New syntax and tools version-gated; no unjustified dependency/tool installation.
 - [ ] Appropriate active testing/framework/DB overlays consulted without duplication.
