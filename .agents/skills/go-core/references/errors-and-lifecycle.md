@@ -1,6 +1,6 @@
 # Errors, contexts, resources and lifecycle
 
-Go version gates: `errors.Is`/`errors.As` and `%w` wrapping: Go 1.13+; `errors.Join` and `context.WithCancelCause`: Go 1.20+; `context.WithoutCancel`: Go 1.21+. For older targets, select compatible alternatives rather than raising the minimum version implicitly.
+Go version gates: `errors.Is`/`errors.As` and `%w` wrapping: Go 1.13+; `errors.Join` and `context.WithCancelCause`: Go 1.20+; `context.WithoutCancel`: Go 1.21+. For older targets, select compatible alternatives rather than raising the minimum version implicitly. Go snippets below default to Go 1.13+ unless their local heading specifies another minimum.
 
 ## 1. Error identity must survive wrapping
 

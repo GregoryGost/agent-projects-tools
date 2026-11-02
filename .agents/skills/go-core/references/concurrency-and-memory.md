@@ -1,6 +1,6 @@
 # Concurrency, memory ownership and performance
 
-Go does not prevent data races automatically. Channels, mutexes and atomics are different tools; choose by explicit ownership and synchronization requirements. A race-free program has stronger memory-model guarantees, but race-detector success from one execution is not a proof.
+Go does not prevent data races automatically. Channels, mutexes and atomics are different tools; choose by explicit ownership and synchronization requirements. A race-free program has stronger memory-model guarantees, but race-detector success from one execution is not a proof. Unless stated otherwise, Go snippets here require Go 1.0+; `context`-based worker code requires Go 1.7+ and `slices.Clone` requires Go 1.21+.
 
 ## 1. Synchronize shared state
 

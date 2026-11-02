@@ -1,6 +1,6 @@
 # Idiomatic Go decisions and Good/Bad examples
 
-These defaults are **conditional engineering heuristics**. Repository contracts, clarity, measured evidence and real callers take priority over importing conventions from another language.
+These defaults are **conditional engineering heuristics**. Repository contracts, clarity, measured evidence and real callers take priority over importing conventions from another language. Unless marked otherwise, snippets use Go 1.0+; `slices.Clone` needs Go 1.21+ and the generic interface example needs Go 1.18+.
 
 ## 1. Constructors versus useful zero values
 

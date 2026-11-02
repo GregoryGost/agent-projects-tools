@@ -1,5 +1,7 @@
 # Go packages, modules and API boundaries
 
+Unless noted otherwise, Go code examples require Go 1.0+; directory trees are illustrative project layout, not Go source code.
+
 ## Resolve the project boundary first
 
 Inspect `go.mod`, `go.work`, module replacement directives, code generation, tags, exported symbols, imports, tests and CI. The `go` directive determines permitted language semantics; the optional `toolchain` directive is not a universal deployment guarantee. Do not change dependency graph or run `go mod tidy` during documentation/review work.

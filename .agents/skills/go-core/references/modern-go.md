@@ -17,7 +17,7 @@
 | Generic concrete methods | 1.27 | Method may declare its own type parameters; interface methods still cannot and generic methods cannot implement interface methods. |
 | `encoding/json/v2` | 1.27 | Strict new API/semantics; review JSON compatibility, tags and external dependencies before adopting. |
 
-This table lists the **first Go version** for the stated capability, not a recommendation to upgrade or a complete security-support policy.
+This table lists the **first Go version** for the stated capability, not a recommendation to upgrade or a complete security-support policy. The generic-function example below requires Go 1.18+; the generic-method example is intentionally Go 1.27+ only and cannot be checked with an older compiler.
 
 ## 1. Don't change behavior by assuming a new loop variable rule
 

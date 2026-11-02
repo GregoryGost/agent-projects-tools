@@ -38,7 +38,7 @@ A guideline from the Google Go Style Guide is useful evidence for idiomatic styl
 
 ## Good / Bad snippets must be trustworthy
 
-- Every sample identifies **minimum Go language/runtime version**, required dependencies and whether it is standalone or abbreviated.
+- Every sample identifies the **minimum Go version** through a file-level default or an explicit block label, with higher requirements and dependencies called out. Mark a snippet as standalone or abbreviated.
 - Prefer two self-contained examples that each compile; a deliberately uncompilable sample must be marked **compile error** and say why.
 - Separate BAD labels for **correctness** from a **style/design tradeoff** valid in other contexts; do not manufacture strawmen.
 - Include explanation of behavior, when the good pattern is preferable, counterexamples and a way to validate (compiler, `go vet`, `-race`, tests or benchmark).

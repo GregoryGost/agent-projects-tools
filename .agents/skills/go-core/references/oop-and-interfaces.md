@@ -2,7 +2,7 @@
 
 ## Applicability and evidence
 
-Go models behavior with named types, methods, interfaces and composition, not class inheritance. Embedding promotes fields/methods but is **not** subtype inheritance. Check the effective `go` directive before using new syntax. Default examples in this file require Go 1.18+ only when explicitly marked; otherwise they use older language features.
+Go models behavior with named types, methods, interfaces and composition, not class inheritance. Embedding promotes fields/methods but is **not** subtype inheritance. Check the effective `go` directive before using new syntax. Unless a block specifies a higher version, Go snippets here require Go 1.0+. Examples involving generics or newer packages must state their own minimum.
 
 Decision categories: **CORRECTNESS** (compiler/runtime/data invariant), **DESIGN** (maintainability/ownership tradeoff), **STYLE** (local preference). Do not turn a style guideline into a correctness finding.
 
