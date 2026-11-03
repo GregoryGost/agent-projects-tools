@@ -10,6 +10,8 @@
 - Go 1.25 release notes: https://go.dev/doc/go1.25
 - Leak-profile limitations (Go 1.27): https://go.dev/doc/go1.27
 - Profiling and metric investigation: https://go.dev/doc/diagnostics
+- Optional benchstat comparisons: https://pkg.go.dev/golang.org/x/perf/cmd/benchstat
+- Go PGO: https://go.dev/doc/pgo
 - Optional `goleak` helper documentation: https://pkg.go.dev/go.uber.org/goleak
 - Fuzzing tutorial: https://go.dev/doc/tutorial/fuzz
 - `go test` coverage: https://go.dev/blog/cover
