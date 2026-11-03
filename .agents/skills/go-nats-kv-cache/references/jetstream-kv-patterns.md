@@ -18,7 +18,7 @@ import (
 
 func Get(ctx context.Context, kv jetstream.KeyValue, key string) ([]byte, bool, error) {
     entry, err := kv.Get(ctx, key)
-    if errors.Is(err, jetstream.ErrKeyNotFound) {
+    if errors.Is(err, jetstream.ErrKeyNotFound) || errors.Is(err, jetstream.ErrKeyDeleted) {
         return nil, false, nil
     }
     if err != nil {
@@ -28,7 +28,7 @@ func Get(ctx context.Context, kv jetstream.KeyValue, key string) ([]byte, bool, 
 }
 ```
 
-The helper expects a validated key and a valid existing bucket. The caller is responsible for decoding and validating the value schema. A service may need to distinguish deleted/recreated key states in addition to `ErrKeyNotFound` based on the exact selected client behavior.
+The helper expects a validated key and a valid existing bucket. The caller is responsible for decoding and validating the value schema. Recent clients usually normalize a deleted key to `ErrKeyNotFound` in `Get`; handling `ErrKeyDeleted` explicitly is defensive for verified version-dependent behavior. History/delete-marker inspection belongs to a different API contract.
 
 ## BAD — swallowing unavailable-backend errors as cache misses
 
@@ -72,7 +72,7 @@ kv.Put(ctx, key, bytes)  // assumed: custom 15-second TTL for this particular ke
 
 ## Key format, codec and data ownership
 
-- NATS KV key names are strings with a restricted character set: alphanumerics, `-`, `_`, `=` and `.`. Colon/separators from Redis examples and arbitrary user text must not be copied directly into KV keys.
+- Use a conservative NATS KV key alphabet such as ASCII letters, digits, `-`, `_`, `=` and `.` (and avoid leading/trailing dots or `..`). Actual accepted characters depend on the selected client/server version; some implementations also allow `/`. Do not copy Redis-style colons or arbitrary user input without validating/encoding it.
 - Use deterministic namespaced keys including cache schema version, visibility scope (tenant/user/role as applicable) and all filter inputs. Hash/encode untrusted or variable-length identifiers into valid keys; never include passwords or tokens.
 - Serialize stable DTOs with a declared codec (for example JSON, MessagePack) and schema version. Avoid caching native pointers, ORM sessions or serialized secrets.
 - Define read-your-writes requirements separately; a leader/follower/mirror topology can return stale direct reads. If the read contract requires transactional truth, bypass cache or implement an explicitly reviewed version/revision check.

@@ -41,8 +41,8 @@ Only material dependencies are listed above. Apply `.codex/rules/go_local_cache.
 - `references/otter-v2-patterns.md` — actual Otter API, Good/Bad examples, expiry/eviction/refresh.
 - `references/testing-and-review.md` — focused unit/integration tests and acceptance checklist.
 - `references/official-sources.md` — versioned authoritative sources.
-- `../go-core/references/cache-design.md` — shared design requirements only when cache correctness, keys, staleness and invalidation are in scope.
-- `../go-core/references/memory-and-resource-leaks.md` — only when leak/lifetime behavior is affected.
+- `.agents/skills/go-core/references/cache-design.md` — shared design requirements only when cache correctness, keys, staleness and invalidation are in scope.
+- `.agents/skills/go-core/references/memory-and-resource-leaks.md` — only when leak/lifetime behavior is affected.
 
 ## Optional coordination
 

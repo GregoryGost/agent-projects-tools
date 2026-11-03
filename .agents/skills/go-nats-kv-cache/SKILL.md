@@ -41,7 +41,7 @@ Apply `.codex/rules/go_nats_kv_cache.md` only when independently active. Hard de
 - `references/bucket-consistency-and-watchers.md` for ownership, TTL, read consistency, watcher semantics and runtime failures.
 - `references/testing-and-review.md` for test scenarios, version compatibility and review.
 - `references/official-sources.md` for official nats.go / nats-server references.
-- `../go-core/references/cache-design.md` for shared cache correctness when keys, invalidation or staleness are involved.
+- `.agents/skills/go-core/references/cache-design.md` for shared cache correctness when keys, invalidation or staleness are involved.
 
 ## Optional coordination
 

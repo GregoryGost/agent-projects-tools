@@ -40,10 +40,28 @@ The example is illustrative, **not a default 10,000-entry configuration** for an
 ## BAD — confusing admission with durable success
 
 ```go
-// Incorrect contract interpretation (compiles if users is defined):
-_, ok := users.Set("k", "v")
-if !ok {
-    panic("cache write failed")
+package cachecheck
+
+import "github.com/maypok86/otter/v2"
+
+// BAD: false also means a key was already present.
+func UpdateBad(users *otter.Cache[string, string], key, value string) {
+    _, newlyAssociated := users.Set(key, value)
+    if !newlyAssociated {
+        panic("cache write failed")
+    }
+}
+```
+
+**GOOD — update the value without misinterpreting the result:**
+
+```go
+package cachecheck
+
+import "github.com/maypok86/otter/v2"
+
+func Update(users *otter.Cache[string, string], key, value string) {
+    users.Set(key, value)
 }
 ```
 
