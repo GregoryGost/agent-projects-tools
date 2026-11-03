@@ -1,0 +1,5 @@
+interface:
+  display_name: "Go HTTP Client"
+  short_description: "Reliable net/http clients, deadlines and response safety"
+  default_prompt: "Use $go-http-client with $go-core for outgoing Go HTTP requests, transport lifecycle, safe retries and tests."
+
