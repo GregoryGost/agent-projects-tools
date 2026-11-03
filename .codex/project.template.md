@@ -182,6 +182,8 @@ Selection examples:
 
 - `go-core`
 - `go-testing`
+- `go-local-cache`
+- `go-nats-kv-cache`
 - `go-huma-v2`
 - `go-gorm`
 - `go-gorm-sqlite-goose`
@@ -247,7 +249,7 @@ List only additional rule files active in this project.
 
 - Optional core rules: `<source_code_hygiene.md / none / other>`
 - Git rules: `<git.md / none>`
-- Go rules: `<go_core.md / go_testing.md / go_huma_v2.md / go_gorm.md / go_gorm_sqlite_goose.md / none>`
+- Go rules: `<go_core.md / go_testing.md / go_local_cache.md / go_nats_kv_cache.md / go_huma_v2.md / go_gorm.md / go_gorm_sqlite_goose.md / none>`
 - Python/backend rules: `<python_fastapi.md / python_cashews_cache.md / python_nats_kv_cache.md / none>`
 - Formatting/linting rules: `<csharp_style.md / prettier_formatting.md / eslint_typescript.md / none>`
 - Language rules: `<csharp_core.md / typescript_core.md / typescript_jest_testing.md / none / other>`
@@ -266,7 +268,7 @@ List only additional rule files active in this project.
 List only reusable skills active in this project.
 
 - Code prose / language-policy skills: `<comment-language-audit / none>`
-- Go skills: `<go-core / go-testing / go-huma-v2 / go-gorm / go-gorm-sqlite-goose / none>`
+- Go skills: `<go-core / go-testing / go-local-cache / go-nats-kv-cache / go-huma-v2 / go-gorm / go-gorm-sqlite-goose / none>`
 - Python skills: `<python-core / python-testing / python-fastapi-expert / python-cashews-cache / python-nats-kv-cache / none / other>`
 - Language skills: `<csharp-core / typescript-core / typescript-jest-testing / none / other>`
 - Formatting/linting skills: `<csharp-style / prettier-formatting / eslint-typescript / none>`
@@ -297,6 +299,8 @@ Use only project-declared commands.
 - Go module/toolchain verification: `<commands or none>`
 - Go vet/static checks: `<commands or none>`
 - Go race tests: `<command or none>`
+- Go local Otter cache tests/benchmarks: `<commands or none>`
+- Go NATS KV disposable integration tests: `<commands and isolated environment or none>`
 - Go fuzz tests (bounded): `<command or none>`
 - Goose migration validation/test: `<command or none>`
 - Unit tests: `<command or none>`
@@ -578,6 +582,49 @@ Keep only when Go testing is selected.
 - Test data and environment isolation: `<t.TempDir / file DB / ports / secrets / project-specific>`
 - Leak/lifecycle regression policy (optional): `<cancellation/cleanup/repeated lifecycle / approved goleak / none>`
 - Active Go testing rule/skill: `<go_testing.md + go-testing / none>`
+
+
+## Go Local Cache — Otter v2 Profile
+
+Keep only if the target project explicitly selects **single-process** local cache through `github.com/maypok86/otter/v2`. This profile is independent of the Go NATS KV profile and does not imply a multi-tier cache. An enabled profile must name the exact active rule/skill pair.
+
+- Go local cache enabled: `<yes/no>`
+- Local cache library and module: `<github.com/maypok86/otter/v2 / none>`
+- Otter module version source: `<go.mod + go.sum / none>`
+- Otter/Go runtime compatibility: `<selected module's go requirement + installed/CI toolchain evidence / none>`
+- Cached domain/read paths: `<paths / none>`
+- Cache owner and lifecycle: `<application composition root + StopAllGoroutines policy / project-specific / none>`
+- Cache size policy: `<MaximumSize / MaximumWeight + Weigher / project-specific / none>`
+- Expiration policy: `<ExpiryWriting / ExpiryAccessing / project-specific / none>`
+- Loader and refresh policy: `<none / loader / loader + reviewed refresh / project-specific>`
+- Key, value DTO, privacy and schema-version policy: `<policy / none>`
+- Invalidation and staleness policy: `<post-commit + bounded stale policy / none>`
+- Metrics, error/fallback and memory policy: `<policy / none>`
+- Local cache test command and isolation: `<command + fixture / none>`
+- Active local cache rule/skill: `<go_local_cache.md + go-local-cache / none>`
+
+## Go NATS JetStream KV Cache Profile
+
+Keep only if the target project explicitly selects `github.com/nats-io/nats.go/jetstream` for a reconstructible **distributed cache**. No Redis/GoCache adapter or local cache layer is implied. A complete enabled profile must name the exact active rule/skill pair.
+
+- Go NATS KV cache enabled: `<yes/no>`
+- NATS Go client module/version source: `<go.mod + go.sum / none>`
+- Go toolchain compatibility: `<selected nats.go go requirement + installed/CI toolchain evidence / none>`
+- NATS Server version source / JetStream enabled: `<verified deployed version + JetStream status / none>`
+- NATS target account/domain/environment and connection source: `<source / none>`
+- Auth/TLS and credential source: `<source / none>`
+- Bucket name and owner: `<name source + infrastructure-managed / application-managed / test-managed / none>`
+- Bucket provisioning/reconciliation authorization: `<bind-only / explicitly reviewed application-owned / isolated tests / none>`
+- Bucket config source/verification: `<TTL, History, MaxBytes, MaxValueSize, Replicas, Storage, LimitMarkerTTL / none>`
+- Key namespace and privacy scope: `<schema-version + tenant/user/role + input encoding / none>`
+- Value codec and schema evolution: `<versioned JSON / MessagePack / project-specific / none>`
+- Read-after-write / staleness / CAS policy: `<bounded consistency contract / none>`
+- Cache miss and outage/retry policy: `<fallback, timeout, backoff, observations / none>`
+- Invalidation policy: `<key Delete after authoritative commit / versioned key / other reviewed policy / none>`
+- Watchers and lifecycle: `<disabled / explicit bounded watchers with Stop and recovery / none>`
+- Connection owner: `<shared nats.Conn at application lifecycle / project-specific / none>`
+- Disposable integration-test server/bucket and command: `<isolated server + unique test bucket + command / none>`
+- Active NATS KV rule/skill: `<go_nats_kv_cache.md + go-nats-kv-cache / none>`
 
 ## Go Huma v2 Profile
 

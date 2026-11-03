@@ -36,6 +36,7 @@ HTTP/Huma, GORM/SQLite/Goose and testing framework specifics belong to separatel
 | Error types, wrapping, context propagation, resource ownership, shutdown | `references/errors-and-lifecycle.md` |
 | Data races, synchronization, goroutine ownership, channels, performance | `references/concurrency-and-memory.md` |
 | Memory retention, goroutine/resource leaks, heap/RSS/CGO diagnostics, pprof | `references/memory-and-resource-leaks.md` |
+| Cache eligibility, keys, consistency, invalidation and failure boundaries | `references/cache-design.md`, only for cache-related tasks |
 | New language/library features, deprecations and module-level behavior | `references/modern-go.md` |
 | General code review, refactor audit or multi-category request | `references/patterns-and-review.md` plus the matching focused references |
 | Any version-sensitive or disputed claim | `references/official-sources.md`; then check the actual official source |
@@ -73,6 +74,7 @@ Do not present a preference (e.g. "always use interfaces"/"always use pointer re
 - `go-testing` for independently active Go tests and test engineering.
 - `go-huma-v2` for typed Huma HTTP contracts when that profile is active.
 - `go-gorm` for active GORM persistence, with `go-gorm-sqlite-goose` only when the exact SQLite/Goose stack is selected.
+- `go-local-cache` for the independently active Otter v2 in-process cache; `go-nats-kv-cache` for the independently active direct NATS JetStream KV cache. Neither activates the other and no shared abstraction/layer is implied.
 
 This skill remains framework-neutral and does not select DB, router, migration strategy or runtime toolchain for a target project.
 

@@ -174,6 +174,7 @@ max_concurrent_threads_per_session = 4
 | Official Blender Lab MCP | `blender_mcp.md`, `blender-mcp` для официального Blender Lab MCP; priority baseline `1.0.3`, live Editor first, scene/docs/screenshot inspection, bounded `bpy` execution и headless fallback |
 | Blender → Unity | `blender_unity.md`, `blender-unity` для Blender 5.2.x → Unity 6000.3.x asset boundary: FBX, scale/axes, mesh/UV/normals, textures/material data, rigs/animation, blend shapes, LOD и import validation |
 | Go: язык, тесты, Huma v2 | `go_core.md`, `go-core` (идиоматичный Go, ООП, интерфейсы, пакеты, конкурентность, современные возможности и Good/Bad); `go_testing.md`, `go-testing` (unit, `httptest`, race/fuzz); `go_huma_v2.md`, `go-huma-v2` (типизированные HTTP API, OpenAPI 3.1) |
+| Go: локальный и NATS KV кэш | `go_local_cache.md` + `go-local-cache` (Otter v2, ограниченный по размеру in-process кэш); `go_nats_kv_cache.md` + `go-nats-kv-cache` (официальный `nats.go/jetstream`, bucket TTL, CAS, watcher, изоляция окружений) — независимые опциональные профили |
 | Go: GORM и SQLite/Goose | `go_gorm.md`, `go-gorm` для backend-neutral ORM; `go_gorm_sqlite_goose.md`, `go-gorm-sqlite-goose` для SQLite-драйверов, PRAGMA, блокировок и миграций Goose v3 |
 | Python core и тестирование | `python-core`, `python-testing`, `python-service-e2e-testing` |
 | Python backend | `python-fastapi-expert`, `python-cashews-cache`, `python-sqlalchemy-core`, `python-sqlalchemy-sqlite`, `python-sqlalchemy-mysql`, `python-httpx-client`, `python-backend-security` |
@@ -323,6 +324,20 @@ Good/bad patterns, review checklist и официальные SQLAlchemy, `aiomy
 Чтобы использовать этот набор в целевом проекте, перечислите выбранные идентификаторы в `Active Stack Profiles`, точные пары в `Active Rules` и `Active Skills`, заполните соответствующие Go-профили из `.codex/project.template.md` и скопируйте `.codex/rules/material_dependencies.md` для проверки зависимостей. Неизвестные версии Go, Huma, GORM, SQLite и Goose нельзя подставлять по умолчанию. Отсутствие выбранного ORM не препятствует использованию Go или Huma.
 
 Официальные источники: [Go](https://go.dev/doc/), [Huma](https://huma.rocks/), [GORM](https://gorm.io/docs/), [Goose](https://pressly.github.io/goose/), [SQLite](https://www.sqlite.org/docs.html).
+
+
+### Локальное и распределённое кэширование Go
+
+Для Go выбраны **два самостоятельных решения**, не требующих универсального GoCache/Redis-адаптера:
+
+- `go_local_cache.md + go-local-cache` — локальный кэш только одного процесса на `github.com/maypok86/otter/v2`: `MaximumSize` или `MaximumWeight`, TTL, загрузка, опциональный refresh, память, владельцы ресурсов и `StopAllGoroutines`. Текущий upstream модуль требует Go 1.24+; фактическое требование определяется зафиксированной версией.
+- `go_nats_kv_cache.md + go-nats-kv-cache` — распределённый кэш напрямую на `github.com/nats-io/nats.go/jetstream`: bucket ownership и ограничения, `Get/Put/Create/Update/Delete`, ревизии, TTL bucket, контролируемые watchers, отказоустойчивость и реальные тесты на изолированном JetStream. Требование Go зависит от закреплённой версии `nats.go` (актуальная основная ветка использует Go 1.26+).
+
+Оба скилла требуют активный `go-core`. Применение `go-testing`, `go-huma-v2` и `go-gorm` зависит от конкретной задачи. Общие принципы ключей/версий/TTL/инвалидации хранятся в `go-core/references/cache-design.md`, без копирования API двух библиотек.
+
+Данные кэша должны быть восстановимы из источника истины. Локальный Otter не синхронизирует записи между процессами; NATS KV не гарантирует строгий read-your-writes во всех топологиях. Автоматического объединения Otter + NATS в L1/L2 **нет**: оно потребует отдельного согласованного решения. В `CODEX_PROJECT.md` выбирается только нужный режим и конкретные настройки; сетевые bucket не создаются/не изменяются в рамках изменений документации или кода без отдельной авторизации.
+
+Официальные источники: [Otter v2](https://github.com/maypok86/otter), [NATS Go](https://github.com/nats-io/nats.go), [JetStream KV](https://docs.nats.io/nats-concepts/jetstream/key-value-store).
 
 ## Профиль Vue SVG graphics
 

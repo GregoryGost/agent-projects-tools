@@ -57,7 +57,7 @@ Use `.codex/rules/go_testing.md` only when it is independently active; its requi
 
 ## Optional overlays
 
-Apply `go-huma-v2` for independently active Huma contract tests. Apply `go-gorm` and `go-gorm-sqlite-goose` for independently active DB and migrations tests.
+Apply `go-huma-v2` for independently active Huma contract tests. Apply `go-gorm` and `go-gorm-sqlite-goose` for independently active DB and migrations tests. When selected, use `go-local-cache` for Otter v2 cache-hit/expiry/eviction/loading tests, or `go-nats-kv-cache` for disposable JetStream KV/CAS/TTL/watch integration tests. Do not treat a mock as proof of NATS server behavior.
 
 Load `references/test-boundaries-and-patterns.md` for general examples, `references/leak-regression.md` for lifecycle/memory regression testing when relevant, and `references/official-sources.md` for official tools.
 
