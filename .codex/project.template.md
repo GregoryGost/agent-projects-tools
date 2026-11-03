@@ -182,6 +182,9 @@ Selection examples:
 
 - `go-core`
 - `go-testing`
+- `go-observability`
+- `go-security`
+- `go-http-client`
 - `go-local-cache`
 - `go-nats-kv-cache`
 - `go-huma-v2`
@@ -249,7 +252,7 @@ List only additional rule files active in this project.
 
 - Optional core rules: `<source_code_hygiene.md / none / other>`
 - Git rules: `<git.md / none>`
-- Go rules: `<go_core.md / go_testing.md / go_local_cache.md / go_nats_kv_cache.md / go_huma_v2.md / go_gorm.md / go_gorm_sqlite_goose.md / none>`
+- Go rules: `<go_core.md / go_testing.md / go_observability.md / go_security.md / go_http_client.md / go_local_cache.md / go_nats_kv_cache.md / go_huma_v2.md / go_gorm.md / go_gorm_sqlite_goose.md / none>`
 - Python/backend rules: `<python_fastapi.md / python_cashews_cache.md / python_nats_kv_cache.md / none>`
 - Formatting/linting rules: `<csharp_style.md / prettier_formatting.md / eslint_typescript.md / none>`
 - Language rules: `<csharp_core.md / typescript_core.md / typescript_jest_testing.md / none / other>`
@@ -268,7 +271,7 @@ List only additional rule files active in this project.
 List only reusable skills active in this project.
 
 - Code prose / language-policy skills: `<comment-language-audit / none>`
-- Go skills: `<go-core / go-testing / go-local-cache / go-nats-kv-cache / go-huma-v2 / go-gorm / go-gorm-sqlite-goose / none>`
+- Go skills: `<go-core / go-testing / go-observability / go-security / go-http-client / go-local-cache / go-nats-kv-cache / go-huma-v2 / go-gorm / go-gorm-sqlite-goose / none>`
 - Python skills: `<python-core / python-testing / python-fastapi-expert / python-cashews-cache / python-nats-kv-cache / none / other>`
 - Language skills: `<csharp-core / typescript-core / typescript-jest-testing / none / other>`
 - Formatting/linting skills: `<csharp-style / prettier-formatting / eslint-typescript / none>`
@@ -298,6 +301,11 @@ Use only project-declared commands.
 - Type check / static analysis: `<command or none>`
 - Go module/toolchain verification: `<commands or none>`
 - Go vet/static checks: `<commands or none>`
+- Go approved vulnerability check: `<existing govulncheck command and scope / none>`
+- Go benchmark comparisons: `<approved go test -bench target and optional benchstat / none>`
+- Go PGO profile/build comparison: `<approved profile source and build commands / none>`
+- Go module consistency inspection: `<supported go mod tidy -diff or alternative / none>`
+- Go build matrix/CGO checks: `<declared GOOS GOARCH CGO_ENABLED commands / none>`
 - Go terminal Delve debugging (optional): `<verified installed dlv + approved focused command + interactive terminal / none>`
 - Go race tests: `<command or none>`
 - Go local Otter cache tests/benchmarks: `<commands or none>`
@@ -566,8 +574,33 @@ Keep only when Go is active. The base Go pair is framework-neutral.
 - Delve terminal debugging policy (optional): `<disabled / approved isolated dlv debug and/or test + version/OS/arch check + persistent stdin / project-specific>`
 - Delve target process / attachment policy: `<local launched targets only / individually approved attach / disabled>`
 - Debug build artifacts and cleanup: `<approved temporary path and owner / none>`
+- Application startup/shutdown policy (optional): `<CLI/no-service / service-owned dependencies + signal + drain + deadline / project-specific / none>`
+- Health/readiness/listener policy (optional): `<none / explicitly selected endpoints and semantics>`
+- Module/build provenance and output policy: `<versioned modules + build tags + target GOOS/GOARCH/CGO + artifact locations / project-specific / none>`
+- Performance/PGO policy (optional): `<none / approved benchmarks and profile source + output/retention + baseline build flags>`
 - Idiomatic design and review sources: `<project conventions + versioned Go spec/release notes + go-core references / project-specific / none>`
 - Active Go rule/skill: `<go_core.md + go-core / none>`
+
+## Go Application Context And Data Disclosure Policy
+
+This section is a **single, owner-approved project policy**, chosen once when enabling `go-security` or `go-observability` (or when the Go HTTP client deliberately logs sensitive fields). It is **not** a per-task risk-assessment worksheet. Subsequent tasks read the selected values unchanged. If an entry is missing or verified deployment reality contradicts it, the agent reports the exact mismatch and requests an explicit profile revision; it must not silently reclassify the application or rewrite logging rules.
+
+Keep only the applicable fields in the final `CODEX_PROJECT.md`, with actual values instead of these placeholders.
+
+- Policy selection and owner approval: `<approved once + decision source / unresolved>`
+- Application role: `<personal-local / desktop / internal service / public service / library / other explicitly selected role>`
+- Effective exposure and trust boundary: `<local-only / LAN / VPN / internet / mixed + trusted actors + real interfaces>`
+- Protected assets and deliberately accepted risks: `<explicit asset/risk contracts / none>`
+- Required security controls and intentionally omitted controls: `<explicit project decisions / none>`
+- Application-owned log capture mode: `<full / masked / selective / disabled>`
+- Exact log field categories: `<auth tokens, other credentials, headers, request/response payloads, identifiers, errors: each full/masked/omitted as applicable>`
+- Masking or omission format when selected: `<explicit algorithm/field mapping / not applicable>`
+- Log sinks, readers, retention and lifetime: `<destinations/access/retention / none>`
+- External log/trace/metric export: `<none / specific approved sinks and allowed data categories>`
+- Agent/PR/CI disclosure: `<separate explicit authorization and data scope; not inherited from application logging>`
+- Profile change policy: `<explicit owner decision only; report contradictions without silent edits>`
+
+Selecting `full` for particular application-owned fields expressly permits their full values, including complete tokens when the owner requests them. `go-security` and `go-observability` must obey this **same** configuration and not impose conflicting redaction defaults. No application-log setting automatically authorizes sharing its contents with the assistant's output, GitHub or third-party telemetry.
 
 ## Go Testing Profile
 
@@ -586,8 +619,49 @@ Keep only when Go testing is selected.
 - Fuzz budget and targets: `<bounded command/targets / none>`
 - Test data and environment isolation: `<t.TempDir / file DB / ports / secrets / project-specific>`
 - Leak/lifecycle regression policy (optional): `<cancellation/cleanup/repeated lifecycle / approved goleak / none>`
+- Benchmark regression policy (optional): `<none / representative datasets + repeat-count + baseline/variant matrix + artifact path>`
 - Active Go testing rule/skill: `<go_testing.md + go-testing / none>`
 
+
+## Go Observability Profile
+
+Keep only if the project activates the exact `go_observability.md + go-observability` pair. Requires `go-core`. Read the already selected Go Application Context And Data Disclosure Policy; do not duplicate or reassess it on each task.
+
+- Go observability enabled: `<yes/no>`
+- Logging backend/source and effective Go version: `<log/slog Go 1.21+ / existing project logger / none>`
+- Structured event/level/key and correlation policy: `<contract / none>`
+- Logging data disclosure: `<reference the shared Go Application Context And Data Disclosure Policy>`
+- Metrics/tracing: `<disabled / exact selected OTel modules and versions / project-specific>`
+- Enabled signal/exporters/sinks/sampling and metric-cardinality policy: `<explicit selected config / none>`
+- Telemetry ownership, flush/shutdown and artifact policy: `<composition root + bounded timeout / none>`
+- Isolated instrumentation and export validation commands: `<commands / none>`
+- Active Go observability rule/skill: `<go_observability.md + go-observability / none>`
+
+## Go Security Profile
+
+Keep only if the exact `go_security.md + go-security` pair is selected. Requires `go-core`. Application role, accepted risks, omitted controls and log disclosure are configured **once** in the shared Go Application Context And Data Disclosure Policy.
+
+- Go security enabled: `<yes/no>`
+- Required technical controls and relevant code surfaces: `<reference shared policy + scoped implementation boundaries>`
+- Vulnerability/advisory review policy: `<official Go vulnerability database / approved installed govulncheck / none>`
+- Approved test/review/exception procedure: `<project-owned commands and accepted risks / none>`
+- Shared application logging contract: `<reference the shared Go Application Context And Data Disclosure Policy>`
+- Active Go security rule/skill: `<go_security.md + go-security / none>`
+
+## Go HTTP Client Profile
+
+Keep only for the exact `go_http_client.md + go-http-client` pair. Requires `go-core`. Covers **outgoing** HTTP; Huma is an independent server-side profile.
+
+- Go HTTP client enabled: `<yes/no>`
+- Client stack/Go version: `<net/http / already approved client + version / none>`
+- Remote API origins/contracts and auth source: `<explicit trusted destinations and protocol versions / none>`
+- Shared Client/Transport owner and pool/proxy/TLS policy: `<composition root + project settings / none>`
+- Context/deadline and bounded response policy: `<per-call budget + max bytes + expected statuses / none>`
+- Redirect and replay policy: `<approved origins/methods / none>`
+- Retries: `<disabled / specific idempotent operations + attempts + total budget + backoff and Retry-After>`
+- HTTP request/response logging: `<reference shared Go Application Context And Data Disclosure Policy if enabled>`
+- Disposable HTTP client tests/validation commands: `<httptest + commands / none>`
+- Active Go HTTP client rule/skill: `<go_http_client.md + go-http-client / none>`
 
 ## Go Local Cache — Otter v2 Profile
 

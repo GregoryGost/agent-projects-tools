@@ -28,6 +28,12 @@
 - Sync: https://pkg.go.dev/sync
 - Go race detector: https://go.dev/doc/articles/race_detector
 - Diagnostics and profiling: https://go.dev/doc/diagnostics
+- PGO: https://go.dev/doc/pgo
+- Module and workspace semantics: https://go.dev/ref/mod
+- Go toolchain selection: https://go.dev/doc/toolchain
+- OS signal cancellation: https://pkg.go.dev/os/signal
+- HTTP server shutdown semantics: https://pkg.go.dev/net/http#Server.Shutdown
+- Benchmark comparison (optional benchstat): https://pkg.go.dev/golang.org/x/perf/cmd/benchstat
 - Delve terminal debugger and getting started: https://github.com/go-delve/delve/blob/master/Documentation/cli/getting_started.md
 - Delve CLI help and commands: https://github.com/go-delve/delve/blob/master/Documentation/cli/README.md
 - Delve `dlv debug`: https://github.com/go-delve/delve/blob/master/Documentation/usage/dlv_debug.md

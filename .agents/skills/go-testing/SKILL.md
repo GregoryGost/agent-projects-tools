@@ -64,9 +64,13 @@ When an authorized isolated Go test failure needs runtime inspection, use the te
 - Use bounded `go test -fuzz=FuzzName -fuzztime=<budget>` for appropriate pure functions, retaining valid regression corpus cases.
 - Benchmarks (`go test -bench=... -benchmem`) require representative input and should not be used to assert functional correctness.
 
+## Performance regression testing
+
+For a real performance question, use `references/benchmark-regression.md` with `go-core/references/performance-engineering.md`. Run representative repeatable benchmarks in approved environments, compare noise and the exact Go version/build matrix, and retest correctness. `benchstat` and PGO are optional, never installed or enabled automatically. Benchmark success does not prove a latency SLO or absence of leaks.
+
 ## Optional overlays
 
 Apply `go-huma-v2` for independently active Huma contract tests. Apply `go-gorm` and `go-gorm-sqlite-goose` for independently active DB and migrations tests. When selected, use `go-local-cache` for Otter v2 cache-hit/expiry/eviction/loading tests, or `go-nats-kv-cache` for disposable JetStream KV/CAS/TTL/watch integration tests. Do not treat a mock as proof of NATS server behavior.
 
-Load `references/test-boundaries-and-patterns.md` for general examples, `references/leak-regression.md` for lifecycle/memory regression testing when relevant, `.agents/skills/go-core/references/runtime-debugging.md` for authorized terminal Delve diagnostics, and `references/official-sources.md` for official tools.
+Load `references/test-boundaries-and-patterns.md` for general examples, `references/leak-regression.md` for lifecycle/memory regression testing when relevant, `references/benchmark-regression.md` for performance claims, `.agents/skills/go-core/references/runtime-debugging.md` for authorized terminal Delve diagnostics, and `references/official-sources.md` for official tools.
 
