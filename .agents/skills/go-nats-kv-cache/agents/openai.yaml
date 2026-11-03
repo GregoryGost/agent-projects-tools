@@ -1,0 +1,5 @@
+interface:
+  display_name: "Go NATS KV Cache"
+  short_description: "Official NATS JetStream KV distributed cache guidance"
+  default_prompt: "Use $go-nats-kv-cache and independently active $go-core for scoped nats.go JetStream KV caching, bucket governance, TTL, revisions and tests. Never mutate live buckets by implication."
+
