@@ -28,6 +28,11 @@
 - Sync: https://pkg.go.dev/sync
 - Go race detector: https://go.dev/doc/articles/race_detector
 - Diagnostics and profiling: https://go.dev/doc/diagnostics
+- Delve terminal debugger and getting started: https://github.com/go-delve/delve/blob/master/Documentation/cli/getting_started.md
+- Delve CLI help and commands: https://github.com/go-delve/delve/blob/master/Documentation/cli/README.md
+- Delve `dlv debug`: https://github.com/go-delve/delve/blob/master/Documentation/usage/dlv_debug.md
+- Delve `dlv test`: https://github.com/go-delve/delve/blob/master/Documentation/usage/dlv_test.md
+- Delve `dlv exec`: https://github.com/go-delve/delve/blob/master/Documentation/usage/dlv_exec.md
 - GC and process memory accounting: https://go.dev/doc/gc-guide
 - Runtime memory and goroutine metrics: https://pkg.go.dev/runtime/metrics
 - Runtime heap / goroutine / goroutineleak profiles: https://pkg.go.dev/runtime/pprof

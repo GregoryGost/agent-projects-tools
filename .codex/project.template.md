@@ -298,6 +298,7 @@ Use only project-declared commands.
 - Type check / static analysis: `<command or none>`
 - Go module/toolchain verification: `<commands or none>`
 - Go vet/static checks: `<commands or none>`
+- Go terminal Delve debugging (optional): `<verified installed dlv + approved focused command + interactive terminal / none>`
 - Go race tests: `<command or none>`
 - Go local Otter cache tests/benchmarks: `<commands or none>`
 - Go NATS KV disposable integration tests: `<commands and isolated environment or none>`
@@ -562,6 +563,9 @@ Keep only when Go is active. The base Go pair is framework-neutral.
 - Dependency integrity/change policy: `<go.mod + go.sum / vendor / project-specific / none>`
 - Formatter/linter source: `<gofmt + go vet / golangci-lint config / other / none>`
 - Runtime diagnostics and memory ownership policy (optional): `<protected pprof / runtime metrics / OS+CGO monitoring / project-specific / none>`
+- Delve terminal debugging policy (optional): `<disabled / approved isolated dlv debug and/or test + version/OS/arch check + persistent stdin / project-specific>`
+- Delve target process / attachment policy: `<local launched targets only / individually approved attach / disabled>`
+- Debug build artifacts and cleanup: `<approved temporary path and owner / none>`
 - Idiomatic design and review sources: `<project conventions + versioned Go spec/release notes + go-core references / project-specific / none>`
 - Active Go rule/skill: `<go_core.md + go-core / none>`
 
@@ -576,6 +580,7 @@ Keep only when Go testing is selected.
 - E2E boundary: `<real HTTP / process / worker / none / project-specific>`
 - HTTP test boundary: `<httptest recorder / httptest server / project-specific / none>`
 - Race detector support and command: `<supported toolchain/platform + command / none>`
+- Focused terminal Delve test policy (optional): `<dlv test <package> -- -test.run <regex> with safe isolated target and interactive stdin / none>`
 - Parallel/shuffle policy: `<isolation and command / none>`
 - Coverage output and policy: `<temp/artifact path, threshold or none>`
 - Fuzz budget and targets: `<bounded command/targets / none>`

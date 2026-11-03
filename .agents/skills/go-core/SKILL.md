@@ -36,6 +36,7 @@ HTTP/Huma, GORM/SQLite/Goose and testing framework specifics belong to separatel
 | Error types, wrapping, context propagation, resource ownership, shutdown | `references/errors-and-lifecycle.md` |
 | Data races, synchronization, goroutine ownership, channels, performance | `references/concurrency-and-memory.md` |
 | Memory retention, goroutine/resource leaks, heap/RSS/CGO diagnostics, pprof | `references/memory-and-resource-leaks.md` |
+| Terminal debugging of failing tests or local Go processes with Delve (`dlv`) | `references/runtime-debugging.md` |
 | Cache eligibility, keys, consistency, invalidation and failure boundaries | `references/cache-design.md`, only for cache-related tasks |
 | New language/library features, deprecations and module-level behavior | `references/modern-go.md` |
 | General code review, refactor audit or multi-category request | `references/patterns-and-review.md` plus the matching focused references |
@@ -53,6 +54,7 @@ Do not load every reference for a one-line change; do not skip the relevant refe
 - Propagate `context.Context` into cancelable I/O; wrap and classify errors at deliberate boundaries; do not leak driver errors to transport or suppress failures.
 - Bound goroutine lifetimes and queue capacity, synchronize shared mutable state and separate correctness from performance guesses.
 - For long-running work and changes that affect resource ownership, check cancellation/join, cleanup on all exit paths, bounded retention and appropriate memory diagnostics. Distinguish live Go heap, native/CGO memory and process RSS; do not require profiling for unrelated small changes. See `references/memory-and-resource-leaks.md`.
+- For reproducible failures needing runtime state, optionally use terminal-only Delve via `references/runtime-debugging.md`, but only after verifying the toolchain, debugger availability, interactive input and allowed side effects. Debugging is not a required step for routine tasks.
 - Keep package imports acyclic and exported contracts intentional. Do not introduce new dependencies, tools, language-version upgrades or source rewrites without the active project policy/user authorization.
 - `gofmt` is the standard baseline; apply additional local linting/testing tools only when already declared and permitted.
 
