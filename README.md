@@ -97,7 +97,7 @@
 
 Необязательный контроль вызовов приведён в `.codex/hooks.example.json` и `.codex/hooks/require_fresh_subagent.py`. Файл-пример НЕ активируется автоматически: для целевого проекта замените абсолютные пути к Python/скрипту, включая `commandWindows` для Windows, явно подключите и доверьте hook в Codex. Локальные Python-тесты: `python -m unittest discover -s .codex/hooks/tests`; они не устанавливают hook и не проверяют интеграцию с конкретной сборкой Codex. Проверяйте его на используемой версии Codex: `PreToolUse` — дополнительный ограничитель, а не абсолютная защита.
 
-Предлагаемая проектная политика допускает делегирование только для авторизованных изменений исполняемого кода и тестов. Запросы исключительно на документацию, комментарии и инструкции не делегируются. Для архитектурных решений оба архитектора сначала формируют независимые предложения, затем получают аргументированную критику друг друга через основного агента. Итоговое решение требует явного согласия обоих; при недоказанном противоречии привлекается deep_debugger. Основной агент отвечает за финальную проверку. Read-only в TOML — ограничение поведения: реальный sandbox и разрешения наследуются от основного агента.
+Базовая политика делегирования для целевых проектов с включёнными субагентами допускает только авторизованные изменения исполняемого кода и тестов. Запросы исключительно на документацию, комментарии и инструкции не делегируются. Для архитектурных решений оба архитектора сначала формируют независимые предложения, затем получают аргументированную критику друг друга через основного агента. Итоговое решение требует явного согласия обоих; при недоказанном противоречии привлекается deep_debugger. Основной агент отвечает за финальную проверку. Read-only в TOML — ограничение поведения: реальный sandbox и разрешения наследуются от основного агента.
 
 ### Database Architect: предметная архитектура данных
 
@@ -139,7 +139,7 @@
 
 У Codex есть ограничение на количество открытых потоков: куратор ожидает результаты или закрывает завершённые потоки; каждое новое назначение требует новой чистой сессии. Если подтверждённый режим без наследования истории недоступен, делегирование останавливается вместо запуска с унаследованным контекстом. Потоки одной сессии разделяют рабочую среду и разрешения; инструкции «read-only» не создают физическую файловую блокировку. Для нескольких параллельных сессий нужны проверенная изоляция рабочих деревьев либо согласованная политика одного пишущего процесса. Worktree не создаётся автоматически и не разрешается инструкциями субагента.
 
-После обновления agent-projects-tools существующие целевые проекты нужно отдельно синхронизировать: `AGENTS.md`, `.codex/rules/request_routing.md`, **обязательный при включённых субагентах** `.codex/rules/subagent_coordination.md`, раздел Agent Roles And Model Selection в `CODEX_PROJECT.md` и выбранные `.codex/agents/*.toml`. Для `local-ephemeral` добавьте `.agent-handoffs/` в `.gitignore` целевого проекта; установка hook остаётся отдельной добровольной операцией. Проверьте соответствие названий ролей, моделей и текущей версии handoff. Автоматизированный CI-контроль нового контракта не добавляется.
+При обновлении материалов agent-projects-tools в целевом проекте синхронизируйте: `AGENTS.md`, `.codex/rules/request_routing.md`, **обязательный при включённых субагентах** `.codex/rules/subagent_coordination.md`, раздел Agent Roles And Model Selection в `CODEX_PROJECT.md` и выбранные `.codex/agents/*.toml`. Для `local-ephemeral` добавьте `.agent-handoffs/` в `.gitignore` целевого проекта; установка hook остаётся отдельной добровольной операцией. Проверьте соответствие названий ролей, моделей и текущей версии handoff. Автоматическая CI-проверка соблюдения этого контракта в целевых проектах не устанавливается вместе с шаблоном.
 
 ### Настройка главного агента и параллельности в целевом проекте
 
@@ -173,6 +173,9 @@ max_concurrent_threads_per_session = 4
 | Blender 5.2 | `blender_core.md`, `blender-core`, `blender_modeling.md`, `blender-modeling`, `blender_materials_texturing.md`, `blender-materials-texturing`, `blender_rigging_animation.md`, `blender-rigging-animation` для Blender 5.2.x data model и asset authoring |
 | Official Blender Lab MCP | `blender_mcp.md`, `blender-mcp` для официального Blender Lab MCP; priority baseline `1.0.3`, live Editor first, scene/docs/screenshot inspection, bounded `bpy` execution и headless fallback |
 | Blender → Unity | `blender_unity.md`, `blender-unity` для Blender 5.2.x → Unity 6000.3.x asset boundary: FBX, scale/axes, mesh/UV/normals, textures/material data, rigs/animation, blend shapes, LOD и import validation |
+| Go: язык, тесты, Huma v2 | `go_core.md`, `go-core` (идиоматичный Go, ООП, интерфейсы, пакеты, конкурентность, современные возможности и Good/Bad); `go_testing.md`, `go-testing` (unit, `httptest`, race/fuzz); `go_huma_v2.md`, `go-huma-v2` (типизированные HTTP API, OpenAPI 3.1) |
+| Go: локальный и NATS KV кэш | `go_local_cache.md` + `go-local-cache` (Otter v2, ограниченный по размеру in-process кэш); `go_nats_kv_cache.md` + `go-nats-kv-cache` (официальный `nats.go/jetstream`, bucket TTL, CAS, watcher, изоляция окружений) — независимые опциональные профили |
+| Go: GORM и SQLite/Goose | `go_gorm.md`, `go-gorm` для backend-neutral ORM; `go_gorm_sqlite_goose.md`, `go-gorm-sqlite-goose` для SQLite-драйверов, PRAGMA, блокировок и миграций Goose v3 |
 | Python core и тестирование | `python-core`, `python-testing`, `python-service-e2e-testing` |
 | Python backend | `python-fastapi-expert`, `python-cashews-cache`, `python-sqlalchemy-core`, `python-sqlalchemy-sqlite`, `python-sqlalchemy-mysql`, `python-httpx-client`, `python-backend-security` |
 | Python distributed cache | `python_nats_kv_cache.md`, `python-nats-kv-cache` для NATS JetStream Key/Value |
@@ -199,7 +202,7 @@ max_concurrent_threads_per_session = 4
 
 ## Профили C# и Unity 6.3
 
-Базовый набор разделяет язык, style, engine semantics, Editor tooling, testing и automation вместо одного монолитного Unity skill.
+Профили разделяют зоны ответственности: язык C#, стиль кода, Unity runtime, инструменты Editor, тестирование и автоматизацию.
 
 - `csharp_core.md + csharp-core` — framework-neutral C# с обязательным определением фактической language/runtime boundary до выбора синтаксиса и API.
 - `csharp_style.md + csharp-style` — `.editorconfig`-first naming/formatting/IDE style policy. Existing project configuration имеет приоритет над переносимыми defaults; Unity serialized/reflected/framework contracts нельзя ломать косметическим rename.
@@ -218,7 +221,7 @@ Unity CLI может одной командой затрагивать прое
 
 ## Профили Blender 5.2 и Blender → Unity
 
-Blender-набор разделён по самостоятельным authoring и automation boundaries вместо одного монолитного skill.
+Профили Blender разделяют создание ассетов и автоматизацию редактора; предметные области подключаются независимо.
 
 - `blender_core.md + blender-core` — version-bounded база Blender 5.2.x с priority baseline `5.2.2 LTS`: data-block ownership, `bpy`, context/modes, BMesh, transforms, evaluated depsgraph, Undo, save/file state. Для обычной работы в открытом Blender отдельный `pip install bpy` не требуется: `bpy` принадлежит embedded Python Blender.
 - `blender_modeling.md + blender-modeling` — mesh/topology/modifiers, normals/smoothing, UV geometry, origins/transforms, high/low и source LOD workflows. Профиль требует `blender-core`.
@@ -302,6 +305,40 @@ Skill `python-sqlalchemy-mysql` предназначен для SQLAlchemy 2.x �
 
 Good/bad patterns, review checklist и официальные SQLAlchemy, `aiomysql` и MySQL sources находятся в `.agents/skills/python-sqlalchemy-mysql/references/`.
 
+## Go: язык, тестирование, HTTP API, БД и кэширование
+
+Go представлен независимыми профилями, активируемыми только через `CODEX_PROJECT.md`:
+
+- `go_core.md + go-core` — базовый экспертный профиль идиоматичного Go: структуры и методы, ООП через композицию, интерфейсы и method sets, zero-value, конструкторы, API/packages, ошибки и контекст, память и конкурентность, производительность, современные версии Go и критический code review. Предметные ссылки выбираются по задаче из `go-core/references/`, с полноценными Good/Bad-примерами, условиями применимости и критериями проверки. `memory-and-resource-leaks.md` отдельно описывает утечки goroutine и ресурсов, удержание Go heap, диагностику `pprof` и различия Go heap/RSS/CGO.
+- `go_testing.md + go-testing` — стандартный пакет `testing`, table-driven тесты, `httptest`, интеграционное/E2E-тестирование, `-race`, coverage, fuzzing, `testing/synctest` для Go 1.25+ и изоляция окружения. `leak-regression.md` описывает проверки отмены, завершения, повторных запусков и освобождения ресурсов; `go.uber.org/goleak` не устанавливается автоматически.
+- `go_huma_v2.md + go-huma-v2` — Huma v2, проверка минимальной версии Go, router adapters, типизированные операции, входные/выходные контракты, обработка ошибок, OpenAPI 3.1/JSON Schema и контрактные тесты. Huma v2 не требует обязательного ORM.
+- `go_gorm.md + go-gorm` — базовые правила GORM для репозиториев, транзакций, параметризованных запросов, ошибок, моделей и запросов; не привязан к SQLite.
+- `go_gorm_sqlite_goose.md + go-gorm-sqlite-goose` — **условный** профиль для выбранной связки SQLite + GORM + Goose v3. Его выбор не происходит автоматически при активации Go/Huma/GORM.
+
+Рекомендации `go-core` разделяются на ошибки корректности/безопасности/совместимости и контекстно-зависимые предпочтения архитектуры/стиля. Для версии Go 1.27 учитывается поддержка generic methods конкретных типов, при этом в интерфейсах generic methods по-прежнему не разрешены. Старые материалы, включая некоторые разделы Go FAQ, не должны подменять release notes и спецификацию конкретной версии.
+
+Профилирование применяется к доказанному или обоснованно подозреваемому росту памяти/ресурсов и к изменениям их жизненного цикла, а не механически к каждому исправлению. `go test -race` не обнаруживает утечки. Стабильный `goroutineleak`-профиль доступен с Go 1.27 и выявляет только часть блокировок; `/debug/pprof` требует защищённого диагностического доступа.
+
+При использовании Goose **единственный источник истины для production-схемы — версионируемые миграции Goose**. `AutoMigrate` GORM не должен конкурировать с ними в startup, HTTP handlers или рабочих процессах. Для SQLite проверяются включение foreign keys на каждом соединении, busy timeout, опциональный WAL, транзакционные границы, конкуренция записи и миграции на заполненной БД. Важно учитывать, что обычный GORM SQLite-драйвер использует CGO, а актуальная документация CLI Goose описывает иной SQLite-драйвер; совместимость и доступные функции должны проверяться на конкретных версиях.
+
+Чтобы использовать этот набор в целевом проекте, перечислите выбранные идентификаторы в `Active Stack Profiles`, точные пары в `Active Rules` и `Active Skills`, заполните соответствующие Go-профили из `.codex/project.template.md` и скопируйте `.codex/rules/material_dependencies.md` для проверки зависимостей. Неизвестные версии Go, Huma, GORM, SQLite и Goose нельзя подставлять по умолчанию. Отсутствие выбранного ORM не препятствует использованию Go или Huma.
+
+Официальные источники: [Go](https://go.dev/doc/), [Huma](https://huma.rocks/), [GORM](https://gorm.io/docs/), [Goose](https://pressly.github.io/goose/), [SQLite](https://www.sqlite.org/docs.html).
+
+
+### Кэширование Go: Otter v2 и NATS JetStream KV
+
+Кэширование в Go представлено двумя независимыми профилями:
+
+- `go_local_cache.md + go-local-cache` — локальный кэш только одного процесса на `github.com/maypok86/otter/v2`: `MaximumSize` или `MaximumWeight`, TTL, загрузка, опциональный refresh, память, владельцы ресурсов и `StopAllGoroutines`. Текущий upstream модуль требует Go 1.24+; фактическое требование определяется зафиксированной версией.
+- `go_nats_kv_cache.md + go-nats-kv-cache` — распределённый кэш напрямую на `github.com/nats-io/nats.go/jetstream`: bucket ownership и ограничения, `Get/Put/Create/Update/Delete`, ревизии, TTL bucket, контролируемые watchers, отказоустойчивость и реальные тесты на изолированном JetStream. Требование Go зависит от закреплённой версии `nats.go` (актуальная основная ветка использует Go 1.26+).
+
+Оба скилла требуют активный `go-core`. Применение `go-testing`, `go-huma-v2` и `go-gorm` зависит от конкретной задачи. Общие принципы ключей/версий/TTL/инвалидации хранятся в `go-core/references/cache-design.md`, без копирования API двух библиотек.
+
+Данные кэша должны быть восстановимы из источника истины. Локальный Otter не синхронизирует записи между процессами; NATS KV не гарантирует строгий read-your-writes во всех топологиях. Автоматического объединения Otter + NATS в L1/L2 **нет**: оно потребует отдельного согласованного решения. В `CODEX_PROJECT.md` выбирается только нужный режим и конкретные настройки; сетевые bucket не создаются/не изменяются в рамках изменений документации или кода без отдельной авторизации.
+
+Официальные источники: [Otter v2](https://github.com/maypok86/otter), [NATS Go](https://github.com/nats-io/nats.go), [JetStream KV](https://docs.nats.io/nats-concepts/jetstream/key-value-store).
+
 ## Профиль Vue SVG graphics
 
 Пакет `vue_svg_graphics.md + vue-svg-graphics-expert` предназначен для переиспользуемой параметризуемой SVG-графики, которую Vue 3 формирует или изменяет на уровне geometry, paint, semantics либо motion.
@@ -351,7 +388,7 @@ Obsidian-related rules и skills требуют MCP-only подхода:
 6. **Минимум неявных предположений** — источник истины для конкретного проекта — его `CODEX_PROJECT.md` и repository metadata.
 7. **Актуальность** — устаревшие rules, skills и references следует обновлять или удалять.
 8. **Краткий routing description** — поле `description` в frontmatter кратко формулирует условия активации и отличительные ключевые слова. Полный перечень возможностей, workflow и ограничений остаётся в теле `SKILL.md`.
-9. **Синхронизация README** — изменения структуры, путей, dependency graph и фактического покрытия должны отражаться в README в том же PR.
+9. **README как справочник** — README описывает актуальный состав, назначение, активацию и ограничения материалов. Изменения структуры, путей и зависимостей отражаются в README в том же PR; история доработок и принятых промежуточных решений остаётся в PR или релизах.
 
 ## Версионирование
 
