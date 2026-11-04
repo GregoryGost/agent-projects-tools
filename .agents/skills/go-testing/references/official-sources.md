@@ -15,6 +15,7 @@
 - Optional `goleak` helper documentation: https://pkg.go.dev/go.uber.org/goleak
 - Fuzzing tutorial: https://go.dev/doc/tutorial/fuzz
 - `go test` coverage: https://go.dev/blog/cover
+- Official profile parser and repeated-block merge semantics: https://go.dev/src/cmd/vendor/golang.org/x/tools/cover/profile.go
 - Coverage profile and `go tool cover` reporting: https://go.dev/doc/build-cover
 - Go cover command format and coverage options: https://pkg.go.dev/cmd/cover
 - `t.TempDir` / `t.Setenv` / `t.Cleanup`: https://pkg.go.dev/testing#T
