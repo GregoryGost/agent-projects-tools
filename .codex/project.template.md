@@ -615,7 +615,13 @@ Keep only when Go testing is selected.
 - Race detector support and command: `<supported toolchain/platform + command / none>`
 - Focused terminal Delve test policy (optional): `<dlv test <package> -- -test.run <regex> with safe isolated target and interactive stdin / none>`
 - Parallel/shuffle policy: `<isolation and command / none>`
-- Coverage output and policy: `<temp/artifact path, threshold or none>`
+- Statement coverage enabled: `<yes (recommended for new Go projects) / explicit owner-approved exception: disabled + reason>`
+- Statement coverage minimum: `<85% default floor / greater project-selected percentage / explicit owner-approved exception below 85% + reason>`
+- Covered production package set and exclusions: `<complete module packages / explicit package patterns + exclusions and reasons>`
+- Coverage execution command and environment: `<approved go test -count=1 -coverprofile=<output> <full package scope> + declared tags/CGO/integration boundary / none if explicitly disabled>`
+- Coverage profile artifact path and retention: `<approved temporary/CI-artifact path + cleanup policy / none if disabled>`
+- Coverage gate implementation: `<project-declared exact weighted statement-count threshold checker and CI/local command / missing: report not enforced>`
+- Coverage reporting and comparison baseline (optional): `<aggregate numerator/denominator + displayed percentage + configured threshold + PASS/FAIL + comparable baseline source / none>`
 - Fuzz budget and targets: `<bounded command/targets / none>`
 - Test data and environment isolation: `<t.TempDir / file DB / ports / secrets / project-specific>`
 - Leak/lifecycle regression policy (optional): `<cancellation/cleanup/repeated lifecycle / approved goleak / none>`
