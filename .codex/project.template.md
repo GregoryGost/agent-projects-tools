@@ -302,6 +302,7 @@ Use only project-declared commands.
 - Type check / static analysis: `<command or none>`
 - Go module/toolchain verification: `<commands or none>`
 - Go vet/static checks: `<commands or none>`
+- Go gopls diagnostics (when selected): `<verified connected MCP go_diagnostics + affected absolute file paths / existing LSP diagnostics / verified gopls check commands / disabled or unavailable>`
 - Go approved vulnerability check: `<existing govulncheck command and scope / none>`
 - Go benchmark comparisons: `<approved go test -bench target and optional benchstat / none>`
 - Go PGO profile/build comparison: `<approved profile source and build commands / none>`
@@ -571,6 +572,11 @@ Keep only when Go is active. The base Go pair is framework-neutral.
 - CGO policy: `<enabled / disabled / conditional by platform / none>`
 - Dependency integrity/change policy: `<go.mod + go.sum / vendor / project-specific / none>`
 - Formatter/linter source: `<gofmt + go vet / golangci-lint config / other / none>`
+- gopls language-server integration (optional, selected once): `<disabled / existing official MCP detached (stdio) / approved attached MCP (live LSP + local endpoint) / existing LSP client / CLI fallback>`
+- gopls executable/version and configured connection: `<verified gopls version + exact client/tool source / none>`
+- gopls workspace/build/analysis settings: `<roots + saved-buffer policy + build tags/GOOS/CGO + configured analyses/source / none>`
+- gopls diagnostics/acceptance policy: `<affected files and workspace scope + selected analyzer/severity blocking criteria + new-vs-existing findings + report-on-unavailable / none>`
+- gopls permitted tool side effects: `<local cache and go list/module network/telemetry policy + explicit approval for listener/editor writes / none>`
 - Runtime diagnostics and memory ownership policy (optional): `<protected pprof / runtime metrics / OS+CGO monitoring / project-specific / none>`
 - Delve terminal debugging policy (optional): `<disabled / approved isolated dlv debug and/or test + version/OS/arch check + persistent stdin / project-specific>`
 - Delve target process / attachment policy: `<local launched targets only / individually approved attach / disabled>`
