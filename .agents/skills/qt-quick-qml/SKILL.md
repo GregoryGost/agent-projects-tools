@@ -21,7 +21,7 @@ Use qt_quick_qml.md only if independently active. Qt Testing is optional coordin
 3. Verify QML module resource prefix, URI and imports against version-specific qt_add_qml_module policy and actual CMake target.
 4. For QML/C++ exposure, verify QObject/metaobject registration, NOTIFY signals, thread affinity, ownership, context properties and lifetime of referenced objects.
 5. Prefer existing declarative components and targeted fixes over speculative QML architecture changes. Don't introduce async loaders, custom singletons, extra files or new QML modules without requirement.
-6. Use available, configured qmllint/qmlformat/qmlls and build/test commands. QML Preview MCP, Qt Documentation MCP and profilers remain optional and require actual configured connection and authorized execution.
+6. Use available, configured qmllint/qmlformat/qmlls and build/test commands. QML Preview MCP, Qt Documentation MCP and profilers remain optional and require actual configured connection, tool-specific version prerequisites (for the upstream live QML Preview MCP: Qt 6.12+) and authorized execution. This prerequisite is not a minimum Qt version for ordinary QML projects.
 7. Validate runtime behavior with real environment where necessary. Report analyzer/tool version, scope, bindings and results distinctly from C++ compilation.
 
 ## References

@@ -9,7 +9,7 @@ Use only declared commands and already configured tools from CODEX_PROJECT.md. N
 - qmlformat: format only authorized files/ranges using the project config/version; no broad text churn.
 - QML Test: run actual TestCase tests via project-approved qmltestrunner/CTest, with real imports and GUI environment where needed. A parsed-only QML file is not a passing UI test.
 - QML Profiler: optional for measured performance regressions, not mandatory for ordinary changes.
-- Qt QML Preview MCP: optional already connected tool and version-dependent; never start a preview session or require Qt 6.12 just because an upstream agent skill suggests it.
+- Qt QML Preview MCP: optional already connected tool. When this specific preview server is selected, verify its documented Qt 6.12+ runtime prerequisite against the actual SDK before using it; never impose Qt 6.12+ on ordinary QML development. Do not start a preview session without authorization.
 
 ## Review questions from the Qt Company
 
