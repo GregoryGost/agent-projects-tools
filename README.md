@@ -55,6 +55,22 @@
 
 `CODEX_PROJECT.md` намеренно не хранится в этом репозитории: он создаётся отдельно в каждом целевом проекте и содержит только применимые для него profiles, rules, skills, команды и политики. При работе над самим `agent-projects-tools` действует template repository mode: rules, skills и project template рассматриваются как поддерживаемые исходные материалы, а `CODEX_PROJECT.md` не создаётся.
 
+## Универсальная прединициализация целевого проекта (только при подключении материалов)
+
+Этот раздел предназначен **для агента, выполняющего первоначальное внедрение agent-projects-tools** в другой репозиторий. Он относится ко всем технологиям, которые поддерживаются текущим набором материалов (Go, Python, C#, Unity, Blender, TypeScript, Vue, C++/Qt и другие), а не только к C++/Qt. После подготовки проекта обычные агенты читают выбранные параметры из CODEX_PROJECT.md и применяют активные rules/skills; повторная инвентаризация среды на каждую задачу не требуется.
+
+Перед копированием/активацией материалов выполните ограниченное исследование **только релевантного данному проекту** стека и среды:
+
+1. Из исходников, manifest/lock files, CMake/прочих build configs, CI, существующих тестов и документации определите языки, стандарты, фреймворки, библиотеки, версионные ограничения и реальные задачи проекта. Отличайте используемые зависимости от случайно установленных SDK и инструментов.
+2. Исследуйте доступные средства разработки и проверки в том окружении, где фактически исполняется агент: компиляторы, runtime, SDK, build/test tools, анализаторы, отладчики, поддерживаемые MCP/LSP интерфейсы. Для VS Code учитывайте настройки workspace/user, связанные расширения и локальный/удалённый extension host (SSH/WSL/container) только в той мере, в какой к ним имеется реальный read-only доступ. Например, code --list-extensions --show-versions показывает установки доступного extension host, но не доказывает, какой language server активен и видит ли Codex панель Problems/несохранённые буферы.
+3. Сопоставьте IDE-конфигурацию с рабочим build context: активные компилятор и preset/target, defines/includes, CMake generator, Qt SDK или иной фреймворк, диагностика и тестовая среда. Для C++/Qt учитывайте cpptools против clangd, clang-tidy/Clazy, CMake compilation database и ограничения генератора Visual Studio; не считайте инструменты взаимозаменяемыми по названию. Для остальных стеков применяйте аналогичное сопоставление их реальных runtime/IDE/CI средств (например, gopls для Go).
+4. Используйте лишь разрешённые read-only проверки. Даже команда с названием configure, test, debug или lint может писать кеши, загружать пакеты, запускать процессы и менять окружение: анализируйте эффекты до запуска. Не устанавливайте расширения, компиляторы, MCP, SDK и зависимости, не меняйте IDE, генератор, глобальные настройки или исходники без отдельной авторизации.
+5. Выберите минимально достаточные профили, rules/skills и их **полное замыкание hard dependencies** на основании подтверждённого стека. Не активируйте профиль просто потому, что инструмент обнаружен. Перенесите обязательные материалы, проверяя точные имена и собственные ограничения activation.
+6. Заполните CODEX_PROJECT.md из .codex/project.template.md **итоговыми** версиями, путями/источниками конфигурации, активными профилями, доступными интерфейсами, проверочными командами и политиками. Не переносите в итоговый профиль процедуру предварительного поиска. Отсутствие доступа к IDE/LSP, неподтверждённые версии или несовместимость описывайте явно как неизвестные/недоступные, а не придумывайте успешную проверку.
+7. Проверьте согласованность профиля с репозиторием, SDK, CI, scope команд, активацией зависимостей и текущими разрешениями. При материальной неоднозначности не назначайте произвольную технологию по умолчанию и не устанавливайте программы самостоятельно.
+
+Эта процедура прединициализации не вводит нового режима полномочий: запрос пользователя и .codex/rules/request_routing.md по-прежнему ограничивают все изменения. Инструкции обнаружения должны оставаться в **README**, а .codex/project.template.md описывает уже выбранную рабочую конфигурацию.
+
 ## Как использовать в другом проекте
 
 1. Скопируйте или подключите `AGENTS.md` в целевой проект.
@@ -169,6 +185,10 @@ max_concurrent_threads_per_session = 4
 | Маршрутизация и общие правила | `request_routing.md`, `material_dependencies.md`, `subagent_coordination.md` (условная активация), `source_code_hygiene.md`, `git.md` |
 | Актуальная техническая документация | `context7_documentation.md` для опционального Context7 MCP retrieval |
 | Язык code-adjacent prose | `comment-language-audit` |
+| C++17+ язык и стиль | `cpp_core.md` + `cpp-core`: ownership/RAII, ABI и C interop, concurrency, VS Code diagnostics, clangd/clang-tidy, debugging; `cpp_style.md` + `cpp-style`: .clang-format и безопасная область форматирования |
+| C++ сборка и тестирование | `cpp_cmake.md` + `cpp-cmake`: CMake targets, presets и compilation database; `cpp_testing.md` + `cpp-testing`: CTest, existing test frameworks, sanitizers и coverage по настройкам проекта |
+| Qt 6 Core и Widgets | `qt_core.md` + `qt-core`: QObject, signals/slots, event loop, thread affinity, Clazy; `qt_widgets.md` + `qt-widgets`: GUI и model/view contracts |
+| Qt 6 Testing и Quick/QML | `qt_testing.md` + `qt-testing`: QTest, QSignalSpy, GUI/event-loop tests; `qt_quick_qml.md` + `qt-quick-qml`: QML modules, bindings, qmllint/qmlls, C++ integration |
 | C# core и style | `csharp_core.md`, `csharp-core`, `csharp_style.md`, `csharp-style` для version-aware C#, `.editorconfig`-first naming/formatting и безопасных style-изменений |
 | Unity 6.3 | `unity_core.md`, `unity-core`, `unity_editor.md`, `unity-editor`, `unity_testing.md`, `unity-testing` для Unity 6000.3.x runtime/Editor/test boundaries |
 | Official Unity CLI | `unity_cli.md`, `unity-cli` для официального Unity CLI; priority baseline `1.0.0-beta.10`, `unity mcp`/live Editor + Pipeline command discovery, batch/CI fallback и routed side effects |
@@ -202,6 +222,15 @@ max_concurrent_threads_per_session = 4
 - для version-sensitive поведения проверяются корректные library/source/version и не допускается молчаливая подмена на `latest`;
 - при недоступности или недостаточном покрытии Context7 используются curated official sources или прямая официальная документация;
 - security, Jira Data Center и Obsidian сохраняют собственные source-of-truth и workflow boundaries.
+
+## C++17+ и Qt 6 — переносимые профили (VS Code)
+
+- OBS Studio 33.0.1 служит **проверенным ориентиром** C++17/C17 (без GNU extensions), но ни OBS, ни его SDK не являются базовым таргетом/зависимостью правил. Если целевой проект использует иной подтверждённый стандарт C++, применяется именно он.
+- `cpp_core.md + cpp-core` — базовый экспертный профиль; `cpp_style.md + cpp-style`, `cpp_cmake.md + cpp-cmake` и `cpp_testing.md + cpp-testing` — независимые опциональные профили, требующие активную C++-базу. Наличие CMake/CTest/clangd не активирует их автоматически.
+- `qt_core.md + qt-core` — Qt 6 overlay поверх C++; `qt_widgets.md + qt-widgets` и `qt_quick_qml.md + qt-quick-qml` — независимые UI-профили. `qt_testing.md + qt-testing` требует и `cpp-testing`, и `qt-core`. Проверяйте полное замыкание hard dependencies через `material_dependencies.md`.
+- VS Code — целевая IDE; активный диагностический провайдер (cpptools/clangd/другой), доступный агенту LSP или CLI, CMake target/preset, генератор и набор анализаторов выбираются **при универсальной прединициализации выше**. В готовом CODEX_PROJECT.md фиксируется результат. Отсутствие прямого доступа к VS Code Problems не заменяется заявлением об идентичной CLI-диагностике.
+- Clazy, Qt Documentation MCP, QML Preview MCP, GDB/LLDB/CDB, sanitizer/profiler и сторонние линтеры остаются опциональными инструментами. Не устанавливайте и не запускайте их без соответствующего проекта, toolchain и разрешённой области действия. Дополнительные Qt minor/patch или C++20+ особенности всегда проверяются по фактическому SDK и компилятору.
+- Использованы идеи из официального проекта **The Qt Company**: https://github.com/TheQtCompanyRnD/agent-skills (qt-cpp-review, qt-cmake-project, qt-qml, qt-qml-review, qt-qml-test/test-run). Они проанализированы в `.agents/skills/qt-core/references/qt-company-skill-assessment.md`. Сценарии контроля перенесены в собственные reference-материалы; внешние скрипты и субагентные протоколы не копируются, поскольку должны соблюдать наш request routing, доказательное ревью и управление субагентами. Внешние материалы можно подключать отдельно при согласовании лицензии и рабочей среды.
 
 ## Профили C# и Unity 6.3
 

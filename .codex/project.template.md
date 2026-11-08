@@ -181,6 +181,14 @@ List only profiles active in this repository.
 
 Selection examples:
 
+- `cpp-core`
+- `cpp-style`
+- `cpp-cmake`
+- `cpp-testing`
+- `qt-core`
+- `qt-widgets`
+- `qt-testing`
+- `qt-quick-qml`
 - `go-core`
 - `go-testing`
 - `go-observability`
@@ -253,6 +261,8 @@ List only additional rule files active in this project.
 
 - Optional core rules: `<source_code_hygiene.md / none / other>`
 - Git rules: `<git.md / none>`
+- C++ rules: `<cpp_core.md / cpp_style.md / cpp_cmake.md / cpp_testing.md / none>`
+- Qt 6 rules: `<qt_core.md / qt_widgets.md / qt_testing.md / qt_quick_qml.md / none>`
 - Go rules: `<go_core.md / go_testing.md / go_observability.md / go_security.md / go_http_client.md / go_local_cache.md / go_nats_kv_cache.md / go_huma_v2.md / go_gorm.md / go_gorm_sqlite_goose.md / none>`
 - Python/backend rules: `<python_fastapi.md / python_cashews_cache.md / python_nats_kv_cache.md / none>`
 - Formatting/linting rules: `<csharp_style.md / prettier_formatting.md / eslint_typescript.md / none>`
@@ -272,6 +282,8 @@ List only additional rule files active in this project.
 List only reusable skills active in this project.
 
 - Code prose / language-policy skills: `<comment-language-audit / none>`
+- C++ skills: `<cpp-core / cpp-style / cpp-cmake / cpp-testing / none>`
+- Qt 6 skills: `<qt-core / qt-widgets / qt-testing / qt-quick-qml / none>`
 - Go skills: `<go-core / go-testing / go-observability / go-security / go-http-client / go-local-cache / go-nats-kv-cache / go-huma-v2 / go-gorm / go-gorm-sqlite-goose / none>`
 - Python skills: `<python-core / python-testing / python-fastapi-expert / python-cashews-cache / python-nats-kv-cache / none / other>`
 - Language skills: `<csharp-core / typescript-core / typescript-jest-testing / none / other>`
@@ -300,6 +312,17 @@ Use only project-declared commands.
 - Format check: `<command or none>`
 - Lint: `<command or none>`
 - Type check / static analysis: `<command or none>`
+- C++ configured toolchain/build verification: `<compiler + standard + target/build preset commands / none>`
+- C++ active VS Code diagnostic provider: `<selected provider and reachable LSP/API or saved-file CLI fallback / unavailable>`
+- C++ clangd diagnostics (when selected): `<verified workspace LSP scope or approved clangd --check command + compilation context / none>`
+- C++ clang-tidy/static analyzers: `<selected checks, compile DB/build context, affected target commands / none>`
+- C++ clang-format check: `<installed version + approved touched-file/line check / none>`
+- C++ CTest/native test runner: `<configured targeted and required broad suite commands + build configuration / none>`
+- C++ sanitizer builds/tests: `<selected ASan/UBSan/TSan/LSan supported configuration + command / none>`
+- C++ coverage/benchmark commands: `<toolchain/metric/source scope/commands / none>`
+- Qt Clazy checks: `<configured compatible checks and compile context / none>`
+- Qt Test/GUI test commands: `<registered Qt Test runner + platform/display constraints / none>`
+- Qt QML tools: `<configured qmllint/qmlls/qmlformat/Quick Test commands / none>`
 - Go module/toolchain verification: `<commands or none>`
 - Go vet/static checks: `<commands or none>`
 - Go gopls diagnostics (when selected): `<verified connected MCP go_diagnostics + affected absolute file paths / existing LSP diagnostics / verified gopls check commands / disabled or unavailable>`
@@ -334,6 +357,100 @@ Use only project-declared commands.
 - Blender MCP live validation: `<workflow or none>`
 - Blender → Unity import validation: `<workflow or none>`
 - Other validation: `<command or none>`
+
+## C++ Core Profile
+
+Keep only for a prepared C++ target. C++17 (no GNU extensions) is the portability reference corresponding to OBS Studio 33.0.1, not a mandatory project downgrade or OBS-specific activation.
+
+- C++ enabled: <yes/no>
+- C++ standard and extensions policy: <C++17 / newer verified standard + extensions on/off>
+- C language standard when C is present: <C17 / actual target C version / none>
+- Actual language/compiler version source: <CMake target/preset/CI/toolchain files / project-specific>
+- Compiler/stdlib/ABI: <MSVC/Clang/GCC + version + standard library + runtime ABI>
+- Target architectures and OS build matrix: <explicit selected targets and configurations>
+- Exceptions/RTTI and C/plugin interface policy: <enabled/disabled + library/host contract / none>
+- Native plugin/shared-library compatibility: <host SDK/API version + calling convention + export/allocator/lifetime policy / not applicable>
+- Selected VS Code C++ diagnostic provider: <cpptools / clangd / other explicitly selected / unavailable>
+- Available diagnostics interface and source snapshot: <connected LSP/API + scope / saved-files CLI fallback + limits / unavailable>
+- Diagnostic workspace/build context: <selected target/preset + build directory + flags/include defines + compile DB or equivalent provider>
+- Analyzer version/severity and acceptance policy: <selected clang-tidy/clangd/compiler/other config and blocking criteria / none>
+- C++ terminal debugger (optional): <selected GDB/LLDB/CDB + approved isolated command / none>
+- Active C++ base rule/skill: <cpp_core.md + cpp-core / none>
+
+## C++ Style Profile
+
+Keep only when selected; requires the active cpp-core base rule/skill.
+
+- Style configuration: <.clang-format/.editorconfig/project conventions + paths / none>
+- Selected clang-format and version: <version + command / none>
+- Formatting scope and public/Qt ABI naming preservation: <changed paths/lines + policy>
+- Active C++ style rule/skill: <cpp_style.md + cpp-style / none>
+
+## C++ CMake Profile
+
+Keep only for selected CMake projects; requires the active cpp-core base rule/skill.
+
+- Minimum/installed CMake and configured generator: <versions + Ninja/Makefiles/Visual Studio/Xcode/Ninja Multi-Config>
+- Build presets/targets/configurations: <existing configure/build/test preset names and targets>
+- Toolchain/SDK and dependency provenance: <existing paths + approved sources>
+- Compilation database/proven provider: <current compile_commands.json + target/config / alternative selected provider / unavailable>
+- Configure/build/matrix commands and artifact policy: <project-owned commands/paths and allowed effects>
+- Active C++ CMake rule/skill: <cpp_cmake.md + cpp-cmake / none>
+
+## C++ Testing Profile
+
+Keep only when selected; requires the active cpp-core base rule/skill.
+
+- Test framework/runner versions: <GoogleTest/Catch2/doctest/custom/CTest + actual versions / none>
+- Unit/integration/plugin/E2E boundaries and fixtures: <paths + environment isolation and allowed effects>
+- Target tests and required suite command: <project-owned commands + platform/build config>
+- Optional sanitizer targets and support matrix: <ASan/UBSan/TSan/LSan + exact commands / disabled>
+- Coverage policy: <disabled / selected toolchain metric, source scope, thresholds and commands approved by owner>
+- Performance benchmark policy: <none / representative matrix + repeat commands>
+- Active C++ testing rule/skill: <cpp_testing.md + cpp-testing / none>
+
+## Qt 6 Core Profile
+
+Keep only for a verified Qt 6 target; requires the active cpp-core base rule/skill.
+
+- Qt enabled and SDK exact version: <Qt 6.x.y + selected installed/CI package>
+- Qt components and module versions: <Core/Network/other actually used components>
+- Qt ABI/deployment compatibility: <library linkage, platform SDK, plugin and runtime policy>
+- QObject/metaobject/thread/event-loop contract: <project-specific ownership and lifecycle policy>
+- Qt CMake targets, moc/uic/rcc and generated artifact policy: <existing target/configuration>
+- Clazy Qt diagnostics: <enabled with selected checks + tool version / unavailable/none>
+- Versioned Qt documentation source: <Qt Documentation MCP/Context7/official version-matched docs / none>
+- Active Qt core rule/skill: <qt_core.md + qt-core / none>
+
+## Qt Widgets Profile
+
+Keep only for Qt Widgets projects; requires the active Qt Core pair.
+
+- Qt Widgets enabled: <yes/no>
+- UI/form/layout/model/view ownership: <source roots and .ui/autogen policy>
+- GUI thread and platform/window event behavior: <existing contract>
+- Active Qt Widgets rule/skill: <qt_widgets.md + qt-widgets / none>
+
+## Qt Testing Profile
+
+Keep only for Qt-specific tests; requires the active cpp-testing and qt-core base pairs.
+
+- Qt Test module and runner: <QTest/CTest/QML test runner + actual version and paths>
+- Qt application/GUI test environment: <QCoreApplication/QGuiApplication/QApplication + display/offscreen constraints>
+- Qt signal/model/widget/QML test scopes: <paths + project commands>
+- Async waits, worker shutdown and fixture policy: <actual config>
+- Active Qt testing rule/skill: <qt_testing.md + qt-testing / none>
+
+## Qt Quick / QML Profile
+
+Keep only for Qt Quick/QML; requires the active Qt Core pair, not qt-widgets.
+
+- Qt Quick/Controls/QML modules and versions: <versioned selected components/URIs>
+- QML source/import/resource paths and CMake registration: <existing target/layout/policy>
+- QML/C++ ownership, property notification and type exposure: <project-specific contract>
+- QML diagnostic tools and commands: <configured qmlls/qmllint/qmlformat + scope / none>
+- QML test/preview/profiler integrations (optional): <authorized runner/MCP + versions/commands / disabled>
+- Active Qt Quick/QML rule/skill: <qt_quick_qml.md + qt-quick-qml / none>
 
 ## C# Profile
 
