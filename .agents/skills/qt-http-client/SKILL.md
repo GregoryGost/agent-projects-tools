@@ -24,7 +24,7 @@ Apply `.codex/rules/qt_http_client.md` only when independently active; selecting
 4. Confirm the **actually negotiated** HTTP/2 on the reply only when required; Qt 6 enables HTTP/2 by default but may fall back to HTTP/1.1. Avoid h2c/direct mode unless the endpoint explicitly requires it.
 5. For Qt 6.7+ projects consider `QNetworkRequestFactory`/`QRestAccessManager` when already adopted or clearly useful. They are convenience APIs, not compulsory replacements for `QNetworkAccessManager` or applicable to every Qt 6 minor.
 6. Retry normal requests only under the `cpp-http-client` idempotency/replay/budget policy, using a bounded `QTimer` approach where needed; never block the Qt event loop with sleeps or nested synchronous loops.
-7. When SSE is requested, read both `cpp-http-client/references/sse-protocol.md` and `references/sse-streaming.md`. Implement SSE over `QNetworkReply::readyRead()` with an incremental parser, optional subscription reconnect, event cursor and lifecycle-safe stop. **No separate SSE library.**
+7. When SSE is requested, read both `.agents/skills/cpp-http-client/references/sse-protocol.md` and `references/sse-streaming.md`. Implement SSE over `QNetworkReply::readyRead()` with an incremental parser, optional subscription reconnect, event cursor and lifecycle-safe stop. **No separate SSE library.**
 8. Validate a saved final build/diagnostic/test snapshot and report the actual Qt version, HTTP protocol used when material, test fixture and any blocked/unavailable checks.
 
 ## Reference routing

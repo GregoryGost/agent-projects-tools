@@ -1,6 +1,6 @@
 # Server-Sent Events (SSE) — protocol contract for C++ clients
 
-Use this reference **only** for a confirmed SSE endpoint. No separate SSE library is assumed or installed. This is a transport-neutral protocol reference; Qt's `QNetworkReply` wiring belongs to `qt-http-client/references/sse-streaming.md`.
+Use this reference **only** for a confirmed SSE endpoint. No separate SSE library is assumed or installed. This is a transport-neutral protocol reference; Qt's `QNetworkReply` wiring belongs to `.agents/skills/qt-http-client/references/sse-streaming.md`.
 
 Authoritative specification: https://html.spec.whatwg.org/multipage/server-sent-events.html
 
@@ -10,7 +10,7 @@ Authoritative specification: https://html.spec.whatwg.org/multipage/server-sent-
 - The parser must persist its **byte/UTF-8 decoder, line state and event buffers across reads**. Recognize CRLF (including CR and LF split between reads), lone LF and lone CR. Ignore at most one leading UTF-8 BOM. Follow UTF-8 replacement behavior for invalid sequences as required by the contract.
 - Empty line dispatches an accumulated SSE event; a line beginning with `:` is a comment/heartbeat. Parse field at the first colon; strip **one** optional leading space after colon, not all spaces. Unknown fields are ignored and names are case-sensitive.
 - `data:` appends the value and a newline. For multiple data lines, combine with newline; on dispatch remove **one** final newline. `event:` selects the event type, with empty meaning the default `message`.
-- `id:` sets the persistent last-event-ID buffer unless the value contains a NUL; an **empty id resets the cursor**. An id-only block can update the cursor even if no data event is dispatched. `Last-Event-ID` is sent on reconnect **only when nonempty**.
+- `id:` sets the persistent last-event-ID buffer unless the value contains a NUL; an **empty id resets the cursor**. An id-only block can update the cursor even if no data event is dispatched. `Last-Event-ID` is sent on reconnect **only when nonempty**. When serializing the header, use the cursor's UTF-8 bytes and reject invalid CR/LF/NUL bytes rather than injecting or normalizing arbitrary field names; a cursor is opaque text, not necessarily an integer.
 - `retry:` with only ASCII digits updates the reconnect time; malformed/non-digit fields are ignored. Do not crash, overflow integers or schedule unbounded delays; apply the project's maximum and budget policy.
 - A block with no `data` is not an application event. A `data` field with an empty value **does** dispatch an event whose data is empty. An EOF without a terminating blank line must not implicitly dispatch a partial event.
 - Do not parse a JSON object as an SSE event just because a `data` field may contain JSON; JSON parsing is a separate application contract.

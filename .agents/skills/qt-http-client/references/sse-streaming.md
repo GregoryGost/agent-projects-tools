@@ -2,7 +2,7 @@
 
 Qt Network already transports `text/event-stream` over HTTP/1.1 or negotiated HTTP/2. No additional SSE library is required or selected by this skill. This is an **implementation review specification**, not an instruction to create an SSE subsystem for every Qt application.
 
-**Read first:** `cpp-http-client/references/sse-protocol.md` for normative parsing of bytes, UTF-8/BOM, CR/LF/CRLF, empty data and id-only blocks. Using raw network fragments as complete events violates the SSE wire format.
+**Read first:** `.agents/skills/cpp-http-client/references/sse-protocol.md` for normative parsing of bytes, UTF-8/BOM, CR/LF/CRLF, empty data and id-only blocks. Using raw network fragments as complete events violates the SSE wire format.
 
 ## One subscription lifecycle
 
