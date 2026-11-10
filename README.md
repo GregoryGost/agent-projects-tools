@@ -186,6 +186,8 @@ max_concurrent_threads_per_session = 4
 | Актуальная техническая документация | `context7_documentation.md` для опционального Context7 MCP retrieval |
 | Язык code-adjacent prose | `comment-language-audit` |
 | C++17+ язык и стиль | `cpp_core.md` + `cpp-core`: ownership/RAII, ABI и C interop, concurrency, VS Code diagnostics, clangd/clang-tidy, debugging; `cpp_style.md` + `cpp-style`: .clang-format и безопасная область форматирования |
+| C++ исходящие HTTP-клиенты | `cpp_http_client.md` + `cpp-http-client`: выбранный проектом libcurl/cpr/иной транспорт, HTTP/1.1 и HTTP/2, TLS, безопасные opt-in retries, rate limits, SSE-протокол и изолированные проверки |
+| Qt 6 HTTP-клиенты | `qt_http_client.md` + `qt-http-client`: QNetworkAccessManager, QNetworkReply, Qt REST 6.7+, HTTP/2, асинхронная отмена, QTimer retries и SSE без дополнительных библиотек |
 | C++ сборка и тестирование | `cpp_cmake.md` + `cpp-cmake`: CMake targets, presets и compilation database; `cpp_testing.md` + `cpp-testing`: CTest, existing test frameworks, sanitizers и coverage по настройкам проекта |
 | Qt 6 Core и Widgets | `qt_core.md` + `qt-core`: QObject, signals/slots, event loop, thread affinity, Clazy; `qt_widgets.md` + `qt-widgets`: GUI и model/view contracts |
 | Qt 6 Testing и Quick/QML | `qt_testing.md` + `qt-testing`: QTest, QSignalSpy, GUI/event-loop tests; `qt_quick_qml.md` + `qt-quick-qml`: QML modules, bindings, qmllint/qmlls, C++ integration |
@@ -231,6 +233,15 @@ max_concurrent_threads_per_session = 4
 - VS Code — целевая IDE; активный диагностический провайдер (cpptools/clangd/другой), доступный агенту LSP или CLI, CMake target/preset, генератор и набор анализаторов выбираются **при универсальной прединициализации выше**. В готовом CODEX_PROJECT.md фиксируется результат. Отсутствие прямого доступа к VS Code Problems не заменяется заявлением об идентичной CLI-диагностике.
 - Clazy, Qt Documentation MCP, QML Preview MCP, GDB/LLDB/CDB, sanitizer/profiler и сторонние линтеры остаются опциональными инструментами. Не устанавливайте и не запускайте их без соответствующего проекта, toolchain и разрешённой области действия. Дополнительные Qt minor/patch или C++20+ особенности всегда проверяются по фактическому SDK и компилятору.
 - Использованы идеи из официального проекта **The Qt Company**: https://github.com/TheQtCompanyRnD/agent-skills (qt-cpp-review, qt-cmake-project, qt-qml, qt-qml-review, qt-qml-test/test-run). Они проанализированы в `.agents/skills/qt-core/references/qt-company-skill-assessment.md`. Сценарии контроля перенесены в собственные reference-материалы; внешние скрипты и субагентные протоколы не копируются, поскольку должны соблюдать наш request routing, доказательное ревью и управление субагентами. Внешние материалы можно подключать отдельно при согласовании лицензии и рабочей среды.
+
+
+### Исходящие HTTP-клиенты C++ и Qt 6
+
+- `cpp_http_client.md + cpp-http-client` — отдельный профайл исходящего C++ HTTP-клиента, с обязательной активной парой `cpp_core.md + cpp-core`. Использует уже выбранную проектом библиотеку (libcurl, cpr или другую) и фактические версии/компилятор; не добавляет сетевых зависимостей автоматически.
+- `qt_http_client.md + qt-http-client` — Qt Network поверх базового C++ HTTP-контракта; требует активных пар `cpp_http_client.md + cpp-http-client` и `qt_core.md + qt-core`. Для Qt по умолчанию предпочитается существующий `QNetworkAccessManager`, а не второй libcurl/cpr-стек. `QNetworkRequestFactory` и `QRestAccessManager` доступны начиная с Qt 6.7, поэтому не требуются для старых Qt 6.
+- Оба профиля покрывают HTTP/1.1/2, negotiated protocol, TLS/redirect/timeout, per-operation retries с ограничением попыток и подтверждённой идемпотентностью, размер/время ответа, потоковую обработку и тестирование. Наличие поддержки HTTP/2 не доказывает фактического использования — для Qt проверяется `Http2WasUsedAttribute` ответа.
+- Для SSE **не выбирается отдельная библиотека**. `cpp-http-client/references/sse-protocol.md` описывает формат `text/event-stream`, курсор `Last-Event-ID`, `retry:` и условия остановки, а `qt-http-client/references/sse-streaming.md` — чтение `QNetworkReply::readyRead()`, bounded parsing и асинхронное переподключение `QTimer`. HTTP retry и SSE reconnect независимы; SSE активируется только при задаче на потоковые события.
+- Никакого нового универсального retry/cache/rate-limit framework, самостоятельного сервера, SDK, Qt extension или фонового процесса из-за активации профиля. Параметры и разрешённые команды берутся из итогового `CODEX_PROJECT.md`; первичная идентификация доступных инструментов остаётся только в универсальном разделе прединициализации выше.
 
 ## Профили C# и Unity 6.3
 
