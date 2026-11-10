@@ -185,7 +185,9 @@ Selection examples:
 - `cpp-style`
 - `cpp-cmake`
 - `cpp-testing`
+- `cpp-http-client`
 - `qt-core`
+- `qt-http-client`
 - `qt-widgets`
 - `qt-testing`
 - `qt-quick-qml`
@@ -261,8 +263,8 @@ List only additional rule files active in this project.
 
 - Optional core rules: `<source_code_hygiene.md / none / other>`
 - Git rules: `<git.md / none>`
-- C++ rules: `<cpp_core.md / cpp_style.md / cpp_cmake.md / cpp_testing.md / none>`
-- Qt 6 rules: `<qt_core.md / qt_widgets.md / qt_testing.md / qt_quick_qml.md / none>`
+- C++ rules: `<cpp_core.md / cpp_style.md / cpp_cmake.md / cpp_testing.md / cpp_http_client.md / none>`
+- Qt 6 rules: `<qt_core.md / qt_http_client.md / qt_widgets.md / qt_testing.md / qt_quick_qml.md / none>`
 - Go rules: `<go_core.md / go_testing.md / go_observability.md / go_security.md / go_http_client.md / go_local_cache.md / go_nats_kv_cache.md / go_huma_v2.md / go_gorm.md / go_gorm_sqlite_goose.md / none>`
 - Python/backend rules: `<python_fastapi.md / python_cashews_cache.md / python_nats_kv_cache.md / none>`
 - Formatting/linting rules: `<csharp_style.md / prettier_formatting.md / eslint_typescript.md / none>`
@@ -282,8 +284,8 @@ List only additional rule files active in this project.
 List only reusable skills active in this project.
 
 - Code prose / language-policy skills: `<comment-language-audit / none>`
-- C++ skills: `<cpp-core / cpp-style / cpp-cmake / cpp-testing / none>`
-- Qt 6 skills: `<qt-core / qt-widgets / qt-testing / qt-quick-qml / none>`
+- C++ skills: `<cpp-core / cpp-style / cpp-cmake / cpp-testing / cpp-http-client / none>`
+- Qt 6 skills: `<qt-core / qt-http-client / qt-widgets / qt-testing / qt-quick-qml / none>`
 - Go skills: `<go-core / go-testing / go-observability / go-security / go-http-client / go-local-cache / go-nats-kv-cache / go-huma-v2 / go-gorm / go-gorm-sqlite-goose / none>`
 - Python skills: `<python-core / python-testing / python-fastapi-expert / python-cashews-cache / python-nats-kv-cache / none / other>`
 - Language skills: `<csharp-core / typescript-core / typescript-jest-testing / none / other>`
@@ -320,6 +322,8 @@ Use only project-declared commands.
 - C++ CTest/native test runner: `<configured targeted and required broad suite commands + build configuration / none>`
 - C++ sanitizer builds/tests: `<selected ASan/UBSan/TSan/LSan supported configuration + command / none>`
 - C++ coverage/benchmark commands: `<toolchain/metric/source scope/commands / none>`
+- C++ outgoing HTTP checks (when selected): `<project's existing client/transport test commands + build config / none>`
+- Qt Network/HTTP2/SSE checks (when selected): `<Qt Network fixture + actual protocol / SSE parser/reconnect tests / none>`
 - Qt Clazy checks: `<configured compatible checks and compile context / none>`
 - Qt Test/GUI test commands: `<registered Qt Test runner + platform/display constraints / none>`
 - Qt QML tools: `<configured qmllint/qmlls/qmlformat/Quick Test commands / none>`
@@ -409,6 +413,25 @@ Keep only when selected; requires the active cpp-core base rule/skill.
 - Performance benchmark policy: <none / representative matrix + repeat commands>
 - Active C++ testing rule/skill: <cpp_testing.md + cpp-testing / none>
 
+
+## C++ HTTP Client Profile
+
+Keep only when the project selects the exact `cpp_http_client.md + cpp-http-client` pair. Requires the active C++ Core rule/skill. The profile is for outgoing HTTP, not inbound servers.
+
+- C++ HTTP client enabled: <yes/no>
+- Selected client/transport and exact version source: <libcurl / cpr / other project-approved transport + manifest/SDK/CI version>
+- Runtime protocol capabilities: <HTTP/1.1 / HTTP/2 + actual client build/TLS/backend and negotiated version verification / project-specific>
+- External API origins, auth and trust boundary: <explicit endpoints, methods, credentials source and allowed redirects / none>
+- Session, connection pool and callback owner/lifetime: <application/service/plugin owner + shutdown/unload policy>
+- Request and response contract: <methods, expected status/JSON/content types, request body replayability, maximum sizes and streaming policy>
+- Timeouts/cancellation: <connect, inactivity/read, per-attempt, total operation, cancellation + project-approved values>
+- HTTP retry policy: <disabled / exact allowed operations, idempotency, status/errors, attempts, Retry-After, bounded backoff/jitter and total budget>
+- Rate/concurrency limits: <none / actual upstream quota + existing project-owned limiter and request/stream budgets>
+- SSE enabled and API contract: <no / endpoint, MIME, parser limits, heartbeat, cursor resume, reconnect, dedup/gap policy and terminal conditions>
+- Application logging/disclosure policy reference: <existing approved project policy + log destinations/categories / none>
+- Isolated HTTP/HTTP2/SSE test commands: <project-owned fixtures and checks / none>
+- Active C++ HTTP rule/skill: <cpp_http_client.md + cpp-http-client / none>
+
 ## Qt 6 Core Profile
 
 Keep only for a verified Qt 6 target; requires the active cpp-core base rule/skill.
@@ -421,6 +444,23 @@ Keep only for a verified Qt 6 target; requires the active cpp-core base rule/ski
 - Clazy Qt diagnostics: <enabled with selected checks + tool version / unavailable/none>
 - Versioned Qt documentation source: <Qt Documentation MCP/Context7/official version-matched docs / none>
 - Active Qt core rule/skill: <qt_core.md + qt-core / none>
+
+
+## Qt HTTP Client Profile
+
+Keep only when the project selects the exact `qt_http_client.md + qt-http-client` pair. Requires active `cpp-http-client` and `qt-core` rule/skill pairs; it does not require Qt Widgets, Qt Quick or Qt Testing by default.
+
+- Qt HTTP enabled: <yes/no>
+- Qt Network SDK/module version and target: <existing Qt 6.x.y Network module + CMake target>
+- QNetworkAccessManager/QNetworkReply owner and thread/event-loop policy: <real owner + reply cleanup/auto-delete + plugin/service shutdown>
+- Optional Qt REST/request factory APIs: <unused / exact supported Qt 6.7+ QRestAccessManager or QNetworkRequestFactory usage>
+- HTTP protocol policy: <default negotiated HTTP/2 with HTTP/1.1 fallback / explicit permitted overrides + actual reply verification>
+- Request status, TLS/proxy/redirect and auth policy: <reference shared C++ HTTP profile + Qt-specific attributes/settings>
+- Transfer inactivity timeout versus total operation deadline: <effective request/manager timeout + actual total budget/cancellation>
+- Qt retry scheduling: <disabled / project-approved per-operation QTimer strategy, attempt/backoff limits and cancellation>
+- Qt SSE implementation: <disabled / QNetworkReply readyRead parser, bounded buffers, Last-Event-ID, retry delay, terminal HTTP 204, teardown>
+- Real Qt Network test environment and commands: <QCoreApplication/Qt Test/loopback server with HTTP2 support where required / none>
+- Active Qt HTTP rule/skill: <qt_http_client.md + qt-http-client / none>
 
 ## Qt Widgets Profile
 
