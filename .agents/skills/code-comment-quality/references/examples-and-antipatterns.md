@@ -116,11 +116,15 @@ defer mu.Unlock()
 **Stronger when these facts are proven:**
 
 ~~~go
-// A lease can be renewed while the expiry callback from its previous
-// version is still running. Check which version is expiring while holding
-// the lock; otherwise the old callback might cancel the renewed lease.
+// A lease can be renewed while an expiry callback from its previous
+// version is still running. We check the version under the lock so the
+// old callback cannot cancel the renewed lease.
 mu.Lock()
 defer mu.Unlock()
+if expiringVersion != lease.version {
+    return
+}
+lease.expired = true
 ~~~
 
 **Why:** “avoid races” describes an abstract goal, while the improved version exposes the actual race and the protected invariant. It must agree with the code's lock coverage.
@@ -213,9 +217,10 @@ Task SendAsync(Batch batch, CancellationToken cancellationToken);
 **Stronger if the actual synchronization contract confirms it:**
 
 ~~~go
-// Timer callbacks have their own limited queue so a backlog of ordinary
-// work cannot delay scheduling of expired timers. Separate queues do not
-// guarantee that callbacks run immediately or in exact time order.
+// Timer callbacks have their own limited queue. Ordinary work waiting
+// in another queue cannot prevent an expired timer from being queued.
+// This does not guarantee that its callback runs immediately or exactly
+// in the order timers expired.
 ~~~
 
 **Why:** it describes the precise purpose and the limit of the guarantee. Avoid claims about benchmarks, speedups, or decisions by previous authors without evidence.

@@ -1,6 +1,6 @@
 ---
 name: code-comment-quality
-description: "Use for semantic completeness, evidence-based rationale, and quality review of code comments, docstrings, and source-adjacent API contracts across languages."
+description: "Use for human-readable, evidence-based code comments and docstrings with complete contracts, clear rationale, and maintainability review across languages."
 ---
 
 # Code Comment Quality
@@ -25,7 +25,7 @@ Read the relevant sections of **both** references when new or revised documentat
 
 | Need | Reference sections |
 | --- | --- |
-| Choose documentation location and depth | `references/documentation-patterns.md`: levels and coverage triage; `references/examples-and-antipatterns.md`: 1–3 |
+| Choose documentation location and depth | `references/documentation-patterns.md`: levels and coverage triage; `references/examples-and-antipatterns.md`: 1–3 and 15 (human-readable wording) |
 | API and error/side-effect contracts | Patterns: contracts/boundaries; Examples: 3, 8, 9 |
 | State machine, ordering, concurrency | Patterns: states and concurrency; Examples: 4–6 |
 | Async lifecycle, network integration, retries | Patterns: lifecycle/integrations; Examples: 6–8 |
