@@ -19,6 +19,16 @@ Documentation is sufficient when an informed maintainer can recover the **materi
 - Use tables, small state-transition descriptions, examples, or multi-paragraph explanations when the mechanism warrants them. Do not impose a minimum length, comment percentage, or a rule that every function needs a comment.
 - Omit comments that merely narrate obvious code. A complex subsystem may legitimately require several detailed explanations while a simple helper needs none.
 
+## Human maintainer first
+
+Write comments **for another developer who must understand, debug, or change this code**, not for an AI agent, an automated reviewer, or a documentation checklist. The content should sound like a colleague explaining a concrete behavior, not a generated analysis report.
+
+- Prefer natural, direct sentences with identifiable actors and actions: what can happen, under which condition, why the code acts this way, and what would break if it changed. Concrete explanations beat labels such as "enforce lifecycle invariant" when those labels alone do not explain the behavior.
+- Use accurate technical terms, identifiers, protocol names, and project vocabulary when they make an explanation **more precise**. Do not ban necessary terminology or oversimplify expert concepts. Briefly explain an unfamiliar term in context when the intended project's developers would otherwise have to guess.
+- Avoid artificial "AI-style" prose: generic padding, repeated "responsible for" descriptions, abstract buzzword chains, rigid What/Why/How or Risk/Invariant/Decision sections, and self-assessment or instructions addressed to agents. A project-required documentation format (for example, `@param` or XML documentation tags) and a genuinely useful state diagram are exceptions, not defects.
+- Make the prose readable in the project's chosen natural language. Do not copy internal task analysis, prompts, reviewer checklists, or English-language constructions into source comments. Use ordinary, grammatically natural language rather than a literal translation of reference examples.
+- Explain a real mechanism at the detail necessary for safe maintenance; do not trade away important conditions or guarantees merely to shorten the text.
+
 ## Evidence, accuracy, and upkeep
 
 - Ground each factual comment in the real implementation, callers, tests, project contracts, or verified platform/API behavior. Do not invent design history, alternative approaches that were never considered, concurrency guarantees, or external-service behavior.
@@ -40,5 +50,6 @@ For the affected scope, ask:
 3. Could a maintainer make a plausible but unsafe change because an important constraint is missing or inaccurate?
 4. Does each substantive assertion match observable code, project contracts, and validated dependencies?
 5. Is the explanation positioned at the level where its consumers need it, with no repetitive narration?
+6. Could another project developer understand the comment as ordinary, direct technical prose, without reconstructing the meaning of opaque labels, agent instructions, or artificial template phrases?
 
 Report a **material omission, stale statement, or false guarantee** with exact file/line, evidence, consequence, and the smallest needed documentation correction. Do not file findings based on stylistic preference, raw comment count, or the fact that an example is longer than the project's comment. Use the skill's applicable patterns and contrastive examples before judging completeness.

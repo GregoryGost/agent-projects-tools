@@ -75,7 +75,20 @@ The longest category is not automatically the best. Expand until the *material k
 
 During review, build a short mental map of the affected component's **contracts / invariants / unusual mechanisms / failure paths**. Compare it with the existing explanations. Report omissions only when they carry a concrete comprehension or change-safety risk; distinguish real defects from formatting preferences. Validate each statement against source and contracts, not against another agent's prose.
 
-## 7. Maintenance and change discipline
+## 7. A developer should understand it on first reading
+
+The patterns and review questions in this document are **instructions for the author**, not headings or wording to paste into actual source comments.
+
+- Write like a colleague explaining a concrete problem: "The old response can arrive last and replace newer data" rather than "preserve asynchronous ordering invariants".
+- Prefer specific nouns and verbs over stacked abstractions. Name the worker, request, lock, database row, or callback when the code makes it identifiable.
+- Give context for a specialist term if a teammate working on this project may not know it; preserve established terms such as `commit`, `mutex`, `QPointer`, `context.Context` and exact API names when they are the clearest description.
+- Keep paragraphs and lists only when they improve navigation. Do not stamp every comment with "Context / Contract / Invariants / Risks", introduce your own grading scale, address an AI assistant, or embed a reviewer task list in production source.
+- Don't turn source comments into beginner tutorials for standard language features. Readers are developers, not necessarily nontechnical users. The desired result is clarity **without losing precision**.
+- In the project's selected language, use phrases a teammate would naturally write; translate meaning, not the English syntax of examples.
+
+**Human-reader check:** after reading the comment alone, can a developer say what might go wrong and why the code prevents it, in plain technical language? If not, simplify the *wording* or add the missing concrete cause, rather than deleting necessary facts.
+
+## 8. Maintenance and change discipline
 
 A behavior change may invalidate a comment that is physically outside the modified lines. Inspect directly dependent comments and examples within the permitted scope. Correct or remove stale promises. Do not initiate a repository-wide documentation campaign, generate speculative explanations, or alter executable behavior merely to make a comment sound complete.
 

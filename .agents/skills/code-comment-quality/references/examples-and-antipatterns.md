@@ -1,6 +1,6 @@
 # Worked Contrasts: What a Maintainer Actually Needs to Know
 
-**Illustrative examples, not executable project code or universally correct contracts.** Assume the stated behavior exists in each hypothetical component; before using a similar comment, verify it against the target's complete source, tests, callers and dependency contracts. The snippets use several languages only to expose different engineering situations. Translate natural-language prose to the project's selected language and use its doc-comment syntax. Each lesson concerns **semantic information**, not length.
+**Illustrative examples, not executable project code or universally correct contracts.** Assume the stated behavior exists in each hypothetical component; before using a similar comment, verify it against the target's complete source, tests, callers and dependency contracts. The snippets use several languages only to expose different engineering situations. Translate natural-language prose to the project's selected language and use its doc-comment syntax. Each lesson concerns **semantic information**, not length. The comments should sound like something a developer would explain to a teammate, not like an agent's summary or scoring rubric. Technical terms are welcome where useful, but unexplained abstractions are not.
 
 ## 1. Obvious behavior: no comment is better (TypeScript)
 
@@ -37,7 +37,7 @@ delivery cursors. A cursor advances only after the subscriber acknowledges an
 event, so a disconnected subscriber may receive the last unacknowledged event
 again. Consumers must therefore tolerate duplicate delivery.
 
-The module does not delete events or guarantee end-to-end exactly-once effects.
+This module never deletes events and cannot ensure that the receiver processes each event only once.
 """
 ~~~
 
@@ -93,12 +93,12 @@ def read_page(limit: int, cursor: str | None) -> Page:
 //        |           |
 //        +-----------+-----> cancelled
 //
-// Only the scheduler moves pending to running. The worker may complete a
-// running task while another goroutine requests cancellation; both paths
-// resolve through the same state guard, and only one terminal transition wins.
+// Only the scheduler starts a pending task. A worker can finish just as
+// another goroutine requests cancellation. Both updates use the same lock,
+// so the task ends as either done or cancelled, never both.
 //
-// done and cancelled are terminal. Once either is published, callbacks may
-// observe the result but must not restart or complete the task again.
+// After completion or cancellation, callbacks can read the result, but
+// cannot restart the task or change its final state.
 ~~~
 
 **Why:** the diagram describes reachable transitions, and the prose names the actor, race, winner, and terminal invariant. Verify that the implementation really enforces a single terminal transition.
@@ -116,10 +116,9 @@ defer mu.Unlock()
 **Stronger when these facts are proven:**
 
 ~~~go
-// The token identifies one lease generation, not just the resource. An expiry
-// callback for an older lease can race with renewal of the same resource.
-// Compare the generation and change the lease state under the same lock;
-// otherwise a late callback could cancel the newly renewed lease.
+// A lease can be renewed while the expiry callback from its previous
+// version is still running. Check which version is expiring while holding
+// the lock; otherwise the old callback might cancel the renewed lease.
 mu.Lock()
 defer mu.Unlock()
 ~~~
@@ -138,17 +137,17 @@ reply->deleteLater();
 **Stronger for a finished handler with a `QPointer<Controller> controller`:**
 
 ~~~cpp
-// Completion can race with the controller's teardown. Use the guarded
-// QPointer before passing on the reply data; do not retain the reply itself.
-// Schedule deletion after the last read rather than deleting it while its
-// finished signal is being delivered.
+// The controller may have been destroyed before the reply finishes.
+// QPointer becomes null when that happens, so check it before passing
+// the data on. Read the reply before scheduling its deletion; do not
+// keep the reply after this handler returns.
 if (controller) {
     controller->accept(reply->readAll());
 }
 reply->deleteLater();
 ~~~
 
-**Why:** the comment states ownership and callback-lifetime constraints rather than narrating a cleanup call. The final sentence requires actual cancellation/receiver handling in the target code; it must not be added as a speculative promise.
+**Why:** the comment says what can go wrong during shutdown and why the pointer check and cleanup order matter. This is illustrative: the full handler must still be checked for correct reply and receiver lifetimes.
 
 ## 7. HTTP retry and ambiguous completion (TypeScript)
 
@@ -157,11 +156,10 @@ reply->deleteLater();
 **Stronger for an implementation that retries only declared-safe operations:**
 
 ~~~ts
-// A lost response does not prove that the server skipped the operation.
-// Automatic retry is limited to calls whose server contract permits replay;
-// an unsafe mutation can otherwise be applied twice after a successful
-// commit followed by a connection failure. Leave ambiguous mutations to the
-// caller unless the endpoint provides a verified idempotency mechanism.
+// The connection can fail after the server has already saved the change.
+// Sending the same request again might apply it twice. Retry only operations
+// that the endpoint explicitly allows us to repeat; otherwise the caller
+// must check what happened before trying again.
 ~~~
 
 **Why:** this covers the causality, scope, and consequence of retries. “All POSTs are unsafe” or “GET is always harmless” would be an unjustified universal claim.
@@ -185,8 +183,8 @@ Task SendAsync(Batch batch, CancellationToken cancellationToken);
 /// </param>
 /// <remarks>
 /// Cancellation does not roll back a batch already accepted by the server.
-/// If the acknowledgement is lost, the caller must reconcile the outcome
-/// before replaying a non-idempotent batch.
+/// If the acknowledgement is lost, the caller must check whether the
+/// server accepted the batch before sending it again.
 /// </remarks>
 Task SendAsync(Batch batch, CancellationToken cancellationToken);
 ~~~
@@ -215,10 +213,9 @@ Task SendAsync(Batch batch, CancellationToken cancellationToken);
 **Stronger if the actual synchronization contract confirms it:**
 
 ~~~go
-// Timer callbacks use a separate bounded queue so a backlog of ordinary work
-// cannot prevent expiry processing from being scheduled. This separates the
-// two latency-sensitive consumers; it does not guarantee that callbacks run
-// immediately or in wall-clock order.
+// Timer callbacks have their own limited queue so a backlog of ordinary
+// work cannot delay scheduling of expired timers. Separate queues do not
+// guarantee that callbacks run immediately or in exact time order.
 ~~~
 
 **Why:** it describes the precise purpose and the limit of the guarantee. Avoid claims about benchmarks, speedups, or decisions by previous authors without evidence.
@@ -230,11 +227,10 @@ Task SendAsync(Batch batch, CancellationToken cancellationToken);
 **Stronger for an actual transactional outbox:**
 
 ~~~sql
--- Store the outgoing event in the same transaction as the business change.
--- The dispatcher must not publish it before commit: otherwise consumers could
--- observe an event for a change that later rolls back. A dispatcher retry may
--- deliver the same committed event again, so consumer deduplication remains
--- necessary.
+-- Store the event in the same transaction as the business change.
+-- Publishing it before commit could tell other services about a change
+-- that is later rolled back. The sender may retry and deliver the event
+-- twice, so receivers must detect events they have already handled.
 ~~~
 
 **Why:** this ties the ordering to a real failure mode and explains the delivery consequence. Only use when the schema/dispatcher behavior supports the outbox contract.
@@ -246,9 +242,9 @@ Task SendAsync(Batch batch, CancellationToken cancellationToken);
 **Stronger where the test actually exercises the race:**
 
 ~~~python
-# Reproduce expiry arriving after renewal of the same lease. Cancellation
-# must be generation-scoped: the stale expiry may finish, but the new lease
-# remains active and its notification is not emitted a second time.
+# A timeout from an old lease may arrive after that lease is renewed.
+# The old timeout must not cancel the renewed lease or send a second
+# cancellation notification.
 ~~~
 
 **Why:** it explains which defect the test detects. Ensure synchronization in the test actually controls this interleaving; a comment cannot make a nondeterministic test reliable.
@@ -293,6 +289,28 @@ if config.Enabled {
 ~~~
 
 **Why:** one fact explaining an ordering dependency can replace a series of obvious comments. If startup ordering is not enforced here, that improved comment would also be misleading.
+
+---
+
+## 15. Human explanation instead of an agent-style abstraction (TypeScript)
+
+**Formally technical, but difficult to read:**
+
+~~~ts
+// Enforce request exclusivity invariant to prevent stale asynchronous
+// response propagation across overlapping execution boundaries.
+if (requestInFlight) return
+~~~
+
+**Clearer, when this guard really prevents overlapping requests:**
+
+~~~ts
+// Don't start a second request while the previous one is still running.
+// Otherwise the older response could arrive last and overwrite newer data.
+if (requestInFlight) return
+~~~
+
+**Why:** both comments point toward the same risk, but the second names the real situation and consequence. The goal is not to avoid the terms "async", "invariant" or "race" everywhere. Use them when they genuinely help the intended developers, and explain an unfamiliar mechanism rather than decorating it with jargon. Do not paste an instruction such as "Review the contract" or a generated What/Why/Risk template into source comments.
 
 ---
 
