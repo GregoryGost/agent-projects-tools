@@ -261,7 +261,7 @@ The conditional dependency validator is a bootstrap support file, not an optiona
 
 List only additional rule files active in this project.
 
-- Optional core rules: `<source_code_hygiene.md / none / other>`
+- Optional core rules: `<source_code_hygiene.md / code_comment_quality.md / none / other>`
 - Git rules: `<git.md / none>`
 - C++ rules: `<cpp_core.md / cpp_style.md / cpp_cmake.md / cpp_testing.md / cpp_http_client.md / none>`
 - Qt 6 rules: `<qt_core.md / qt_http_client.md / qt_widgets.md / qt_testing.md / qt_quick_qml.md / none>`
@@ -283,7 +283,7 @@ List only additional rule files active in this project.
 
 List only reusable skills active in this project.
 
-- Code prose / language-policy skills: `<comment-language-audit / none>`
+- Code prose / language-policy skills: `<comment-language-audit / code-comment-quality / none>`
 - C++ skills: `<cpp-core / cpp-style / cpp-cmake / cpp-testing / cpp-http-client / none>`
 - Qt 6 skills: `<qt-core / qt-http-client / qt-widgets / qt-testing / qt-quick-qml / none>`
 - Go skills: `<go-core / go-testing / go-observability / go-security / go-http-client / go-local-cache / go-nats-kv-cache / go-huma-v2 / go-gorm / go-gorm-sqlite-goose / none>`
@@ -302,6 +302,8 @@ List only reusable skills active in this project.
 - Security skills: `<python-backend-security / none / other>`
 - Obsidian skills: `<obsidian-mcp-core / obsidian-llm-wiki / obsidian-taskbook / none>`
 - External-system skills: `<jira-data-center / none / other>`
+
+The recommended code-documentation quality pair for projects with agent-authored source is `.codex/rules/code_comment_quality.md` and `code-comment-quality`. If selected, list **both** independently above; their declared mutual hard dependency requires `material_dependencies.md`. The pair reviews semantic completeness of affected source comments and examples, while `comment-language-audit` is a separate optional language check. Do not treat the template, this recommendation, or file presence as automatic activation; existing target projects require their own explicit profile update.
 
 ## Build And Validation Commands
 

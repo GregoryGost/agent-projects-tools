@@ -1,0 +1,4 @@
+interface:
+  display_name: "Code Comment Quality"
+  short_description: "Evidence-based code documentation and comment review"
+  default_prompt: "Use $code-comment-quality with the active code_comment_quality rule to document real contracts, invariants, rationale and failure cases; select applicable worked examples and review comments for semantic completeness without requiring comment density."
