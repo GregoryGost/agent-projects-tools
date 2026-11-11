@@ -261,7 +261,8 @@ The conditional dependency validator is a bootstrap support file, not an optiona
 
 List only additional rule files active in this project.
 
-- Optional core rules: `<source_code_hygiene.md / code_comment_quality.md / none / other>`
+- Optional core rules: `<source_code_hygiene.md / none / other>`
+- Code comment quality rule: `<code_comment_quality.md / none>` (select together with `code-comment-quality`)
 - Git rules: `<git.md / none>`
 - C++ rules: `<cpp_core.md / cpp_style.md / cpp_cmake.md / cpp_testing.md / cpp_http_client.md / none>`
 - Qt 6 rules: `<qt_core.md / qt_http_client.md / qt_widgets.md / qt_testing.md / qt_quick_qml.md / none>`
@@ -283,7 +284,8 @@ List only additional rule files active in this project.
 
 List only reusable skills active in this project.
 
-- Code prose / language-policy skills: `<comment-language-audit / code-comment-quality / none>`
+- Natural-language code prose audit: `<comment-language-audit / none>`
+- Code comment quality skill: `<code-comment-quality / none>` (select together with `code_comment_quality.md`)
 - C++ skills: `<cpp-core / cpp-style / cpp-cmake / cpp-testing / cpp-http-client / none>`
 - Qt 6 skills: `<qt-core / qt-http-client / qt-widgets / qt-testing / qt-quick-qml / none>`
 - Go skills: `<go-core / go-testing / go-observability / go-security / go-http-client / go-local-cache / go-nats-kv-cache / go-huma-v2 / go-gorm / go-gorm-sqlite-goose / none>`

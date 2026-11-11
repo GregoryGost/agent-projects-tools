@@ -135,14 +135,16 @@ defer mu.Unlock()
 reply->deleteLater();
 ~~~
 
-**Stronger for a handler that follows this lifetime contract:**
+**Stronger for a finished handler with a `QPointer<Controller> controller`:**
 
 ~~~cpp
-// The reply's payload is consumed in this finished handler; no code may keep
-// QNetworkReply or its buffer beyond the handler. Schedule deferred deletion
-// rather than deleting the object while its signal is being delivered.
-// A cancelled request may still complete its callback path, so guard the
-// receiver's lifetime before accessing widget or controller state.
+// Completion can race with the controller's teardown. Use the guarded
+// QPointer before passing on the reply data; do not retain the reply itself.
+// Schedule deletion after the last read rather than deleting it while its
+// finished signal is being delivered.
+if (controller) {
+    controller->accept(reply->readAll());
+}
 reply->deleteLater();
 ~~~
 
@@ -281,8 +283,10 @@ if enabled {
 **Better where a real startup invariant applies:**
 
 ~~~go
-// Start workers only after configuration is committed; otherwise a worker
-// could read a partially updated routing table.
+routing := buildRoutingTable(config)
+publishRoutingTable(routing)
+// Workers must start after publication of the complete routing table;
+// starting earlier would allow a worker to read partially updated routes.
 if config.Enabled {
     startWorker()
 }
