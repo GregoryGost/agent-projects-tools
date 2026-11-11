@@ -184,6 +184,7 @@ max_concurrent_threads_per_session = 4
 | --- | --- |
 | Маршрутизация и общие правила | `request_routing.md`, `material_dependencies.md`, `subagent_coordination.md` (условная активация), `source_code_hygiene.md`, `git.md` |
 | Актуальная техническая документация | `context7_documentation.md` для опционального Context7 MCP retrieval |
+| Содержательность code-adjacent prose | `code_comment_quality.md` + `code-comment-quality`: полнота контрактов, инвариантов и технических обоснований, примеры и антипаттерны |
 | Язык code-adjacent prose | `comment-language-audit` |
 | C++17+ язык и стиль | `cpp_core.md` + `cpp-core`: ownership/RAII, ABI и C interop, concurrency, VS Code diagnostics, clangd/clang-tidy, debugging; `cpp_style.md` + `cpp-style`: .clang-format и безопасная область форматирования |
 | C++ исходящие HTTP-клиенты | `cpp_http_client.md` + `cpp-http-client`: выбранный проектом libcurl/cpr/иной транспорт, HTTP/1.1 и HTTP/2, TLS, безопасные opt-in retries, rate limits, SSE-протокол и изолированные проверки |
@@ -213,6 +214,12 @@ max_concurrent_threads_per_session = 4
 | Obsidian | `obsidian-mcp-core`, `obsidian-llm-wiki`, `obsidian-taskbook` |
 
 Наличие технологии в `.codex/project.template.md` само по себе не означает наличие отдельного rule или skill-пакета. Фактическим источником перечня материалов служат `.codex/rules/` и `.agents/skills/`.
+
+## Качество комментариев к коду
+
+Для языконезависимой смысловой полноты комментариев используйте пару `.codex/rules/code_comment_quality.md` + `code-comment-quality`. Это **взаимная hard dependency**: оба материала должны быть скопированы и явно активированы через `CODEX_PROJECT.md`; для проверки нужен `material_dependencies.md`. При первоначальной настройке проекта с исходным кодом рекомендуем включать оба. Наличие файла или упоминание комментариев в задаче не заменяет активацию. В существующих проектах нужно обновить профиль отдельно; эта версия шаблона не меняет их автоматически.
+
+`.agents/skills/code-comment-quality/references/documentation-patterns.md` описывает выбор уровня и глубины документации; `examples-and-antipatterns.md` содержит сопоставление недостаточных и достаточных объяснений на Python, Go, TypeScript, C#/XML, C++/Qt и SQL. Используются только применимые примеры, а не обязательный шаблон для каждого метода. Комментарии предназначены для разработчика: они должны понятным языком объяснять реальные действия, причины и последствия, а не воспроизводить чек-листы агента или искусственно усложнённые формулировки. Точные технические термины сохраняются там, где без них объяснение потеряет смысл. Проверка охватывает существенные пропуски, непонятные формулировки и устаревшие комментарии при обычном code review в рамках разрешённого изменения. `comment-language-audit` отдельно отвечает за естественный язык и не активируется этой парой.
 
 ## Context7 documentation
 
