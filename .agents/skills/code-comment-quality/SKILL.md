@@ -32,6 +32,7 @@ For any task that creates or changes authored declarations, read the relevant se
 | Resource ownership, architectural trade-offs | Patterns: ownership and decisions; Examples: 2, 9–11 |
 | Local, grouped, destructured and loop variables | Patterns: variable coverage and grouping; Examples: 17, 18, 20 |
 | Test functions, test locals, misleading/stale text | Patterns: tests and maintenance; Examples: 12–14, 21 |
+| Module globals, constants, callbacks and exception bindings | Patterns: declaration coverage and placement; Examples: 22–23 |
 | Human-readable prose versus agent-oriented jargon | Patterns: human-reader check; Examples: 15 |
 
 For a genuinely complex component with multiple relevant dimensions, inspect more than one worked contrast. The references teach reasoning patterns, not required comment layouts.

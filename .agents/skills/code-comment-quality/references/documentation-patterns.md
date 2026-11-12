@@ -32,7 +32,7 @@ for index := range records {
 }
 ~~~
 
-Use the natural language and correct comment syntax selected by the project; these are hypothetical excerpts, not permission to invent contract details.
+Use the natural language and correct comment syntax selected by the project; these are hypothetical excerpts, not permission to invent contract details. See worked examples 22–23 for module-level values, an anonymous callback, and a catch binding.
 
 ## 2. Locate the explanation at the right level
 

@@ -461,6 +461,59 @@ def test_empty_page_returns_no_items():
 
 ---
 
+## 22. Standalone global variable and constant (TypeScript)
+
+**Insufficient:**
+
+~~~ts
+export const MAX_PAGE_ITEMS = 250
+let lastRefreshMs: number | null = null
+~~~
+
+**Documented for a client using this paging and refresh policy:**
+
+~~~ts
+/** Maximum number of records this client requests in a single page. */
+export const MAX_PAGE_ITEMS = 250
+
+// Time of the last successful refresh in milliseconds, or null if
+// this module has not completed a refresh yet.
+let lastRefreshMs: number | null = null
+~~~
+
+**Why:** constants and module variables require the same coverage as fields. Their descriptions explain the meaning, use and units of their values.
+
+## 23. Anonymous callback, its parameter, locals and a catch binding (TypeScript)
+
+**Documented:**
+
+~~~ts
+/**
+ * Watches for a socket closing and reports the reason.
+ * connection is the socket whose close events will be observed.
+ */
+function watchConnection(connection: WebSocket): void {
+    // onClose runs after the socket closes. Its event parameter contains
+    // the close reason; the callback sends that reason to the logger.
+    const onClose = (event: CloseEvent): void => {
+        // reason is the description received with this close event,
+        // or "unknown" when the event contains no reason.
+        const reason = event.reason || "unknown"
+        try {
+            reportDisconnect(reason)
+        } catch (error) {
+            // error is the failure returned by the disconnect reporter.
+            logDisconnectFailure(error)
+        }
+    }
+    connection.addEventListener("close", onClose)
+}
+~~~
+
+**Why:** the named function has its own block, the anonymous function is documented through the declaration that owns it, and its parameter and local/catch bindings are explained. This is a hypothetical fragment: validate the real callback lifecycle, error contract and listener cleanup instead of copying it blindly.
+
+---
+
 ## Calibrate by consequence, not size
 
 Each authored declaration in the affected scope requires a documentation block or an explicit grouped-variable explanation, even when its implementation is short. Some examples above focus on a fragment of a larger function; they do **not** waive documentation for the enclosing function or other variables in real source. A complex public boundary can need several paragraphs and a transition table. Keep every necessary fact, without filler or invented guarantees.
