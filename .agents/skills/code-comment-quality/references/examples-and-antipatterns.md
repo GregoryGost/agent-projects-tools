@@ -502,8 +502,8 @@ function watchConnection(connection: WebSocket): void {
         try {
             reportDisconnect(reason)
         } catch (error) {
-            // error is the failure returned by the disconnect reporter.
-            logDisconnectFailure(error)
+            // error is the exception thrown while reporting this disconnect.
+            logDisconnectFailure(String(error))
         }
     }
     connection.addEventListener("close", onClose)
