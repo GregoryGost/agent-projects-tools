@@ -16,17 +16,22 @@ class Task {
 **Correct for a task whose ID is stored at construction:**
 
 ~~~ts
-/** Holds the identifier assigned to a task when it is created. */
+/** Keeps the identifier assigned when this task is created. */
 class Task {
-    /** Identifier received from the code that creates this task. */
-    private id: string
+    /** Identifier supplied by the task creator. */
+    private readonly id: string
 
-    /** Returns the task's stored identifier without modifying the task. */
+    /** Creates a task that stores the given identifier. 
+     * @param id Identifier assigned by the calling code.
+     */
+    constructor(id: string) { this.id = id }
+
+    /** Returns the stored identifier without changing the task. */
     idValue(): string { return this.id }
 }
 ~~~
 
-**Why:** every authored declaration has documentation, even though the method is one line. The comments explain the role of the field and the method rather than leaving them undocumented. Do not invent immutability or uniqueness unless the real implementation guarantees it.
+**Why:** even the one-line method is documented. The field, constructor, parameter, and accessor have distinct roles and explanations. The example's `readonly` modifier supports its non-reassignment property; do not infer that other implementations provide the same guarantee.
 
 ## 2. Module role and shared invariants (Python)
 
@@ -303,7 +308,7 @@ if config.Enabled {
 }
 ~~~
 
-**Why:** one fact explaining an ordering dependency can replace a series of obvious comments. If startup ordering is not enforced here, that improved comment would also be misleading.
+**Why:** the useful comments explain what `routing` stores and why the sequence matters, rather than narrating each operation. If startup ordering is not enforced here, the proposed explanation would be misleading.
 
 ---
 
@@ -329,7 +334,7 @@ if (requestInFlight) return
 
 ---
 
-## 16. Short method, field and constant (Go)
+## 16. Short method and field (Go)
 
 **Missing documentation (not acceptable):**
 

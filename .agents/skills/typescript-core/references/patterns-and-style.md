@@ -297,7 +297,10 @@ const createdAtMs = createdAtSeconds * 1000
 ### Small method with required documentation
 
 ```ts
-/** Returns the currently stored record count without changing the collection. */
+/**
+ * Returns the number of records currently supplied, without changing them.
+ * @param records Collection whose elements are counted.
+ */
 function recordCount(records: readonly Record[]): number {
   return records.length
 }
