@@ -128,7 +128,7 @@ This is guidance for the author, **not** a set of headings to insert into source
 - Do not treat any single word or sentence form as forbidden: a nominal explanation can accurately describe a value object, and specialist terminology may be essential.
 - Verify every asserted action or lifetime rule against source and actual contracts. Do not add invented behavior just to complete the prose.
 
-**Maintainer test:** can a colleague tell what the component actually does or represents, without mentally translating the sentence back into English? Examples 24–25 illustrate Russian-specific failures and distinct possible contracts.
+**Maintainer test:** can a colleague tell what the component actually does or represents, without mentally translating the sentence back into English? Examples 24–28 illustrate Russian-specific failures, distinct contracts, and role-specific phrasing.
 
 ## 10. Russian description style by declaration kind
 
