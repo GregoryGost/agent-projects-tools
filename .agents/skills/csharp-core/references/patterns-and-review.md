@@ -5,15 +5,22 @@ These examples are portable defaults. Existing project contracts and active fram
 ## Good: narrow immutable input contract
 
 ```csharp
+/// <summary>Stores a movement direction and requested speed for a single move.</summary>
 public sealed class MoveRequest
 {
+    /// <summary>Creates a move request without changing either input value.</summary>
+    /// <param name="direction">Direction in which the move should occur.</param>
+    /// <param name="speed">Requested speed of the move.</param>
     public MoveRequest(Vector2 direction, float speed)
     {
         Direction = direction;
         Speed = speed;
     }
 
+    /// <summary>Direction supplied for this move.</summary>
     public Vector2 Direction { get; }
+
+    /// <summary>Speed supplied for this move.</summary>
     public float Speed { get; }
 }
 ```

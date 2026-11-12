@@ -305,7 +305,7 @@ List only reusable skills active in this project.
 - Obsidian skills: `<obsidian-mcp-core / obsidian-llm-wiki / obsidian-taskbook / none>`
 - External-system skills: `<jira-data-center / none / other>`
 
-The recommended code-documentation quality pair for projects with agent-authored source is `.codex/rules/code_comment_quality.md` and `code-comment-quality`. If selected, list **both** independently above; their declared mutual hard dependency requires `material_dependencies.md`. The pair reviews semantic completeness of affected source comments and examples, while `comment-language-audit` is a separate optional language check. Do not treat the template, this recommendation, or file presence as automatic activation; existing target projects require their own explicit profile update.
+The recommended code-documentation quality pair for projects with agent-authored source is `.codex/rules/code_comment_quality.md` and `code-comment-quality`. If selected, list **both** independently above; their declared mutual hard dependency requires `material_dependencies.md`. The pair **requires documentation of every authored function/method, field, constant and variable within affected definitions**, including local/loop bindings, with sufficient, human-readable content. Variable groups must explicitly name and explain each binding. `comment-language-audit` is a separate optional language check. Do not treat the template, this recommendation, or file presence as automatic activation; existing target projects require their own explicit profile update.
 
 ## Build And Validation Commands
 
