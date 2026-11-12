@@ -59,6 +59,10 @@ Prefer explicit types at public or integration boundaries and keep local variabl
 - Do not change exported type names or shapes without checking consumers.
 - Do not add dependencies for type convenience without project policy or user approval.
 
+## Source comment coverage when selected
+
+When `code_comment_quality.md` + `code-comment-quality` is independently active, every authored affected function, method, callback, field, constant and variable binding (including destructuring, locals and loop variables) must have meaningful documentation at its declaration or in an explicit named-variable group. Use existing JSDoc/TSDoc conventions where applicable. A short function or clear identifier does not waive documentation; this skill does not activate the pair.
+
 ## Review Checklist
 
 - [ ] Project profile and TypeScript profile were checked.

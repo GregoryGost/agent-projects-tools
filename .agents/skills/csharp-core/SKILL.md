@@ -58,6 +58,10 @@ Load references when needed:
 - Do not infer framework compatibility from a generated IDE project file.
 - Do not change reflection/serialization/framework callback contracts as a cleanup side effect.
 
+## Code documentation when the comment-quality pair is active
+
+When `code_comment_quality.md` + `code-comment-quality` is independently active, document every new/affected method (including constructors, accessors and short helpers), field, property, constant, and local/loop variable in the authorized affected scope. Use the project's XML documentation conventions for APIs and comments or explicitly mapped groups for variable bindings. Explain the real behavior, not just the symbol name. This skill does not activate the pair.
+
 ## Review checklist
 
 - [ ] Language/runtime constraints were established.

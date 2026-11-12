@@ -274,23 +274,33 @@ Use the target project's error/result convention instead of introducing a new on
 
 ## Comments And Documentation
 
-- Preserve project natural-language policy.
-- Use comments to explain non-obvious decisions, invariants, and integration constraints.
-- Do not add comments that repeat obvious code.
-- Keep JSDoc/TSDoc style consistent with the existing project.
+- Preserve the project's natural-language policy and its existing JSDoc/TSDoc format.
+- When the independent `code_comment_quality.md` + `code-comment-quality` pair is active, every authored affected function/method and variable binding must be documented. Use an individual block or a group that identifies and explains each variable; do not omit documentation based on brevity or naming.
+- Describe actual purpose and behavior. A comment that only repeats a symbol name is insufficient; replace it with meaningful technical information, not with absence of documentation.
+- For complex code, explain real contracts, invariants, concurrency or integration constraints in enough detail for another developer.
 
-### Bad: obvious comment
+### Insufficient: a label instead of a meaning
 
 ```ts
-// Increment count by one.
-count += 1
+// Timestamp.
+const createdAtMs = createdAtSeconds * 1000
 ```
 
-### Good: explain invariant or boundary
+### Better: explain the stored value and conversion
 
 ```ts
-// The backend stores timestamps in seconds; UI code expects milliseconds.
+// Time this record was created, expressed in milliseconds for the UI.
+// The backend supplies seconds, so convert the value before storing it.
 const createdAtMs = createdAtSeconds * 1000
+```
+
+### Small method with required documentation
+
+```ts
+/** Returns the currently stored record count without changing the collection. */
+function recordCount(records: readonly Record[]): number {
+  return records.length
+}
 ```
 
 ## Formatting
