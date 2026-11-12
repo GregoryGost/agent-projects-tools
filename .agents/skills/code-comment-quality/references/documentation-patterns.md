@@ -137,7 +137,7 @@ Choose the **meaning first**, then a natural way to express it. Prefer third-per
 | Declaration | Russian description when the code supports it | What to avoid |
 | --- | --- | --- |
 | Active class (reader, HTTP client, adapter, coordinator) | "Читает конфигурацию и возвращает настройки...", "Отправляет запросы через переданный транспорт..." | Describe only its data or name; attribute storage/ownership it does not implement |
-| Class that actually keeps data | "Хранит записи по ключам в словаре экземпляра..." | Assume every class called `Cache` itself stores or serializes values |
+| Class that actually keeps data | "Хранит записи по ключам в словаре экземпляра..." | Assume internal storage or serialization solely from a name rather than inspecting the implementation |
 | Value object / configuration record | "Содержит параметры...", "Параметры отображения графа..." | Force an action verb when the object is only a data container |
 | Function or method | "Открывает файл и возвращает поток...", "Закрывает переданный поток...", "Заменяет фрагмент и возвращает результат..." | Bare "Открыть...", "Закрыть...", "Заменить..." that reads as an instruction and omits the actual result |
 | Field, property, local variable | "Путь к файлу, который будет открыт...", "Время последнего успешного обновления..." | A meaningless noun/name paraphrase or an invented lifecycle guarantee |
