@@ -33,7 +33,7 @@ For any task that creates or changes authored declarations, read the relevant se
 | Local, grouped, destructured and loop variables | Patterns: variable coverage and grouping; Examples: 17, 18, 20 |
 | Test functions, test locals, misleading/stale text | Patterns: tests and maintenance; Examples: 12–14, 21 |
 | Module globals, constants, callbacks and exception bindings | Patterns: declaration coverage and placement; Examples: 22–23 |
-| Human-readable prose versus agent-oriented jargon | Patterns: human-reader check; Examples: 15 |
+| Human-readable prose, source-language calques and Russian examples | Patterns: natural-language check; Examples: 15, 24–25 |
 
 For a genuinely complex component with multiple relevant dimensions, inspect more than one worked contrast. The references teach reasoning patterns, not required comment layouts.
 
@@ -43,8 +43,8 @@ For a genuinely complex component with multiple relevant dimensions, inspect mor
 2. **Inventory declarations.** Identify every function/method, callback, class field, constant, module/global variable, local and temporary, loop/index, destructured and exception binding, plus test functions and locals inside the affected owned definitions. Include short and private declarations.
 3. **Map each declaration to documentation.** Give every named function/method its own block; put local/field comments beside declarations or in a nearby group that **explicitly names every covered variable and its purpose**. Cover parameters inside their function block. If syntax prevents an independent block on a callback, explain that callback in the containing declaration's attached block.
 4. **Determine required content.** For functions, explain purpose and behavior; add relevant inputs, outputs, errors, side effects and constraints. For variables, explain the value's meaning, origin/use and any material units, updates or lifetime. Expand complex state, ownership, algorithms or races sufficiently; never manufacture details.
-5. **Write for a human developer.** Use specific, naturally phrased sentences and appropriate technical vocabulary, not agent-oriented labels or rote templates. A concise description is mandatory when complete; a complex declaration requires the full relevant explanation.
-6. **Verify and audit.** Re-read the code and every declaration against the documentation inventory, including pre-existing bindings within the affected definition. Check factual accuracy, meaningful coverage and native doc-comment syntax. Replace misleading or tautological blocks with useful explanations; never fix a missing comment by omitting the declaration's documentation.
+5. **Write for a human developer.** Use specific, naturally phrased sentences and appropriate technical vocabulary, not agent-oriented labels or rote templates. For Russian comments, translate the actual semantics rather than the surface form of English phrases like 'own', 'manage' or 'settings for one graph'. A concise description is mandatory when complete; a complex declaration requires the full relevant explanation.
+6. **Verify and audit.** Re-read the code and every declaration against the documentation inventory, including pre-existing bindings within the affected definition. Check factual accuracy, meaningful coverage, native doc-comment syntax, and whether the wording would sound natural when explaining the element to another developer in the target language. Use the conditional Russian contrasts in examples 24–25. Correct literal calques, vague labels, and inaccurate blocks without inventing behaviors or deleting required documentation.
 
 ## Review and handoff
 

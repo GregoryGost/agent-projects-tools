@@ -37,6 +37,17 @@ Write comments **for another developer who must understand, debug, or change thi
 - Make the prose readable in the project's chosen natural language. Do not copy internal task analysis, prompts, reviewer checklists, or English-language constructions into source comments. Use ordinary, grammatically natural language rather than a literal translation of reference examples.
 - Explain a real mechanism at the detail necessary for safe maintenance; do not trade away important conditions or guarantees merely to shorten the text.
 
+## Russian and other natural-language explanations
+
+A grammatically possible phrase is not necessarily useful documentation. Check the **verified role or behavior**, not just whether the comment has words.
+
+- Do not convert a code identifier into an untranslated topic label or an imperative task. Explain what the element does, contains, returns, or changes, and why that matters here.
+- Reject literal calques of English technical idioms when they hide the actual meaning. For example, "Владеть транспортом интеграции" does not explain whether the HTTP client creates, uses, or closes the transport. Find the actual resource-lifetime contract and describe that in normal Russian.
+- "Настройки одного графа" may label a data object but is incomplete for a configuration **reader**. If the class reads a graph's configuration, explain the reading operation and its verified result; do not invent parsing, validation, or return semantics.
+- Keep Russian case agreement, idiomatic word order, and coherent subjects and actions. Prefer natural developer-to-developer prose to a word-for-word English translation, isolated infinitives that read like task instructions, and opaque noun stacks.
+- Do **not** mechanically ban infinitives, noun phrases, precise technical vocabulary, or short blocks. They are acceptable when they communicate the actual meaning naturally.
+- This meaning/readability check is part of **this** rule even if the optional `comment-language-audit` skill is not active; that skill adds deeper language-focused review.
+
 ## Evidence, accuracy, and upkeep
 
 - Ground each factual comment in the real implementation, callers, tests, project contracts, or verified platform/API behavior. Do not invent design history, alternative approaches that were never considered, concurrency guarantees, or external-service behavior.
@@ -56,7 +67,7 @@ On the affected stable source snapshot:
 1. **Inventory every named function/method and every variable, field and constant** within the authorized affected definitions, including private and short methods, loop and destructured bindings, callbacks and tests.
 2. Check each function/method for its **own** attached explanatory block. Check each variable for an adjacent explanation or a group block that **names it and explains its meaning**. Parameters may live in the method block.
 3. Independently verify the content: purpose and actual behavior, applicable contracts, reasons, constraints and outcomes; no tautologies, gaps or fictitious guarantees.
-4. Check for direct, natural wording understandable to a human developer, with necessary technical terms preserved.
+4. Check for natural, complete explanations in the selected language, not just formal grammatical correctness. Identify word-for-word translations, task-style fragments, and class-name paraphrases when they fail to explain the verified purpose or behavior. Preserve valid concise noun phrases and necessary technical terms.
 5. Report **missing mandatory documentation** and insufficient or stale comments as actionable findings, with exact path/line and the smallest correction. Do not waive the finding because a declaration is short or its name appears descriptive.
 
 The mere presence or number of comment lines does not establish quality. Review the skill's applicable patterns and examples; do not use unrelated documentation rewrites to satisfy the check.

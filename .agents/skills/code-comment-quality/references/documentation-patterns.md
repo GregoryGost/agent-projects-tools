@@ -118,7 +118,19 @@ The patterns and review questions in this document are **instructions for the au
 
 **Human-reader check:** after reading the comment alone, can a developer say what might go wrong and why the code prevents it, in plain technical language? If not, simplify the *wording* or add the missing concrete cause, rather than deleting necessary facts.
 
-## 9. Maintenance and change discipline
+## 9. Natural-language checks for code comments
+
+This is guidance for the author, **not** a set of headings to insert into source comments.
+
+- Recover the real meaning first. English "own" can mean that the component creates and closes a resource, borrows it, or is responsible for a resource owned elsewhere. Those cases require different comments.
+- Name the declaration's action when a class actually reads a configuration; a mere noun phrase describing the data it handles can hide its responsibility.
+- Reject word-for-word calques and machine-like noun stacks when they obscure meaning. Use fluent grammar and normal word order in the configured language.
+- Do not treat any single word or sentence form as forbidden: a nominal explanation can accurately describe a value object, and specialist terminology may be essential.
+- Verify every asserted action or lifetime rule against source and actual contracts. Do not add invented behavior just to complete the prose.
+
+**Maintainer test:** can a colleague tell what the component actually does or represents, without mentally translating the sentence back into English? Examples 24–25 illustrate Russian-specific failures and distinct possible contracts.
+
+## 10. Maintenance and change discipline
 
 A behavior change may invalidate a comment that is physically outside the modified lines. Inspect directly dependent comments and examples within the permitted scope. Correct or remove stale promises. Do not initiate a repository-wide documentation campaign, generate speculative explanations, or alter executable behavior merely to make a comment sound complete.
 
