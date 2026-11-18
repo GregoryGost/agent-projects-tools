@@ -5,7 +5,7 @@ description: "Use for Go GORM models, repositories, CRUD, queries, associations,
 
 # Go GORM
 
-Backend-independent GORM expertise. Database-specific driver, migrations, PRAGMAs and locking belong to an active backend overlay.
+Backend-independent GORM expertise. Database-specific driver, migrations, PRAGMAs and locking belong to a matching active backend overlay when available; otherwise verify against the actual server version, driver, official documentation and authorized integration tests. Do not reuse a different database's overlay as a substitute.
 
 ## Required Dependencies
 
@@ -32,7 +32,7 @@ GORM Traditional API and Generics API differ: `gorm.G[T]` is available in GORM 1
 - Translate known persistence errors into stable repository/domain errors; GORM `TranslateError` is optional and dialect/version dependent.
 - For multiple writes use `db.Transaction(func(tx *gorm.DB) error {...})` and exclusively use `tx` inside its callback. Return error for rollback and nil for commit.
 - Keep transactions short, never perform HTTP requests or long computations inside them, and avoid surprising commits in individual repository methods.
-- Treat GORM transactions as local to the actual database transaction. For cross-service consistency, escalate verified workflow/recovery needs to the architecture decision; do not infer Saga or stored procedures merely from multi-table writes, events or ORM limits. Backend-specific routine support, execution and migration contracts belong to an active database overlay.
+- Treat GORM transactions as local to the actual database transaction. For cross-service consistency, escalate verified workflow/recovery needs to the architecture decision; do not infer Saga or stored procedures merely from multi-table writes, events or ORM limits. For approved database routines, keep execution in data-access code and verify actual driver/engine invocation, transaction ownership, errors/results, privileges and versioned migrations through the matching active overlay or version-matched official sources when no overlay exists.
 - Reusing unscoped query state can leak conditions; use fresh sessions for distinct operations and do not assume chained `*gorm.DB` is an immutable singleton.
 - Avoid N+1 and accidental eager loading. Use `Preload` / `Joins` intentionally and confirm SQL/latency with actual query evidence.
 - Require deliberate filters/constraints for `Update` / `Delete`; verify row counts and optimistic concurrency where contract demands it.
