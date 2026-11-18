@@ -341,6 +341,24 @@ Typed runtime patterns, build/artifact workflow, canonical postbuild asset polic
 
 Официальные NATS и `nats.py` источники, version/feature precedence и границы stream-level возможностей перечислены в `.agents/skills/python-nats-kv-cache/references/official-sources.md`.
 
+## Переносимость database-архитектуры и границы покрытия СУБД
+
+Общие решения о Saga, локальных транзакциях, компенсирующих шагах, Transactional Outbox и выборе хранимых процедур принадлежат системным архитекторам и `database_architect` независимо от СУБД. Это не равнозначно наличию специализированного скилла для каждого SQL-диалекта.
+
+| СУБД | Общая работа с архитектурой и ORM | Специализированное покрытие в репозитории |
+| --- | --- | --- |
+| SQLite | `database_architect`, `python-sqlalchemy-core`, `go-gorm` по активному стеку | `python-sqlalchemy-sqlite`, `go-gorm-sqlite-goose` (при точном совпадении стека) |
+| MySQL | То же для выбранного стека | `python-sqlalchemy-mysql` только через SQLAlchemy 2.x + `aiomysql` |
+| PostgreSQL | `database_architect`, `python-sqlalchemy-core` / `go-gorm` по активному стеку | Нет отдельного backend-specific скилла |
+| Microsoft SQL Server | `database_architect`, `python-sqlalchemy-core` / `go-gorm` по активному стеку | Нет отдельного backend-specific скилла |
+| MariaDB и другие | Общие материалы только при подходящем активном стеке | Отдельная совместимость не заявлена |
+
+Если специального скилла нет, агент устанавливает точные СУБД/версию/редакцию, драйвер и фактическую конфигурацию, затем проверяет значимые гарантии по документации производителя и разрешённым интеграционным испытаниям. Отсутствие специального скилла **не разрешает** использовать инструкции MySQL вместо PostgreSQL или Microsoft SQL Server. Непроверенное поведение обозначается как неизвестное; новый скилл или зависимость автоматически не создаётся.
+
+Для **Microsoft SQL Server** особенно важно различать табличные подсказки `WITH (UPDLOCK)`, `WITH (HOLDLOCK)`, `WITH (ROWLOCK)`, `WITH (READPAST)` и другие `table hints`, уровень транзакционной изоляции `SNAPSHOT` и настройку базы `READ_COMMITTED_SNAPSHOT`. Табличная подсказка `WITH (SNAPSHOT)` относится **только к memory-optimized таблицам**, а не заменяет snapshot isolation обычных таблиц; универсальной подсказки `WITH (LOCK)` нет. Применимость и влияние hints на конкуренцию проверяют для фактической версии, режима блокировок и типа таблицы; не добавляют их по умолчанию. Для хранимых T-SQL процедур отдельно оценивают `EXEC`, `TRY...CATCH`, `XACT_STATE()`, `@@TRANCOUNT`, `XACT_ABORT`, права `EXECUTE AS`, совместимость выбранных DBAPI/ODBC-драйверов и поведение локального шага Saga.
+
+Официальные источники для этой проверки: [SQL Server table hints](https://learn.microsoft.com/en-us/sql/t-sql/queries/hints-transact-sql-table), [SQL Server locking/row versioning](https://learn.microsoft.com/en-us/sql/relational-databases/sql-server-transaction-locking-and-row-versioning-guide), [SQL Server transaction isolation](https://learn.microsoft.com/en-us/sql/t-sql/statements/set-transaction-isolation-level-transact-sql), [SQLAlchemy SQL Server dialect](https://docs.sqlalchemy.org/en/20/dialects/mssql.html), [SQLAlchemy PostgreSQL dialect](https://docs.sqlalchemy.org/en/20/dialects/postgresql.html). Для конкретного проекта выбирают документацию его версии и редакции.
+
 ## Профиль Python SQLAlchemy MySQL
 
 Skill `python-sqlalchemy-mysql` предназначен для SQLAlchemy 2.x с MySQL через async driver `aiomysql` и всегда требует базовый skill `python-sqlalchemy-core`.
