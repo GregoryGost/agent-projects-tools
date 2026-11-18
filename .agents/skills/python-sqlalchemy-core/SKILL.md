@@ -41,7 +41,7 @@ Use this skill when creating, changing, or reviewing:
 - DB integration tests;
 - migration-policy coordination.
 
-Do not infer backend-specific guarantees from this skill alone. If a matching database-specific skill is active, apply it for driver, pooling, isolation, migration, lock or SQL-dialect details. If none exists for the project's actual backend (for example PostgreSQL or Microsoft SQL Server), verify the affected behavior using the exact server/dialect/driver documentation and authorized real-backend tests; report unsupported or unverified claims. Never activate MySQL/SQLite materials by analogy.
+Backend-specific guarantees require evidence from the selected engine, version, dialect, driver and configuration. Apply matching active backend-specific skills when available. When none exists (for example for PostgreSQL or Microsoft SQL Server), use official version-matched documentation and authorized real-backend tests, distinguishing verified support from unknown behavior. Techniques described for other backends may be considered as alternatives; compare their equivalent implementations, transaction/locking/error semantics and operational trade-offs in the target backend before deciding. Skill activation remains governed by the project profile rather than by similarity between engines.
 
 ## Repository-First Database Access
 
