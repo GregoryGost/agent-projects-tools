@@ -41,7 +41,7 @@ Use this skill when creating, changing, or reviewing:
 - DB integration tests;
 - migration-policy coordination.
 
-Do not use this skill alone for backend-specific decisions. Apply the active database-specific skill when the task depends on driver behavior, pooling behavior, isolation behavior, migration syntax, lock behavior, or database-specific SQL.
+Do not infer backend-specific guarantees from this skill alone. If a matching database-specific skill is active, apply it for driver, pooling, isolation, migration, lock or SQL-dialect details. If none exists for the project's actual backend (for example PostgreSQL or Microsoft SQL Server), verify the affected behavior using the exact server/dialect/driver documentation and authorized real-backend tests; report unsupported or unverified claims. Never activate MySQL/SQLite materials by analogy.
 
 ## Repository-First Database Access
 
@@ -81,7 +81,8 @@ Do not use this skill alone for backend-specific decisions. Apply the active dat
 - Do not perform external HTTP calls, slow computations, sleeps, cache calls, filesystem scans, or network operations while holding a write transaction.
 - Perform cache invalidation or external side effects only after a successful commit.
 - If the transaction rolls back, cache state and external side effects must remain unchanged unless a project-specific compensation flow exists.
-- A SQLAlchemy unit of work is local to its actual transactional boundary. When a verified business operation spans independent services or commits, surface its consistency and recovery requirements for architecture review; neither Saga nor a stored procedure follows automatically from multiple repositories or messages. Database-specific routine capabilities and call semantics belong to the active backend skill.
+- A SQLAlchemy unit of work is local to its actual transactional boundary. When a verified business operation spans independent services or commits, surface its consistency and recovery requirements for architecture review; neither Saga nor a stored procedure follows automatically from multiple repositories or messages.
+- When an approved design uses a stored routine, keep the invocation and SQL parameters within the repository/data-access boundary. Verify the backend's procedure/function invocation syntax, driver result sets and OUT parameters, transaction ownership, handled-error/status semantics, effective privileges, versioned deployment and real-backend tests. Do not assume that `CALL`, `EXEC` or driver APIs have interchangeable contracts, that a routine commits automatically, or that it supplies distributed atomicity. Use the matching active backend-specific skill when available; otherwise verify from official version-matched sources.
 
 ## Query Correctness And Performance
 
