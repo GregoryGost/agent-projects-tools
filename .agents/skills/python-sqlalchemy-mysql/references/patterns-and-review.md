@@ -1135,7 +1135,7 @@ When the active Python version is not present in current `aiomysql` classifiers 
 ### Stored Procedures (Only If Selected)
 
 - [ ] A database-local need justifies the routine over ordinary SQLAlchemy/SQL, constraints and atomic DML; no procedure is required merely because Saga is in use.
-- [ ] CALL does not secretly COMMIT/ROLLBACK a caller-owned transaction; the routine's error and return contract is verified through the real driver.
+- [ ] CALL transaction ownership is explicit: caller-owned units of work use routines without independent COMMIT/ROLLBACK, while self-managed routines are invoked under a compatible, separately verified contract. Error and return handling are tested through the real driver.
 - [ ] Routine creation/replacement, signatures and permissions use approved versioned migrations and a backward-compatible deployment sequence.
 - [ ] SQL SECURITY/EXECUTE privileges and tenant access are tested on the actual server; a routine is not treated as a distributed transaction.
 - [ ] Authorized integration tests cover commit/rollback, failures, concurrent calls and any saga-step replay/compensation behavior that the approved workflow promises.
