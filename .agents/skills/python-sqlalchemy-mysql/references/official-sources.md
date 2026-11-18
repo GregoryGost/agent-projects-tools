@@ -116,6 +116,9 @@ The `aiomysql` `sa` optional dependency remains tied to SQLAlchemy versions belo
   - <https://dev.mysql.com/doc/refman/8.4/en/stored-program-restrictions.html>
 - Stored-object DEFINER/INVOKER access, orphan DEFINER accounts and least privilege:
   - <https://dev.mysql.com/doc/refman/8.4/en/stored-objects-security.html>
+- Error and condition handling (CONTINUE/EXIT, SIGNAL/RESIGNAL), including OUT/INOUT propagation on errors:
+  - <https://dev.mysql.com/doc/refman/8.4/en/declare-handler.html>
+  - <https://dev.mysql.com/doc/refman/8.4/en/conditions-and-parameters.html>
 - Session-scoped user variables used for SQL-level OUT/INOUT parameters:
   - <https://dev.mysql.com/doc/refman/8.4/en/user-variables.html>
 - `aiomysql` cursor `callproc()` OUT/INOUT behavior and `nextset()` requirements:
