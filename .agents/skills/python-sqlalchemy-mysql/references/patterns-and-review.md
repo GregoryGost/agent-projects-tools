@@ -1140,7 +1140,7 @@ When the active Python version is not present in current `aiomysql` classifiers 
 - [ ] SQL SECURITY defaults to DEFINER unless chosen otherwise. Check caller EXECUTE rights and tenant boundaries; with DEFINER, confirm an existing least-privilege definer account, or with INVOKER check the invoking account's permissions. Avoid orphan definer metadata; verify the saved SQL mode for the routine body and the invoker's SQL mode for CALL argument evaluation and parameter assignment. A routine is not treated as a distributed transaction.
 - [ ] For `aiomysql` `callproc()` with OUT/INOUT or multiple result sets, verify complete result-set consumption, reading output variables on the same pooled connection and safe session-variable cleanup/reuse; never treat the returned input arguments as the output values.
 - [ ] If an approved local business operation uses a transactional outbox (whether part of Saga, TCC or neither), integration tests confirm that its routine/app SQL and outbox row share one commit: failures cannot leave committed business state without the required outbox row, or publish an outbox event for a rolled-back step.
-- [ ] Authorized integration tests cover commit/rollback, failures, concurrent calls and any saga-step replay/compensation behavior that the approved workflow promises.
+- [ ] Authorized integration tests cover commit/rollback, failures and concurrent calls. When a routine implements an approved Saga or TCC participant, also check the relevant replay/compensation or Try/Confirm/Cancel outcomes, idempotency and failure recovery promised by that workflow; do not add those tests for unrelated routines.
 
 ### InnoDB And Concurrency
 
