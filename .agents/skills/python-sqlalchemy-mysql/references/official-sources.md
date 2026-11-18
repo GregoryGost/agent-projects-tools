@@ -112,6 +112,8 @@ The `aiomysql` `sa` optional dependency remains tied to SQLAlchemy versions belo
   - <https://dev.mysql.com/doc/refman/8.4/en/create-procedure.html>
 - CALL statement and procedure parameters:
   - <https://dev.mysql.com/doc/refman/8.4/en/call.html>
+- Rollback limits for nontransactional tables touched by procedures or triggers:
+  - <https://dev.mysql.com/doc/refman/8.4/en/nontransactional-tables.html>
 - Stored-program restrictions, including transaction statements and procedure/function differences:
   - <https://dev.mysql.com/doc/refman/8.4/en/stored-program-restrictions.html>
 - Stored-object DEFINER/INVOKER access, orphan DEFINER accounts and least privilege:
