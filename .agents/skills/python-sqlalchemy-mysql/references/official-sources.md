@@ -114,7 +114,9 @@ The `aiomysql` `sa` optional dependency remains tied to SQLAlchemy versions belo
   - <https://dev.mysql.com/doc/refman/8.4/en/call.html>
 - Stored-program restrictions, including transaction statements and procedure/function differences:
   - <https://dev.mysql.com/doc/refman/8.4/en/stored-program-restrictions.html>
-- Match the routine contract and permitted SQL to the deployed MySQL version, not just the documentation above.
+- Stored-object DEFINER/INVOKER access, orphan DEFINER accounts and least privilege:
+  - <https://dev.mysql.com/doc/refman/8.4/en/stored-objects-security.html>
+- Match the routine contract, creation-time SQL mode and permitted SQL to the deployed MySQL version, not just the documentation above.
 
 ## MySQL 8.4 DDL And Metadata Locks
 
