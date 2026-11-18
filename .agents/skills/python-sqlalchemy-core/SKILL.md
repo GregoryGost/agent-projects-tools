@@ -94,7 +94,7 @@ Backend-specific guarantees require evidence from the selected engine, version, 
 - Avoid N+1 queries. Use explicit eager loading, aggregate queries, projection queries, or repository methods that return pre-shaped read models.
 - Use pagination for list endpoints and repository list methods.
 - Avoid returning unbounded result sets from repositories used by API handlers.
-- Keep backend-specific query-plan inspection in the active database-specific skill.
+- For backend-specific query-plan inspection, use the matching active skill when available; otherwise verify the target engine's plan tools, interpretation and limits from version-matched documentation and authorized query-plan evidence.
 
 ## Error Mapping
 
@@ -118,7 +118,7 @@ Backend-specific guarantees require evidence from the selected engine, version, 
 - Follow the migration policy declared in `CODEX_PROJECT.md`.
 - Do not introduce Alembic, raw SQL migrations, migration runners, or replacement tooling unless the user explicitly approves or the repository already standardizes on it.
 - Migration changes must be deterministic, reviewable, and covered by tests appropriate to the active database backend.
-- Database-specific migration syntax, lock behavior, online/offline migration behavior, and rollback policy belong to the active database-specific skill.
+- For database-specific migration syntax, locking, online/offline execution and rollback, use the matching active skill when available. Otherwise verify the actual database version and migration runner against version-matched documentation and authorized isolated tests.
 
 ## Testing Requirements
 
@@ -130,14 +130,14 @@ Backend-specific guarantees require evidence from the selected engine, version, 
 - Test constraint violations through repository methods and assert the typed repository/domain errors they expose.
 - Verify that raw SQLAlchemy or driver exceptions do not escape repository public methods.
 - Test pagination, ordering, filtering, and permission/tenant predicates when they affect behavior.
-- Use the active database-specific skill for backend-specific test database setup and isolation rules.
+- For backend-specific test setup and isolation, apply the matching active skill when available; otherwise derive and validate the setup from the actual backend, driver, runner and project-authorized test environment.
 
 ## Review Workflow
 
 When reviewing common SQLAlchemy code:
 
 - Load `references/patterns-and-review.md` for concrete anti-patterns and the final review checklist.
-- Confirm the required `python-core` dependency; apply `python-testing` and the active database-specific skill when tests or backend-specific behavior are in scope.
+- Confirm the required `python-core` dependency; apply `python-testing` when independently active and relevant, and the matching database-specific skill when independently active and relevant. Without a matching skill, use version-matched backend/driver documentation and authorized integration evidence.
 - Inspect models, repositories, engine/session setup, transaction owners, settings, tests, and existing DB conventions.
 - Verify that SQL/ORM details stay inside repositories and do not leak into routers or unrelated services.
 - Verify that sessions are scoped to one unit of work, request, task, or explicit batch and are not shared across concurrent tasks.
@@ -148,4 +148,4 @@ When reviewing common SQLAlchemy code:
 - Verify that query code is parameterized and does not use f-strings or string concatenation with user-controlled input.
 - Verify that dynamic sorting/filtering inputs are allowlisted.
 - Verify that repository integration tests use real SQLAlchemy behavior instead of mocking SQLAlchemy.
-- Verify that backend-specific mechanics are delegated to the active database-specific skill.
+- Verify that backend-specific mechanics were evaluated against the matching active skill where available, or against version-matched backend/driver evidence when no matching skill exists.
