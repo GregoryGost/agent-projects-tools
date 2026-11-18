@@ -120,7 +120,7 @@ The `aiomysql` `sa` optional dependency remains tied to SQLAlchemy versions belo
   - <https://dev.mysql.com/doc/refman/8.4/en/user-variables.html>
 - `aiomysql` cursor `callproc()` OUT/INOUT behavior and `nextset()` requirements:
   - <https://aiomysql.readthedocs.io/en/stable/cursors.html>
-- Match the routine contract, creation-time SQL mode and permitted SQL to the deployed MySQL version, not just the documentation above. Review SQLAlchemy 2.x driver/DBAPI integration before using a raw cursor from an async connection.
+- Match the routine contract, saved body SQL mode, invoker-mode argument/parameter assignment and permitted SQL to the deployed MySQL version, not just the documentation above. Review SQLAlchemy 2.x driver/DBAPI integration before using a raw cursor from an async connection.
 
 ## MySQL 8.4 DDL And Metadata Locks
 
