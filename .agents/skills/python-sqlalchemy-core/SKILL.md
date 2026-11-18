@@ -81,6 +81,7 @@ Do not use this skill alone for backend-specific decisions. Apply the active dat
 - Do not perform external HTTP calls, slow computations, sleeps, cache calls, filesystem scans, or network operations while holding a write transaction.
 - Perform cache invalidation or external side effects only after a successful commit.
 - If the transaction rolls back, cache state and external side effects must remain unchanged unless a project-specific compensation flow exists.
+- A SQLAlchemy unit of work is local to its actual transactional boundary. When a verified business operation spans independent services or commits, surface its consistency and recovery requirements for architecture review; neither Saga nor a stored procedure follows automatically from multiple repositories or messages. Database-specific routine capabilities and call semantics belong to the active backend skill.
 
 ## Query Correctness And Performance
 
