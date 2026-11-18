@@ -86,6 +86,9 @@ Apply additional active skills only when the task touches their area:
 - Keep write transactions short. Perform validation, HTTP calls, NATS operations, cache reads, filesystem work, sleeps, and slow computation outside the transaction.
 - Perform cache invalidation and external side effects only after successful commit.
 - When a database mutation and external event must be coordinated, use the project-approved transactional outbox or another explicit consistency mechanism instead of publishing inside the database transaction.
+- Use a stored procedure only when a verified database-local requirement justifies it over ordinary SQLAlchemy/SQL, constraints or atomic DML. A procedure call is not a Saga coordinator and does not make a database commit atomic with a broker or another service.
+- For an existing or approved procedure, explicitly define whether CALL participates in the caller-owned SQLAlchemy transaction. MySQL permits transaction control in stored procedures: a routine that commits or rolls back can invalidate the caller's assumed unit of work. Verify actual statements and error/OUT-parameter/result handling with the selected server and `aiomysql` driver; never assume SQLAlchemy can roll back a CALL that committed internally.
+- Keep business compensation and orchestration/choreography outside the procedure; only use separate, idempotency-protected database-local steps when the approved distributed workflow requires them.
 
 ## 8. InnoDB, Isolation, And Locking
 
@@ -153,6 +156,7 @@ Apply additional active skills only when the task touches their area:
 - Use a bounded session-level metadata-lock timeout or an approved deployment timeout policy rather than waiting indefinitely.
 - Use `ALGORITHM`, `LOCK`, instant/inplace claims, functional indexes, generated columns, and online-DDL features only after checking the exact MySQL version.
 - Do not edit already-applied migrations without an explicit history/checksum decision.
+- Version approved routine definitions and callers with the declared migration/deployment process; review CREATE/DROP effects, privileges/SQL SECURITY context, compatible call signatures and old/new application coexistence. Do not create or replace routines manually outside migration ownership.
 - Test both fresh-schema creation and upgrade from the previously supported schema state.
 - Verify indexes, constraints, collations, generated expressions, defaults, data preservation, and application compatibility after migration.
 
@@ -177,6 +181,7 @@ Apply additional active skills only when the task touches their area:
 - Do not mock SQLAlchemy for repository integration tests.
 - Test commit and rollback, constraints, expected typed errors, optimistic concurrency, deadlock retry, lock timeout handling, pool checkout timeout, stale connections, disconnect-in-transaction behavior, and migration upgrades.
 - Test `ON DUPLICATE KEY UPDATE` against every relevant unique constraint.
+- If a stored procedure is part of the verified design, exercise CALL through the real configured async driver and server, checking transaction ownership/rollback, errors, result and OUT parameters where used, permission boundaries, concurrent calls and cross-version deployment compatibility.
 - Test case, accent, Unicode, trailing-space, nullable-unique, JSON, binary, decimal, and datetime behavior when these affect the schema contract.
 - Verify that SQLAlchemy, DBAPI, `aiomysql`, and raw MySQL exceptions do not escape repository or unit-of-work public boundaries.
 - Keep concurrency tests deterministic through explicit coordination primitives and server locks; do not depend on arbitrary sleeps.
@@ -195,4 +200,5 @@ When reviewing SQLAlchemy + MySQL through `aiomysql`:
 - Verify InnoDB, isolation, indexed locking predicates, deterministic lock order, and correct `NOWAIT`/`SKIP LOCKED` use.
 - Verify retry classification, complete unit-of-work retry in a fresh session, bounded attempts, replay safety, and post-commit side-effect placement.
 - Verify MySQL-specific DML semantics, SQL mode, charset/collation, exact types, nullable uniqueness, rowcount assumptions, and migration lock behavior.
+- If stored procedures are used, review their justification, SQL SECURITY/EXECUTE privileges, transaction ownership and error/result handling, routine migrations and isolated real-MySQL tests; do not require procedures or Saga for ordinary database work.
 - Verify real-MySQL integration coverage, xdist isolation, migration upgrade tests, and the compatibility gate for any Python version not covered by upstream `aiomysql` evidence.
