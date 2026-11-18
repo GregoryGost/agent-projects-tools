@@ -1063,6 +1063,7 @@ This generic profile does not require a rule/skill pair. Select only existing ma
 - Database server version: `<exact version / supported version constraint / project-specific / none>`
 - Database product/edition/deployment evidence: `<server or managed-service variant and official version source / project-specific / none>`
 - Database driver: `<aiosqlite / aiomysql / asyncpg / psycopg / psycopg2 / pg8000 / pyodbc / aioodbc / pymssql / mysqlclient / mattn/go-sqlite3 / modernc.org/sqlite / none / other>`
+- Native client/ODBC driver version and security settings (when applicable): `<verified installation, TLS/certificate validation and driver version / project-specific / not applicable>`
 - Database pool library: `<aiosqlitepool / SQLAlchemy pool / none / other>`
 - Migration tool: `<Alembic / Goose v3 / raw SQL / Prisma migrations / project-specific / none>`
 - Migration policy: `<policy / none>`
