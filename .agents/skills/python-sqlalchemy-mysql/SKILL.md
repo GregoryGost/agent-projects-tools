@@ -93,7 +93,7 @@ Apply additional active skills only when the task touches their area:
 
 ## 8. InnoDB, Isolation, And Locking
 
-- Require InnoDB for tables that depend on transactions, row locks, or foreign keys. Verify existing table engines instead of assuming them.
+- Require InnoDB for tables that depend on transactions, row locks, or foreign keys. Verify existing table engines instead of assuming them. For a stored-procedure step that relies on rollback/atomic outbox changes, trace mutated tables through the procedure, invoked routines and affected triggers: writes to a nontransactional engine cannot be undone by ROLLBACK, even if CALL runs inside a SQLAlchemy transaction.
 - Declare the transaction isolation policy in `CODEX_PROJECT.md`, engine settings, or approved runtime configuration. Do not rely on an unknown server default.
 - Use SQLAlchemy-supported isolation names and verify the effective runtime value through a real connection.
 - Put correctness-critical read-modify-write behavior inside one transaction and protect it with an atomic DML statement, a database constraint, optimistic locking, or an explicit locking read.
