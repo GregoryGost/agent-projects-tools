@@ -5,7 +5,7 @@ description: "Use for Go GORM models, repositories, CRUD, queries, associations,
 
 # Go GORM
 
-Backend-independent GORM expertise. Database-specific driver, migrations, PRAGMAs and locking belong to a matching active backend overlay when available; otherwise verify against the actual server version, driver, official documentation and authorized integration tests. Do not reuse a different database's overlay as a substitute.
+Backend-independent GORM expertise. Apply a matching active backend overlay when available for database-specific behavior. Otherwise evaluate driver, migrations, locking and SQL using the actual server version, official documentation and authorized integration tests. Techniques from another database's material may be candidates, provided their target-engine support, semantics and trade-offs are independently verified; the project profile still controls skill activation.
 
 ## Required Dependencies
 
