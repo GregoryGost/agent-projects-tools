@@ -106,6 +106,16 @@ The `aiomysql` `sa` optional dependency remains tied to SQLAlchemy versions belo
 - Identifier case sensitivity and `lower_case_table_names`:
   - <https://dev.mysql.com/doc/refman/8.4/en/identifier-case-sensitivity.html>
 
+## MySQL 8.4 Stored Routines (Only When Used)
+
+- Procedure definition, SQL SECURITY context and routine characteristics:
+  - <https://dev.mysql.com/doc/refman/8.4/en/create-procedure.html>
+- CALL statement and procedure parameters:
+  - <https://dev.mysql.com/doc/refman/8.4/en/call.html>
+- Stored-program restrictions, including transaction statements and procedure/function differences:
+  - <https://dev.mysql.com/doc/refman/8.4/en/stored-program-restrictions.html>
+- Match the routine contract and permitted SQL to the deployed MySQL version, not just the documentation above.
+
 ## MySQL 8.4 DDL And Metadata Locks
 
 - Statements that cause implicit commit:
