@@ -1137,7 +1137,7 @@ When the active Python version is not present in current `aiomysql` classifiers 
 - [ ] A database-local need justifies the routine over ordinary SQLAlchemy/SQL, constraints and atomic DML; no procedure is required merely because Saga is in use.
 - [ ] CALL transaction ownership is explicit: caller-owned units of work use routines without independent COMMIT/ROLLBACK or implicit-commit statements (including in invoked routines); self-managed routines follow a separately verified, compatible call contract. Error and return handling are tested through the real driver.
 - [ ] Routine creation/replacement, signatures and permissions use approved versioned migrations and a backward-compatible deployment sequence.
-- [ ] SQL SECURITY/EXECUTE privileges and tenant access are tested on the actual server; a routine is not treated as a distributed transaction.
+- [ ] SQL SECURITY defaults to DEFINER unless chosen otherwise; the deployed DEFINER account exists with no unnecessary privileges, caller EXECUTE rights and tenant boundaries are verified, and the routine's creation-time SQL mode matches its intended behavior. A routine is not treated as a distributed transaction.
 - [ ] Authorized integration tests cover commit/rollback, failures, concurrent calls and any saga-step replay/compensation behavior that the approved workflow promises.
 
 ### InnoDB And Concurrency
