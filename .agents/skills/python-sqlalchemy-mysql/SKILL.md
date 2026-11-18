@@ -156,7 +156,7 @@ Apply additional active skills only when the task touches their area:
 - Use a bounded session-level metadata-lock timeout or an approved deployment timeout policy rather than waiting indefinitely.
 - Use `ALGORITHM`, `LOCK`, instant/inplace claims, functional indexes, generated columns, and online-DDL features only after checking the exact MySQL version.
 - Do not edit already-applied migrations without an explicit history/checksum decision.
-- Version approved routine definitions and callers with the declared migration/deployment process; review CREATE/DROP effects, privileges/SQL SECURITY context, compatible call signatures and old/new application coexistence. Do not create or replace routines manually outside migration ownership.
+- Version approved routine definitions and callers with the declared migration/deployment process; review CREATE/DROP effects, compatible call signatures and old/new application coexistence. Verify SQL SECURITY (DEFINER by default, or INVOKER), the actual DEFINER account's existence and least-privilege access, caller EXECUTE permissions, and any tenant-access implications. MySQL captures a routine's SQL mode when it is created or altered; verify the intended creation-time SQL mode instead of assuming the caller's mode applies. Do not create or replace routines manually outside migration ownership.
 - Test both fresh-schema creation and upgrade from the previously supported schema state.
 - Verify indexes, constraints, collations, generated expressions, defaults, data preservation, and application compatibility after migration.
 
@@ -181,7 +181,7 @@ Apply additional active skills only when the task touches their area:
 - Do not mock SQLAlchemy for repository integration tests.
 - Test commit and rollback, constraints, expected typed errors, optimistic concurrency, deadlock retry, lock timeout handling, pool checkout timeout, stale connections, disconnect-in-transaction behavior, and migration upgrades.
 - Test `ON DUPLICATE KEY UPDATE` against every relevant unique constraint.
-- If a stored procedure is part of the verified design, exercise CALL through the real configured async driver and server, checking transaction ownership/rollback, errors, result and OUT parameters where used, permission boundaries, concurrent calls and cross-version deployment compatibility.
+- If a stored procedure is part of the verified design, exercise CALL through the real configured async driver and server, checking transaction ownership/rollback, errors, result and OUT parameters where used, effective DEFINER/INVOKER privilege boundaries, concurrent calls and cross-version deployment compatibility.
 - Test case, accent, Unicode, trailing-space, nullable-unique, JSON, binary, decimal, and datetime behavior when these affect the schema contract.
 - Verify that SQLAlchemy, DBAPI, `aiomysql`, and raw MySQL exceptions do not escape repository or unit-of-work public boundaries.
 - Keep concurrency tests deterministic through explicit coordination primitives and server locks; do not depend on arbitrary sleeps.
