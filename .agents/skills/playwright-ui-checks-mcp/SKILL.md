@@ -21,7 +21,9 @@ Apply `.codex/rules/playwright_ui_validation.md` together with this skill.
 6. Capture an accessibility snapshot when available.
 7. Capture screenshots when visible UI changed or the task asks for evidence.
 8. Summarize console errors and failed network requests when available.
-9. Report what was validated and what remains unvalidated.
+9. After evidence collection, use the exposed MCP browser-close operation only for the session exclusively owned by this check; never close another agent's or user's browser.
+10. Stop any dev server started specifically for this check using its approved shutdown path, and verify observable completion. Leave borrowed servers and MCP-client-managed processes running.
+11. Report what was validated, what remains unvalidated, and whether owned resources were released or cleanup remains unverified.
 
 ## Guardrails
 
@@ -31,7 +33,8 @@ Apply `.codex/rules/playwright_ui_validation.md` together with this skill.
 - Do not treat screenshots as the only validation signal.
 - Do not replace persistent E2E tests with MCP screenshots.
 - Do not create project files or test artifacts unless the project declares that workflow.
+- Browser close and MCP-server shutdown are distinct. If a close operation is unavailable or ownership is ambiguous, report the remaining resource instead of guessing a PID or killing by port.
 
 ## Report Format
 
-Include route checked, wait target, visible result summary, accessibility snapshot summary when available, console/network errors, screenshots or artifact references when available, and remaining validation gaps.
+Include route checked, wait target, visible result summary, accessibility snapshot summary when available, console/network errors, screenshots or artifact references when available, remaining validation gaps, and owned-resource cleanup status.
