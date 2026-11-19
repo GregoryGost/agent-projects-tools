@@ -22,7 +22,7 @@ Apply `.codex/rules/playwright_ui_validation.md` together with this skill.
 7. Capture screenshots when visible UI changed or the task asks for evidence.
 8. Summarize console errors and failed network requests when available.
 9. After evidence collection, use the exposed MCP browser-close operation only for the session exclusively owned by this check; never close another agent's or user's browser.
-10. Stop any dev server started specifically for this check using its approved shutdown path, and verify observable completion. Leave borrowed servers and MCP-client-managed processes running.
+10. Stop a dev server started for this check only if it remains exclusively controlled, using its approved shutdown path, and verify observable completion. Leave borrowed servers and MCP-client-managed processes running.
 11. Report what was validated, what remains unvalidated, and whether owned resources were released or cleanup remains unverified.
 
 ## Guardrails

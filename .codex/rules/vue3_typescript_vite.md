@@ -47,4 +47,4 @@ Vite is part of this Vue profile, not a separate skill.
 - Use project-declared scripts for dev/build/preview/typecheck instead of assuming names.
 - Treat `import.meta.env` and Vite modes as project-level configuration boundaries.
 - Dev/preview servers and watch-mode commands are persistent processes, not finite validation checks. Before launching one, identify whether the project already provides a server and whether the task needs a new instance.
-- When the agent starts a temporary Vite server or watcher, keep its supported stop mechanism available and verify observable termination at task end or failure. Never stop a pre-existing shared dev server or claim that a successful build ends a separate watcher.
+- When the agent starts a temporary Vite server or watcher, keep its supported stop mechanism available; before stopping, verify it is still exclusively controlled, then verify observable termination at task end or failure. Never stop a pre-existing shared dev server or claim that a successful build ends a separate watcher.

@@ -23,7 +23,7 @@ Before running UI validation:
 
 - Before a check, distinguish the browser/session used through Playwright MCP, an existing or task-started dev server, and the MCP server itself. A reachable browser or MCP server is not automatically owned by this agent.
 - After collecting evidence, close a browser/session owned exclusively by this check through the currently exposed Playwright MCP close tool (for example `browser_close`, when available). Preserve a shared/borrowed browser session and report if exclusive ownership or a safe close operation cannot be established.
-- Stop a dev server only when this check started it and the project's supported shutdown path is available; never terminate an existing/shared server by port or process name.
+- Stop a dev server only if this check started it, still controls it exclusively, and the project's supported shutdown path is available; never terminate an existing/shared server by port or process name.
 - A browser close does not terminate the client-managed MCP server. Do not kill/reconfigure the MCP host or infer its shutdown from a completed tool call. Verify observable cleanup and report any unresolved owned resources, including after errors or interruption.
 
 ## Constraints
