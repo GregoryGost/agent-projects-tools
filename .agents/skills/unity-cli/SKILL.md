@@ -29,6 +29,7 @@ The mutual `unity_cli.md ↔ unity-cli` pair is intentional; both artifacts must
 8. Use batch `unity test`/build/run only when the workflow is actually batch/headless/CI or no suitable live Editor exists.
 9. Execute only within authorized project/local-environment/external surfaces.
 10. Verify resulting state/output.
+11. Check terminal status of any task-launched batch process or asynchronous test operation; preserve existing Editors and client-managed MCP transports, and report cleanup that cannot be verified.
 
 Load references:
 
@@ -62,7 +63,7 @@ For interactive work on a project that is already open:
 - pass/bind the project explicitly when more than one Editor may be running;
 - do not start a second batch Editor as a silent fallback.
 
-For tests, prefer live `run_tests` + `test_status` only after those commands appear in the current catalog. Use top-level `unity test` for CI/headless/closed-Editor workflows or when project policy explicitly selects batch execution.
+For tests, prefer live `run_tests` + `test_status` only after those commands appear in the current catalog. Use top-level `unity test` for CI/headless/closed-Editor workflows or when project policy explicitly selects batch execution. Poll only the known task's status to completion within a bound; cancel using a discovered operation only when safe and permitted. A finished subagent turn does not prove that an asynchronous test or batch Editor has stopped.
 
 Configuring MCP is separate from using it: `unity mcp configure <client>` changes local agent configuration and requires the corresponding routing authorization.
 

@@ -24,6 +24,7 @@ Load references when needed:
 6. Decide which dependencies should be real, containerized, project-declared, or stubbed.
 7. Add the smallest E2E scenario that validates a critical user/system flow.
 8. Run or report the project-declared E2E command.
+9. Verify completion of task-owned subprocesses, temporary servers, and containers after the run; report any cleanup that could not be observed or completed.
 
 ## Baseline
 
@@ -43,6 +44,7 @@ Load references when needed:
 - Keep scenario data isolated and cleaned up.
 - Prefer readiness checks, health probes, observable events, or bounded polling over fixed sleeps.
 - Clean up app instances, containers, connections, temp files, queues, child processes, and ports.
+- Teardown must cover failure/timeout as well as success; never stop pre-existing Compose services or shared infrastructure merely because they were used by the test.
 - Preserve Jest mock cleanup and timer cleanup policy from `typescript-jest-testing`.
 
 ## Review Checklist
@@ -52,6 +54,7 @@ Load references when needed:
 - [ ] Real/containerized/stubbed dependencies are justified.
 - [ ] Migrations/seeds/test data are deterministic and isolated.
 - [ ] Setup and teardown clean up app instances, containers, connections, env, ports, queues, child processes, and temp files.
+- [ ] Cleanup of owned runtime resources was verified where observable, and borrowed services were preserved.
 - [ ] Assertions target externally visible behavior.
 - [ ] E2E command comes from project configuration.
 - [ ] Unit/integration coverage was not duplicated unnecessarily.

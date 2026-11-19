@@ -41,3 +41,8 @@ For the `vitest-vue-testing` profile, the portable test baseline is:
 - Do not rely exclusively on snapshots.
 - Keep mocks local and explicit.
 - Keep async assertions explicit with `await`, `nextTick`, `flushPromises`, or project-approved helpers.
+
+## Runner lifecycle
+
+- A finite validation must use a verified project-declared one-shot Vitest command rather than leaving an interactive watch process running. Do not invent a package script or disable an explicitly requested persistent workflow.
+- If the task intentionally starts watch mode, record ownership, use the supported exit mechanism when it is no longer required, and verify observable termination; preserve existing user-owned watchers.

@@ -23,6 +23,7 @@ Apply `.codex/rules/vitest_vue_testing.md`, `typescript-core`, and `vue3-typescr
 8. Select the smallest test type that gives confidence for the behavior.
 9. Add or update tests using existing project conventions.
 10. Run or report the project-declared test command.
+11. Prefer an available project-declared one-shot runner for finite checks; if a task-owned watch session was intentionally started, exit it and verify completion when observable.
 
 ## Vue Component Integration
 
@@ -40,3 +41,4 @@ Apply `.codex/rules/vitest_vue_testing.md`, `typescript-core`, and `vue3-typescr
 - [ ] Dependencies are present or explicitly recommended without unauthorized changes.
 - [ ] Tests assert behavior rather than implementation details.
 - [ ] Project-declared test command was run or reported as unavailable.
+- [ ] No task-owned Vitest watch process was left running unintentionally; existing user-owned sessions were preserved.

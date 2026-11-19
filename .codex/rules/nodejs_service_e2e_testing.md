@@ -70,5 +70,7 @@ Use the real public boundary of the service:
 - Avoid real time waits. Prefer readiness checks, health endpoints, wait strategies, explicit event completion, or bounded polling for observable effects.
 - Control clocks, random IDs, ports, environment variables, files, queues, and external calls.
 - Ensure app instances, containers, connections, temp files, queues, child processes, and ports are cleaned up after tests.
+- Identify whether each subprocess, test server, Testcontainers instance, or Docker Compose project was created for this run or is a borrowed/shared dependency. Arrange bounded teardown on success, assertion failure, timeout, and early interruption; only stop resources this run owns.
+- Check observable child-process exit, container shutdown, and port release when appropriate. Do not use global process-name kills or indiscriminate `docker compose down` against pre-existing services; report unresolved resources without misrepresenting the functional assertions.
 - Keep E2E scenarios small, critical, and behavior-oriented.
 - Report known setup gaps, unavailable dependencies, or non-reproducible environment assumptions.

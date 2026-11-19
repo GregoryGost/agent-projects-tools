@@ -62,6 +62,13 @@ Vue E2E tests must test the application as a user through real browser pages.
 - Use controlled API fixtures, test accounts, or disposable backend state.
 - Capture traces, screenshots, videos, and console/network summaries according to project artifact policy.
 
+## Test-run resource lifecycle
+
+- For finite E2E validation, use the project's non-watch test command. Do not leave Playwright Test UI/watch processes running unless the request/project workflow intentionally requires a persistent session.
+- Playwright Test owns the lifecycle of built-in `page`, `context`, and `browser` fixtures. Explicitly close only manually launched browsers/contexts and custom resources through fixture teardown or `try/finally`; do not add competing blanket cleanup for runner-owned fixtures.
+- Inspect `webServer` configuration and `reuseExistingServer` before the run: a pre-existing/reused app server is borrowed, while an exclusively test-started server should be managed by the configured runner or its approved stop procedure. Never stop unrelated services by process name or listening port.
+- Check that the finite runner and any task-owned server/child processes have completed after success, failure, or timeout when observable. Preserve evidence and report unresolved cleanup; normal Playwright Test teardown is not proof that every external process has exited.
+
 ## Relationship to Playwright MCP UI validation
 
 `playwright-ui-checks-mcp` is for local UI validation and evidence gathering. Vue Playwright E2E is a persistent test suite with assertions, config, fixtures, CI policy, and regression scenarios.

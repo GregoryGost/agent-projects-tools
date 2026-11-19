@@ -83,6 +83,8 @@ The upstream `WeakSandboxForLLM` is explicitly not a security sandbox. It blocks
 - Require an explicit on-disk target and account for save/overwrite behavior.
 - Do not use CLI mode as a silent fallback for a live session failure.
 - Validate outputs and report partial/unverified results.
+- Distinguish task-launched background Blender jobs from an existing live Editor and the client-managed MCP server/add-on bridge. For a `*_for_cli` operation, check the tool's completion result and any observable task-owned process status; preserve evidence on failure/timeout and report an unresolved background process if safe shutdown cannot be confirmed.
+- Do not close the user's Blender session, disable a shared add-on bridge, or kill a Blender/MCP process by name or port as an automatic cleanup step.
 
 ## Optional coordination
 
