@@ -24,6 +24,7 @@ Load references when needed:
 6. Apply styling overlays only to user-visible behavior; do not assert private CSS implementation details.
 7. Add the smallest browser E2E scenario that validates a critical flow.
 8. Run or report the project-declared E2E command.
+9. Verify completion of the one-shot runner and task-owned temporary servers; use normal fixture teardown for manually owned browsers/contexts, leaving borrowed `webServer` instances and other client-managed services untouched.
 
 ## Baseline
 
@@ -56,3 +57,4 @@ Load references when needed:
 - [ ] Test data, auth state, and backend readiness are deterministic.
 - [ ] Locators use user-facing attributes or explicit contracts.
 - [ ] Trace/screenshot/video policy is followed.
+- [ ] Runner/worker completion and task-owned browser/server cleanup were checked when observable; existing/reused servers were preserved and uncertainties reported.
