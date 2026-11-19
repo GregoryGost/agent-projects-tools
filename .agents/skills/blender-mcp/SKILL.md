@@ -29,6 +29,7 @@ The mutual `blender_mcp.md ↔ blender-mcp` pair is intentional; both artifacts 
 8. Validate structure and visible result through summaries/screenshots/renders as appropriate.
 9. Use `*_for_cli` only for intentionally background/headless workflows.
 10. Do not modify MCP/add-on/client configuration unless local-environment changes are authorized.
+11. Verify completion of task-owned CLI/background jobs where observable; leave the existing Blender Editor and shared MCP transport intact, and report uncertain process termination.
 
 Load:
 
@@ -78,3 +79,4 @@ Never use code execution to read/exfiltrate unrelated files, secrets, environmen
 - No blind trust in `readOnlyHint`/other annotations when the real tool writes files or mutates UI.
 - No giant opaque script combining unrelated asset mutations and environment/file operations.
 - No silent live→CLI fallback.
+- No automatic termination of an existing Blender Editor, MCP server, or add-on bridge to clean up a completed operation.

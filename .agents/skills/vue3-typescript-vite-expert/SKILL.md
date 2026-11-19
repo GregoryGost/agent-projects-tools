@@ -44,4 +44,4 @@ Router, Pinia, VueUse, Tailwind, SCSS, testing, and UI validation are separate o
 
 ## Vite Awareness
 
-Vite is part of this skill. Use `references/vite-guidelines.md` before changing build, dev server, env, aliases, static assets, or plugin behavior.
+Vite is part of this skill. Use `references/vite-guidelines.md` before changing build, dev server, env, aliases, static assets, or plugin behavior. Use finite project-declared checks for completed validation where possible. For a temporary dev/preview server or watcher started by this agent, stop it through its supported mechanism and verify completion when observable; do not interrupt an existing shared server.

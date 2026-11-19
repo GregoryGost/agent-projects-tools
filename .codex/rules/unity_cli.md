@@ -104,6 +104,13 @@ Classify `unity eval` by the C# expression's real side effects. Read-only syntax
 - `unity watch test` or other persistent watchers require explicit request or project-declared workflow.
 - Treat build/test reports, coverage, and output directories as project artifacts with project cleanup/version-control policy.
 
+## Runtime completion and resource ownership
+
+- An existing connected Editor and its MCP/Pipeline transport are borrowed resources; do not close the user's Editor or kill the client-managed MCP server when a task finishes.
+- For live tests/builds, distinguish an accepted asynchronous command from a terminal result: use the currently discovered status/completion mechanism, with bounded polling. On cancellation, use a discovered supported cancel operation only if it targets this run and is authorized; otherwise report an unfinished operation.
+- For explicitly authorized batch/headless `unity test` or build runs, track the task-started command and verify its exit and any observable owned child Editor processes. Do not assume that returning a report means a background Editor exited; never terminate an ambiguous process by name.
+- On errors, timeouts, or interruptions, preserve the user's Editor state and report outstanding task-owned processes or operations with available evidence rather than silently starting a replacement Editor.
+
 ## Contexts, auth, plugins, and MCP
 
 - Reading the current context is read-only.
