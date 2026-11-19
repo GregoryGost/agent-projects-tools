@@ -1054,19 +1054,23 @@ The specialized section activates the NATS KV cache rule/skill pair only when it
 
 Keep only when the project has a database.
 
-This generic profile does not require a rule/skill pair. Select only existing materials for the active toolkit and database backend. When the project uses code/test subagents, select `database_architect` explicitly under Agent Roles if required; the generic database profile does not automatically enable specialist delegation. Current repository SQLAlchemy coverage is skills-only: `python-sqlalchemy-core` for backend-neutral SQLAlchemy behavior, `python-sqlalchemy-sqlite` for SQLite-specific behavior, and `python-sqlalchemy-mysql` for MySQL through `aiomysql`. Both database-specific skills require `python-sqlalchemy-core` as their base skill. Go database coverage is separately provided by the `go_gorm.md + go-gorm` base pair and an optional `go_gorm_sqlite_goose.md + go-gorm-sqlite-goose` overlay for SQLite + Goose v3. Do not activate Python database skills for Go.
+This generic profile does not require a rule/skill pair. Select only existing materials for the active toolkit and database backend. When the project uses code/test subagents, select `database_architect` explicitly under Agent Roles if required; the generic database profile does not automatically enable specialist delegation. Current repository SQLAlchemy coverage is skills-only: `python-sqlalchemy-core` for backend-neutral SQLAlchemy behavior, `python-sqlalchemy-sqlite` for SQLite-specific behavior, and `python-sqlalchemy-mysql` for MySQL through `aiomysql`. Both database-specific skills require `python-sqlalchemy-core` as their base skill. PostgreSQL and Microsoft SQL Server can be selected as backends but currently have no dedicated database-specific skill in this repository; use active backend-neutral material and verify backend-specific behavior against version-matched official documentation and real-backend tests as authorized. Skill activation follows the project's declared backend and dependency policy; a mechanism found in another backend's material can still be evaluated as a design candidate. Independently verify the target engine's supported syntax and guarantees, relevant driver/version, transaction and locking semantics, and integration tests before choosing it. Selection follows technical criteria rather than the originating skill's database label. Go database coverage is separately provided by the `go_gorm.md + go-gorm` base pair and an optional `go_gorm_sqlite_goose.md + go-gorm-sqlite-goose` overlay for SQLite + Goose v3. Do not activate Python database skills for Go.
 
 - Database enabled: `<yes/no>`
 - Database toolkit/ORM: `<SQLAlchemy / GORM / Prisma / Django ORM / raw SQL / none / other>`
-- Active database: `<SQLite / PostgreSQL / MySQL / none / other>`
-- Database server family: `<SQLite / MySQL / MariaDB / PostgreSQL / project-specific / none>`
+- Active database: `<SQLite / PostgreSQL / MySQL / Microsoft SQL Server / none / other>`
+- Database server family: `<SQLite / MySQL / MariaDB / PostgreSQL / Microsoft SQL Server / project-specific / none>`
 - Database server version: `<exact version / supported version constraint / project-specific / none>`
-- Database driver: `<aiosqlite / aiomysql / asyncpg / psycopg / mysqlclient / mattn/go-sqlite3 / modernc.org/sqlite / none / other>`
+- Database product/edition/deployment evidence: `<server or managed-service variant and official version source / project-specific / none>`
+- Database driver: `<aiosqlite / aiomysql / asyncpg / psycopg / psycopg2 / pg8000 / pyodbc / aioodbc / pymssql / mysqlclient / mattn/go-sqlite3 / modernc.org/sqlite / none / other>`
+- Native client/ODBC driver version and security settings (when applicable): `<verified installation, TLS/certificate validation and driver version / project-specific / not applicable>`
 - Database pool library: `<aiosqlitepool / SQLAlchemy pool / none / other>`
 - Migration tool: `<Alembic / Goose v3 / raw SQL / Prisma migrations / project-specific / none>`
 - Migration policy: `<policy / none>`
 - Active database toolkit skill: `<python-sqlalchemy-core / go-gorm / none / other>`
 - Active database-specific skill: `<python-sqlalchemy-sqlite / python-sqlalchemy-mysql / go-gorm-sqlite-goose / none / other>`
+- Transaction isolation, row versioning and query/table-hint policy: `<verified engine-specific configuration and allowed hints / project-specific / none>`
+- Stored routine policy, if used: `<versioned definitions, call interface, permissions, transaction and error ownership / project-specific / none>`
 - Dependency versions source: `<pyproject.toml / package.json / go.mod / project-specific / none>`
 
 ### SQLAlchemy MySQL Through aiomysql

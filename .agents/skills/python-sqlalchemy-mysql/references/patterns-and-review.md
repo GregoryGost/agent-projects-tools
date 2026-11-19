@@ -1132,6 +1132,16 @@ When the active Python version is not present in current `aiomysql` classifiers 
 - [ ] Post-commit effects happen only after successful commit.
 - [ ] Database failures are not converted to ordinary not-found results.
 
+### Stored Procedures (Only If Selected)
+
+- [ ] The chosen routine is justified by verified requirements and a comparison with ordinary SQLAlchemy/SQL, constraints, atomic DML and feasible coordination alternatives. Consider local operations and any proposed wider Saga role using actual capabilities, transaction/failure guarantees and maintenance cost; Saga alone does not establish a need for procedures.
+- [ ] CALL transaction ownership is explicit: caller-owned units of work use routines without independent COMMIT/ROLLBACK or implicit-commit statements (including in invoked routines); self-managed routines follow a separately verified, compatible call contract. If called from a stored function or trigger, check the additional restrictions on transaction statements and returned result sets. Verify the storage engines of every table mutated by the routine, nested calls or triggers when rollback is required: nontransactional writes survive ROLLBACK. Review DECLARE HANDLER and SIGNAL/RESIGNAL: swallowed SQL errors or returned status codes must not be mistaken for successful business steps. Verify both intended handled outcomes and actual failures through the real driver.
+- [ ] Routine creation/replacement, signatures and permissions use approved versioned migrations and a backward-compatible deployment sequence.
+- [ ] SQL SECURITY defaults to DEFINER unless chosen otherwise. Check caller EXECUTE rights and tenant boundaries; with DEFINER, confirm an existing least-privilege definer account, or with INVOKER check the invoking account's permissions. Avoid orphan definer metadata; verify the saved SQL mode for the routine body and the invoker's SQL mode for CALL argument evaluation and parameter assignment. A routine is not treated as a distributed transaction.
+- [ ] For `aiomysql` `callproc()` with OUT/INOUT or multiple result sets, verify complete result-set consumption, reading output variables on the same pooled connection and safe session-variable cleanup/reuse; never treat the returned input arguments as the output values.
+- [ ] If an approved local business operation uses a transactional outbox (whether part of Saga, TCC or neither), integration tests confirm that its routine/app SQL and outbox row share one commit: failures cannot leave committed business state without the required outbox row, or publish an outbox event for a rolled-back step.
+- [ ] Authorized integration tests cover commit/rollback, failures and concurrent calls. When a routine implements an approved Saga or TCC participant, also check the relevant replay/compensation or Try/Confirm/Cancel outcomes, idempotency and failure recovery promised by that workflow; do not add those tests for unrelated routines.
+
 ### InnoDB And Concurrency
 
 - [ ] Transactional and foreign-key tables use InnoDB.

@@ -106,6 +106,27 @@ The `aiomysql` `sa` optional dependency remains tied to SQLAlchemy versions belo
 - Identifier case sensitivity and `lower_case_table_names`:
   - <https://dev.mysql.com/doc/refman/8.4/en/identifier-case-sensitivity.html>
 
+## MySQL 8.4 Stored Routines (Only When Used)
+
+- Procedure definition, SQL SECURITY context and routine characteristics:
+  - <https://dev.mysql.com/doc/refman/8.4/en/create-procedure.html>
+- CALL statement and procedure parameters:
+  - <https://dev.mysql.com/doc/refman/8.4/en/call.html>
+- Rollback limits for nontransactional tables touched by procedures or triggers:
+  - <https://dev.mysql.com/doc/refman/8.4/en/nontransactional-tables.html>
+- Stored-program restrictions, including transaction statements and procedure/function differences:
+  - <https://dev.mysql.com/doc/refman/8.4/en/stored-program-restrictions.html>
+- Stored-object DEFINER/INVOKER access, orphan DEFINER accounts and least privilege:
+  - <https://dev.mysql.com/doc/refman/8.4/en/stored-objects-security.html>
+- Error and condition handling (CONTINUE/EXIT, SIGNAL/RESIGNAL), including OUT/INOUT propagation on errors:
+  - <https://dev.mysql.com/doc/refman/8.4/en/declare-handler.html>
+  - <https://dev.mysql.com/doc/refman/8.4/en/conditions-and-parameters.html>
+- Session-scoped user variables used for SQL-level OUT/INOUT parameters:
+  - <https://dev.mysql.com/doc/refman/8.4/en/user-variables.html>
+- `aiomysql` cursor `callproc()` OUT/INOUT behavior and `nextset()` requirements:
+  - <https://aiomysql.readthedocs.io/en/stable/cursors.html>
+- Match the routine contract, saved body SQL mode, invoker-mode argument/parameter assignment and permitted SQL to the deployed MySQL version, not just the documentation above. Review SQLAlchemy 2.x driver/DBAPI integration before using a raw cursor from an async connection.
+
 ## MySQL 8.4 DDL And Metadata Locks
 
 - Statements that cause implicit commit:
