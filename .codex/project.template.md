@@ -275,6 +275,7 @@ List only additional rule files active in this project.
 - Framework rules: `<vue3_typescript_vite.md / vue_svg_graphics.md / vue_router.md / pinia.md / vueuse.md / none / other>`
 - Node-RED rules: `<node_red_contrib.md / node_red_contrib_testing.md / none>`
 - Styling rules: `<css.md / css_animation.md / tailwind_css.md / scss_styling.md / none>`
+- Apple design guidance rule: `<apple_design.md / none>` (requires independently selected `apple-hig-design`)
 - UI/browser validation rules: `<ui_ux_validation.md / playwright_ui_validation.md / none>`
 - E2E rules: `<python_service_e2e_testing.md / vue_playwright_e2e_testing.md / nodejs_service_e2e_testing.md / none>`
 - Obsidian rules: `<obsidian_llm_wiki.md / obsidian_taskbook.md / none>`
@@ -297,6 +298,7 @@ List only reusable skills active in this project.
 - Framework skills: `<vue3-typescript-vite-expert / vue-svg-graphics-expert / vue-router-expert / pinia-expert / vueuse-expert / none>`
 - Node-RED skills: `<node-red-contrib-expert / node-red-contrib-testing / none>`
 - Styling skills: `<css-expert / css-animation-expert / tailwind-expert / scss-expert / none>`
+- Apple design guidance skill: `<apple-hig-design / none>`
 - UI/browser validation skills: `<ui-ux-review / playwright-ui-checks-mcp / none>`
 - E2E skills: `<python-service-e2e-testing / vue-playwright-e2e-testing / nodejs-service-e2e-testing / none>`
 - Database skills: `<python-sqlalchemy-core / python-sqlalchemy-sqlite / python-sqlalchemy-mysql / none / other>`
@@ -306,6 +308,8 @@ List only reusable skills active in this project.
 - External-system skills: `<jira-data-center / none / other>`
 
 The recommended code-documentation quality pair for projects with agent-authored source is `.codex/rules/code_comment_quality.md` and `code-comment-quality`. If selected, list **both** independently above; their declared mutual hard dependency requires `material_dependencies.md`. The pair **requires documentation of every authored function/method, field, constant and variable within affected definitions**, including local/loop bindings, with sufficient, human-readable content. Variable groups must explicitly name and explain each binding. `comment-language-audit` is a separate optional language check. Do not treat the template, this recommendation, or file presence as automatic activation; existing target projects require their own explicit profile update.
+
+Apple design guidance is an optional framework-neutral design overlay. Activate `apple-hig-design` only through its exact `Active Skills` entry. If `apple_design.md` is selected in `Active Rules`, also select `apple-hig-design` independently and copy `.codex/rules/material_dependencies.md`. The skill can be used without the rule. Neither frontend stack selection nor file presence activates these materials. Preserve the approved design system and applicable accessibility requirements; other UI, styling, and browser-validation overlays remain independently selected.
 
 ## Build And Validation Commands
 

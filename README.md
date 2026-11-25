@@ -211,6 +211,7 @@ max_concurrent_threads_per_session = 4
 | TypeScript Node-RED contrib и runtime testing | `node_red_contrib.md`, `node-red-contrib-expert`, canonical `node-red-postbuild.mjs`, `node_red_contrib_testing.md`, `node-red-contrib-testing` поверх обязательного `typescript-core` |
 | Vue 3 + TypeScript + Vite | `vue3-typescript-vite-expert`, `vue-svg-graphics-expert`, `vue-router-expert`, `pinia-expert`, `vueuse-expert` |
 | Vue testing и browser E2E | `vitest-vue-testing`, `vue-router-testing`, `pinia-testing`, `vueuse-testing`, `vue-playwright-e2e-testing` |
+| Проектирование интерфейсов по Apple HIG | `apple_design.md`, `apple-hig-design` — опциональные рекомендации для native и Web, независимые от фреймворка |
 | Styling и UI validation | `css-expert`, `css-animation-expert`, `scss-expert`, `tailwind-expert`, `ui-ux-review`, `playwright-ui-checks-mcp` |
 | Jira Data Center 8.22.x | `jira_data_center.md`, `jira-data-center` |
 | Obsidian | `obsidian-mcp-core`, `obsidian-llm-wiki`, `obsidian-taskbook` |
@@ -437,6 +438,18 @@ Go Core дополнительно содержит `service-lifecycle.md` (вл
 Данные кэша должны быть восстановимы из источника истины. Локальный Otter не синхронизирует записи между процессами; NATS KV не гарантирует строгий read-your-writes во всех топологиях. Автоматического объединения Otter + NATS в L1/L2 **нет**: оно потребует отдельного согласованного решения. В `CODEX_PROJECT.md` выбирается только нужный режим и конкретные настройки; сетевые bucket не создаются/не изменяются в рамках изменений документации или кода без отдельной авторизации.
 
 Официальные источники: [Otter v2](https://github.com/maypok86/otter), [NATS Go](https://github.com/nats-io/nats.go), [JetStream KV](https://docs.nats.io/nats-concepts/jetstream/key-value-store).
+
+## Проектирование интерфейсов по Apple HIG
+
+`apple-hig-design` — framework-neutral навык для проектирования интерфейсов, визуальной иерархии, композиции, геометрии, типографики, цвета, взаимодействий, доступности и анимации. `apple_design.md` фиксирует обязательные ограничения при выборе правила. Для веб-проектов HIG служит источником переносимых принципов, а не спецификацией CSS или требованием копировать внешний вид Apple.
+
+- Навык активируется точной записью `apple-hig-design` в `Active Skills` файла `CODEX_PROJECT.md`; правило — отдельной записью `apple_design.md` в `Active Rules`.
+- Правило имеет одностороннюю hard dependency от `apple-hig-design`: при его выборе оба материала должны быть независимо активны, а `.codex/rules/material_dependencies.md` присутствовать в целевом проекте. Навык может использоваться без правила. Неявной активации по frontend-стеку, наличию файлов или упоминанию HIG нет.
+- Утверждённая дизайн-система, требования пользователя и применимые требования доступности сохраняют приоритет; конфликты требуют явного разрешения. Нативные метрики, Liquid Glass, SF Symbols, шрифты и другие ресурсы Apple не переносятся в Web автоматически. Сохраняется необходимая плотность данных профессиональных интерфейсов.
+- `ui-ux-review`, CSS/CSS animation, Tailwind, SCSS, Vue SVG и Playwright остаются отдельными активируемыми материалами. Новых библиотек или MCP-серверов не требуется.
+- В `.agents/skills/apple-hig-design/references/` находятся тематические рекомендации, индекс 158 тем HIG, 26 сессий WWDC и 44 статей Apple Design из исходного архива с базовой датой 25.10.2026. Это карта источников, а не подтверждение их текущей доступности или копия документации Apple. Точные метрики, версии и спорные рекомендации проверяются по актуальному первоисточнику.
+
+Основные источники: [Apple HIG](https://developer.apple.com/design/human-interface-guidelines/), [Apple Design](https://developer.apple.com/design/), [WCAG 2.2](https://www.w3.org/TR/WCAG22/), [WAI-ARIA Authoring Practices](https://www.w3.org/WAI/ARIA/apg/).
 
 ## Профиль Vue SVG graphics
 
