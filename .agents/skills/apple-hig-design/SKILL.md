@@ -1,6 +1,6 @@
 ---
 name: apple-hig-design
-description: "Use active Apple HIG, WWDC design guidance, and Apple Design case studies for interface design and review: layout, shapes, controls, navigation, accessibility, type, color, and motion, distinguishing native guidance from web adaptations."
+description: "Use Apple HIG, WWDC design guidance, and Apple Design case studies for UI design and review when explicitly active. Distinguish native platform guidance from web adaptations for layout, shapes, controls, navigation, accessibility, typography, color, and motion."
 ---
 
 # Apple HIG Design
@@ -10,8 +10,7 @@ This is one skill with references loaded by topic, rather than a requirement to 
 
 ## Required Dependencies
 
-None. Framework, styling, accessibility tooling, and browser automation remain project-selected overlays.
-The optional rule `apple_design.md` requires this skill; the skill does not require that rule.
+None.
 
 ## Authority and applicability
 
@@ -56,7 +55,7 @@ Do not treat an indexed link as a locally synthesized recommendation.
 3. Convert the recommendation into an observable decision: hierarchy, grouping, control semantics,
    geometry, readable text, recovery, or feedback. If a material departure from the approved design
    is outside the authorized scope, present it as a proposal and obtain authorization before changing it.
-4. For web work, use existing project components and styling overlays. Preserve HTML semantics,
+4. For web work, use existing project components and independently active styling overlays. Preserve HTML semantics,
    keyboard access, browser behavior, and the project's applicable accessibility baseline. Use the
    web-specific standards and patterns in the platform reference; native metrics are contextual
    references, not automatic CSS values. Preserve task-critical data density in professional interfaces.
@@ -86,6 +85,8 @@ official alternative or the official video transcript. Keep paraphrases, links, 
 do not vendor Apple's manuals, screenshots, fonts, or design kits into the repository.
 
 ## Optional coordination
+
+The optional rule `apple_design.md` has a one-way dependency on this skill. The rule is not a prerequisite for using the skill. Framework, styling, accessibility tooling, and browser automation remain project-selected overlays.
 
 When independently active and relevant, coordinate with the `apple_design.md` rule, `ui-ux-review`
 for review evidence, `playwright-ui-checks-mcp` for browser inspection, and the project's CSS, CSS
